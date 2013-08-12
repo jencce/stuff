@@ -107,6 +107,7 @@ void file_long_list(char *dir, struct stat *stat)
 	char times[20];
 	struct passwd *pwd;
 	struct group *grp;
+	static int max_filesize = 0;
 
 	memset(s, 0, 10);
 
@@ -171,11 +172,24 @@ void file_long_list(char *dir, struct stat *stat)
 	pwd = getpwuid(stat->st_uid);
 	grp = getgrgid(stat->st_gid);
 
-	strftime(times, 20, "%b %d %Y", localtime(&stat->st_mtime));
+	if (stat->st_size > max_filesize)
+		max_filesize = stat->st_size;
+	memset(times, 0, 20);
+	snprintf(times, 20, "%d", max_filesize);
 
-	printf("%s %d %s %s %ld %s %s\n", s, stat->st_nlink, pwd->pw_name,
-		grp->gr_name, stat->st_size, times, dir);
+	#ifdef LS_DEBUG
+	printf("%d, %s, %d\n", max_filesize, times, strlen(times));
+	#endif
+
+	printf("%s %d %s %s ", s, stat->st_nlink, pwd->pw_name, grp->gr_name);
+
+	printf("%1$*2$ld ", stat->st_size, strlen(times));
+
+	memset(times, 0, 20);
+	strftime(times, 20, "%b %d %Y", localtime(&stat->st_mtime));
+	printf("%s %s\n", times, dir);
 }
+
 
 int list_dir(char *dir, struct ls_param *params)
 {
