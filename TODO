@@ -1,0 +1,3 @@
+ls no . ..
+ls -a error
+ls -l algin garbled

@@ -103,7 +103,7 @@ int parse_params(int argc, char **argv, struct ls_param *params)
 
 void file_long_list(char *dir, struct stat *stat)
 {
-	char s[10];
+	char s[11];
 	char times[20];
 	struct passwd *pwd;
 	struct group *grp;
@@ -166,13 +166,15 @@ void file_long_list(char *dir, struct stat *stat)
 	else
 		s[9] = '-';
 
+	s[10] = '\0';
+
 	pwd = getpwuid(stat->st_uid);
 	grp = getgrgid(stat->st_gid);
 
-	strftime(times, 20, "%B %d %Y", localtime(&stat->st_mtime));
+	strftime(times, 20, "%b %d %Y", localtime(&stat->st_mtime));
 
-	printf("%s %d %s %s %ld %s %s\n", s, stat->st_nlink, pwd->pw_name, grp->gr_name,
-		stat->st_size, times, dir);
+	printf("%s %d %s %s %ld %s %s\n", s, stat->st_nlink, pwd->pw_name,
+		grp->gr_name, stat->st_size, times, dir);
 }
 
 int list_dir(char *dir, struct ls_param *params)
@@ -194,7 +196,9 @@ int list_dir(char *dir, struct ls_param *params)
 		if (params->long_list)
 			file_long_list(dir, &buf);
 		else
-			printf("%s\n", dir);
+			printf("%s ", dir);
+
+		return 0;
 	}
 
 	if (S_ISDIR(buf.st_mode)) {
@@ -207,8 +211,8 @@ int list_dir(char *dir, struct ls_param *params)
 
 			if (params->long_list)
 				file_long_list(dir, &buf);
-			else
-				printf("%s\n", dir);
+			else if (params->all)
+				printf("%s ", dir);
 
 			return 0;
 		}
@@ -218,8 +222,8 @@ int list_dir(char *dir, struct ls_param *params)
 
 			if (params->long_list)
 				file_long_list(dir, &buf);
-			else
-				printf("%s\n", dir);
+			else if (params->all)
+				printf("%s ", dir);
 
 			return 0;
 		}
@@ -243,6 +247,9 @@ int list_dir(char *dir, struct ls_param *params)
 			free(namelist);
 		}
 	}
+
+	if (params->long_list == 0)
+		printf("\n");
 
 	return 0;
 }
