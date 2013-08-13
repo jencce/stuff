@@ -341,8 +341,11 @@ int main(int argc, char **argv)
 		#ifdef LS_DEBUG
 		printf("argv[%d]: %s\n", optind, argv[optind]);
 		#endif
+		printf("%s:\n", argv[optind]);
 		ret = list_dir(argv[optind], &params);
 		optind++;
+		if (argv[optind])
+			printf("\n");
 	}
 
 	return ret;
