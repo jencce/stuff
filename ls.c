@@ -10,18 +10,23 @@
 #include <time.h>
 #include <dirent.h>
 #include <stdlib.h>
+#include <libgen.h>
 
 #define _GNU_SOURCE
 
 struct ls_param {
 	int all;
 	int long_list;
+	int recursive;
+	int dot;
 };
 
 int init_param(struct ls_param *params)
 {
 	params->all = 0;
 	params->long_list = 0;
+	params->recursive = 0;
+	params->dot = 0;
 }
 
 int parse_params(int argc, char **argv, struct ls_param *params)
@@ -89,6 +94,9 @@ int parse_params(int argc, char **argv, struct ls_param *params)
 		case 'l':
 			params->long_list = 1;
 			break;
+		case 'R':
+			params->recursive = 1;
+			break;
 		default:
 			printf("bad parameters\n");
 			#ifdef LS_DEBUG
@@ -108,6 +116,7 @@ void file_long_list(char *dir, struct stat *stat)
 	struct passwd *pwd;
 	struct group *grp;
 	static int max_filesize = 0;
+	char *tmp = NULL;
 
 	memset(s, 0, 10);
 
@@ -187,79 +196,126 @@ void file_long_list(char *dir, struct stat *stat)
 
 	memset(times, 0, 20);
 	strftime(times, 20, "%b %d %Y", localtime(&stat->st_mtime));
-	printf("%s %s\n", times, dir);
-}
 
+	tmp = strdup(dir);
+	if (tmp) {
+		printf("%s %s\n", times, basename(tmp));
+		free(tmp);
+	}
+}
 
 int list_dir(char *dir, struct ls_param *params)
 {
 	struct stat buf;
 	int ret;
+	struct dirent **namelist;
+	int n = 0, i = 0;
 
 	#ifdef LS_DEBUG
 	printf("dir %s\n", dir);
 	#endif
 
-	ret = stat(dir, &buf);
-	if (ret != 0) {
-		printf("stat error: %s\n", strerror(errno));
-		return -1;
+	if (params->recursive) {
+		printf("%s:\n", dir);
 	}
 
-	if (S_ISREG(buf.st_mode)) {
-		if (params->long_list)
-			file_long_list(dir, &buf);
-		else
-			printf("%s ", dir);
+	n = scandir(dir, &namelist, 0, alphasort);
+	if (n < 0) {
+		perror("scandir");
+		free(namelist);
+	} else {
+		while (i < n) {
+			char *item = (char *)malloc(BUFSIZ);
+			sprintf(item, "%s/%s", dir,namelist[i]->d_name);
 
-		return 0;
-	}
-
-	if (S_ISDIR(buf.st_mode)) {
-		int n = 0, i = 0;
-		static int rflag = 0;
-		struct dirent **namelist;
-
-		if (strncmp(dir, ".", strlen(dir) > 1 ? strlen(dir) : 1) == 0
-			&& rflag) {
-
-			if (params->long_list)
-				file_long_list(dir, &buf);
-			else if (params->all)
-				printf("%s ", dir);
-
-			return 0;
-		}
-
-		if (strncmp(dir, "..", strlen(dir) > 2 ? strlen(dir) : 2) == 0
-			&& rflag) {
-
-			if (params->long_list)
-				file_long_list(dir, &buf);
-			else if (params->all)
-				printf("%s ", dir);
-
-			return 0;
-		}
-
-		if (dir[0] == '.' && rflag && params->all == 0)
-			return;
-
-		n = scandir(dir, &namelist, 0, alphasort);
-		if (n < 0) {
-			perror("scandir");
-			free(namelist);
-			rflag = 1;
-			return -1;
-		} else {
-			rflag = 1;
-			while (i < n) {
-				list_dir(namelist[i]->d_name, params);
-				free(namelist[i]);
-				i++;
+			ret = stat(item, &buf);
+			if (ret != 0) {
+				printf("stat error: %s\n", strerror(errno));
+				return -1;
 			}
-			free(namelist);
+		
+			if (S_ISDIR(buf.st_mode)) {
+				char *dir_copy = strdup(item);
+				char *bname = basename(dir_copy);
+				char *dir_copy1 = strdup(item);
+				char *dname = dirname(dir_copy1);
+		
+				if (strcmp(bname, ".") == 0) {
+					if (params->all) {
+						if (params->long_list)
+							file_long_list(item, &buf);
+						else
+							printf("%s ", bname);
+					}
+					free(namelist[i]);
+					free(item);
+					i++;
+					continue;
+				}
+		
+				if (strcmp(bname, "..") == 0) {
+					if (params->all) {
+						if (params->long_list)
+							file_long_list(item, &buf);
+						else
+							printf("%s ", bname);
+					}
+					free(namelist[i]);
+					free(item);
+					i++;
+					continue;
+				}
+		
+				if (bname[0] == '.' && strlen(bname) > 1) {
+					if (params->all) {
+						if (params->recursive)
+							list_dir(item, params);
+						else {
+							if (params->long_list)
+								file_long_list(item, &buf);
+							else {
+								char *s = strdup(item);
+								printf("%s ", basename(s));
+								free(s);
+							}
+						}
+					}
+					free(namelist[i]);
+					free(item);
+					i++;
+					continue;
+				}
+		
+				if (params->recursive)
+					list_dir(item, params);
+				else {
+					if (params->long_list)
+						file_long_list(item, &buf);
+					else {
+						char *s = strdup(item);
+						printf("%s ", basename(s));
+						free(s);
+					}
+				}
+		
+				free(dir_copy);
+				free(dir_copy1);
+			}
+			else {
+				if (params->long_list)
+					file_long_list(item, &buf);
+				else {
+					char *s = strdup(item);
+					printf("%s ", basename(s));
+					free(s);
+				}
+			}
+		
+			free(namelist[i]);
+			free(item);
+			i++;
 		}
+		free(namelist);
 	}
 
 	if (params->long_list == 0)
@@ -278,6 +334,9 @@ int main(int argc, char **argv)
 	init_param(&params);
 	parse_params(argc, argv, &params);
 
+	if (argv[optind] == NULL)
+		ret = list_dir(".", &params);
+
 	while (argv[optind]) {
 		#ifdef LS_DEBUG
 		printf("argv[%d]: %s\n", optind, argv[optind]);
@@ -285,9 +344,6 @@ int main(int argc, char **argv)
 		ret = list_dir(argv[optind], &params);
 		optind++;
 	}
-
-	if (argv[optind] == NULL)
-		ret = list_dir(".", &params);
 
 	return ret;
 }
