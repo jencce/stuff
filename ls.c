@@ -14,6 +14,9 @@
 
 #define _GNU_SOURCE
 
+int max_filesize;
+int max_links;
+
 struct ls_param {
 	int all;
 	int long_list;
@@ -109,13 +112,12 @@ int parse_params(int argc, char **argv, struct ls_param *params)
 	return 0;
 }
 
-void file_long_list(char *dir, struct stat *stat)
+void file_llist(char *dir, struct stat *stat)
 {
 	char s[11];
 	char times[20];
 	struct passwd *pwd;
 	struct group *grp;
-	static int max_filesize = 0;
 	char *tmp = NULL;
 
 	memset(s, 0, 10);
@@ -181,21 +183,26 @@ void file_long_list(char *dir, struct stat *stat)
 	pwd = getpwuid(stat->st_uid);
 	grp = getgrgid(stat->st_gid);
 
-	if (stat->st_size > max_filesize)
-		max_filesize = stat->st_size;
+	printf("%s ", s);
+
+	memset(times, 0, 20);
+	snprintf(times, 20, "%d", max_links);
+	#ifdef LS_DEBUG
+	printf("%d, %s, %d\n", max_links, times, strlen(times));
+	#endif
+	printf("%1$*2$d ", stat->st_nlink, strlen(times));
+
+	printf("%s %s ", pwd->pw_name, grp->gr_name);
+
 	memset(times, 0, 20);
 	snprintf(times, 20, "%d", max_filesize);
-
 	#ifdef LS_DEBUG
 	printf("%d, %s, %d\n", max_filesize, times, strlen(times));
 	#endif
-
-	printf("%s %d %s %s ", s, stat->st_nlink, pwd->pw_name, grp->gr_name);
-
 	printf("%1$*2$ld ", stat->st_size, strlen(times));
 
 	memset(times, 0, 20);
-	strftime(times, 20, "%b %d %Y", localtime(&stat->st_mtime));
+	strftime(times, 20, "%b %d %R", localtime(&stat->st_mtime));
 
 	tmp = strdup(dir);
 	if (tmp) {
@@ -209,7 +216,8 @@ int list_dir(char *dir, struct ls_param *params)
 	struct stat buf;
 	int ret;
 	struct dirent **namelist;
-	int n = 0, i = 0;
+	int n = 0, i = 0, j = 0, dirno = 0;
+	char *dirs[BUFSIZ];
 
 	#ifdef LS_DEBUG
 	printf("dir %s\n", dir);
@@ -234,82 +242,20 @@ int list_dir(char *dir, struct ls_param *params)
 				return -1;
 			}
 		
-			if (S_ISDIR(buf.st_mode)) {
+			if (S_ISDIR(buf.st_mode)) { 
 				char *dir_copy = strdup(item);
 				char *bname = basename(dir_copy);
-				char *dir_copy1 = strdup(item);
-				char *dname = dirname(dir_copy1);
-		
-				if (strcmp(bname, ".") == 0) {
-					if (params->all) {
-						if (params->long_list)
-							file_long_list(item, &buf);
-						else
-							printf("%s ", bname);
-					}
-					free(namelist[i]);
-					free(item);
-					i++;
-					continue;
-				}
-		
-				if (strcmp(bname, "..") == 0) {
-					if (params->all) {
-						if (params->long_list)
-							file_long_list(item, &buf);
-						else
-							printf("%s ", bname);
-					}
-					free(namelist[i]);
-					free(item);
-					i++;
-					continue;
-				}
-		
-				if (bname[0] == '.' && strlen(bname) > 1) {
-					if (params->all) {
-						if (params->recursive)
-							list_dir(item, params);
-						else {
-							if (params->long_list)
-								file_long_list(item, &buf);
-							else {
-								char *s = strdup(item);
-								printf("%s ", basename(s));
-								free(s);
-							}
-						}
-					}
-					free(namelist[i]);
-					free(item);
-					i++;
-					continue;
-				}
-		
-				if (params->recursive)
-					list_dir(item, params);
-				else {
-					if (params->long_list)
-						file_long_list(item, &buf);
-					else {
-						char *s = strdup(item);
-						printf("%s ", basename(s));
-						free(s);
-					}
-				}
-		
-				free(dir_copy);
-				free(dir_copy1);
+
+				if (strcmp(bname, ".") != 0 &&
+				    strcmp(bname, "..") != 0)
+					dirno++;
 			}
-			else {
-				if (params->long_list)
-					file_long_list(item, &buf);
-				else {
-					char *s = strdup(item);
-					printf("%s ", basename(s));
-					free(s);
-				}
-			}
+
+			if (buf.st_size > max_filesize)
+				max_filesize = buf.st_size;
+		
+			if (buf.st_nlink > max_links)
+				max_links = buf.st_nlink;
 		
 			free(namelist[i]);
 			free(item);
@@ -318,8 +264,130 @@ int list_dir(char *dir, struct ls_param *params)
 		free(namelist);
 	}
 
-	if (params->long_list == 0)
-		printf("\n");
+	for (i = 0; i < dirno; i++)
+		while (dirs[i] == NULL)
+			dirs[i] = (char *)malloc(BUFSIZ);
+
+	i = 0;
+	n = 0;
+	n = scandir(dir, &namelist, 0, alphasort);
+	if (n < 0) {
+		perror("scandir");
+		free(namelist);
+		return -1;
+	} 
+	while (i < n) {
+		char *item = (char *)malloc(BUFSIZ);
+		sprintf(item, "%s/%s", dir,namelist[i]->d_name);
+		#ifdef LS_DEBUG
+		printf("item %s\n", item);
+		#endif
+
+		ret = stat(item, &buf);
+		if (ret != 0) {
+			printf("stat error: %s\n", strerror(errno));
+			return -1;
+		}
+	
+		if (S_ISDIR(buf.st_mode)) {
+			char *dir_copy = strdup(item);
+			char *bname = basename(dir_copy);
+			char *dir_copy1 = strdup(item);
+			char *dname = dirname(dir_copy1);
+	
+			if (strcmp(bname, ".") == 0) {
+				if (params->all) {
+					if (params->long_list)
+						file_llist(item, &buf);
+					else
+						printf("%s ", bname);
+				}
+				free(namelist[i]);
+				free(item);
+				i++;
+				continue;
+			}
+	
+			if (strcmp(bname, "..") == 0) {
+				if (params->all) {
+					if (params->long_list)
+						file_llist(item, &buf);
+					else
+						printf("%s ", bname);
+				}
+				free(namelist[i]);
+				free(item);
+				i++;
+				continue;
+			}
+	
+			if (bname[0] == '.' && strlen(bname) > 1) {
+				if (params->all) {
+					/*
+			 		* show before recurse for directory
+			 		*/
+					if (params->long_list)
+						file_llist(item, &buf);
+					else {
+						char *s = strdup(item);
+						printf("%s ", basename(s));
+						free(s);
+					}
+					if (params->recursive)
+						strcpy(dirs[j++], item);
+						//list_dir(item, params);
+				}
+				free(namelist[i]);
+				free(item);
+				i++;
+				continue;
+			}
+	
+			/*
+			 * show before recurse for directory
+			 */
+			if (params->long_list)
+				file_llist(item, &buf);
+			else {
+				char *s = strdup(item);
+				printf("%s ", basename(s));
+				free(s);
+			}
+			if (params->recursive)
+				strcpy(dirs[j++], item);
+				//list_dir(item, params);
+	
+			free(dir_copy);
+			free(dir_copy1);
+		}
+		else {
+			if (params->long_list)
+				file_llist(item, &buf);
+			else {
+				char *s = strdup(item);
+				printf("%s ", basename(s));
+				free(s);
+			}
+		}
+	
+		free(namelist[i]);
+		free(item);
+		i++;
+	}
+	free(namelist);
+
+	//if (params->long_list == 0)
+	printf("\n");
+
+	for (i = 0; i < j; i++) {
+		#ifdef LS_DEBUG
+		printf("dirs[%d]: %s\n", i, dirs[i]);
+		#endif
+		list_dir(dirs[i], params);
+	}
+
+	//for (i = 0; i < j; i++)
+	//	free(dirs[i]);
 
 	return 0;
 }
