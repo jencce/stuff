@@ -24,7 +24,7 @@ struct ls_param {
 	int dot;
 };
 
-int init_param(struct ls_param *params)
+void init_param(struct ls_param *params)
 {
 	params->all = 0;
 	params->long_list = 0;
