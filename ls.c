@@ -3,6 +3,7 @@
 #include <getopt.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/ioctl.h>
 #include <errno.h>
 #include <string.h>
 #include <pwd.h>
@@ -11,6 +12,8 @@
 #include <dirent.h>
 #include <stdlib.h>
 #include <libgen.h>
+#include <locale.h>
+#include <termios.h>
 
 #define _GNU_SOURCE
 
@@ -211,6 +214,59 @@ void file_llist(char *dir, struct stat *stat)
 	}
 }
 
+char out_buff[BUFSIZ][BUFSIZ];
+static int obindex;
+
+void file_slist(char *bname)
+{
+	if (isatty(STDOUT_FILENO)) {
+		sprintf(out_buff[obindex++], "%s", bname);
+	} else {
+		printf("%s\n", bname);
+	}
+}
+
+void print_all()
+{
+	struct winsize ws;
+	int ret;
+	int longest_item = 0;
+	int tt_length = 0;
+	int min_rows, max_rows;
+
+	ret = ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws);
+	if (ret != 0) {
+		perror("ioctl error");
+		return;
+	}
+	#ifdef LS_DEBUG
+	printf("row %d, col %d\n", ws.ws_row, ws.ws_col);
+	#endif
+
+	for(ret = 0; ret < obindex; ret++) {
+		int item_leng = strlen(out_buff[ret]);
+		#ifdef LS_DEBUG
+		printf("out_buff[%d]:%s\n", ret, out_buff[ret]);
+		#endif
+
+		tt_length += item_leng;
+		tt_length += 2;
+		if (item_leng > longest_item)
+			longest_item = item_leng;
+		#ifdef LS_DEBUG
+		printf("tt %d, li %d\n", tt_length, longest_item);
+		#endif
+	}	
+
+	min_rows = tt_length / ws.ws_col + 1;
+	max_rows = longest_item * (obindex - 1) / ws.ws_col + 1;
+
+	#ifdef LS_DEBUG
+	printf("min/max rows:%d %d\n", min_rows, max_rows);
+	#endif
+	
+}
+
 int list_dir(char *dir, struct ls_param *params)
 {
 	struct stat buf;
@@ -230,7 +286,7 @@ int list_dir(char *dir, struct ls_param *params)
 	n = scandir(dir, &namelist, 0, alphasort);
 	if (n < 0) {
 		perror("scandir");
-		free(namelist);
+		//free(namelist);
 	} else {
 		while (i < n) {
 			char *item = (char *)malloc(BUFSIZ);
@@ -273,7 +329,7 @@ int list_dir(char *dir, struct ls_param *params)
 	n = scandir(dir, &namelist, 0, alphasort);
 	if (n < 0) {
 		perror("scandir");
-		free(namelist);
+		//free(namelist);
 		return -1;
 	} 
 	while (i < n) {
@@ -300,7 +356,8 @@ int list_dir(char *dir, struct ls_param *params)
 					if (params->long_list)
 						file_llist(item, &buf);
 					else
-						printf("%s ", bname);
+						file_slist(bname);
+						//printf("%s  ", bname);
 				}
 				free(namelist[i]);
 				free(item);
@@ -313,7 +370,8 @@ int list_dir(char *dir, struct ls_param *params)
 					if (params->long_list)
 						file_llist(item, &buf);
 					else
-						printf("%s ", bname);
+						file_slist(bname);
+						//printf("%s  ", bname);
 				}
 				free(namelist[i]);
 				free(item);
@@ -329,9 +387,8 @@ int list_dir(char *dir, struct ls_param *params)
 					if (params->long_list)
 						file_llist(item, &buf);
 					else {
-						char *s = strdup(item);
-						printf("%s ", basename(s));
-						free(s);
+						file_slist(bname);
+						//printf("%s  ", bname);
 					}
 					if (params->recursive)
 						strcpy(dirs[j++], item);
@@ -349,9 +406,8 @@ int list_dir(char *dir, struct ls_param *params)
 			if (params->long_list)
 				file_llist(item, &buf);
 			else {
-				char *s = strdup(item);
-				printf("%s ", basename(s));
-				free(s);
+				file_slist(bname);
+				//printf("%s  ", bname);
 			}
 			if (params->recursive)
 				strcpy(dirs[j++], item);
@@ -365,7 +421,8 @@ int list_dir(char *dir, struct ls_param *params)
 				file_llist(item, &buf);
 			else {
 				char *s = strdup(item);
-				printf("%s ", basename(s));
+				file_slist(basename(s));
+				//printf("%s  ", basename(s));
 				free(s);
 			}
 		}
@@ -399,6 +456,8 @@ int main(int argc, char **argv)
 	struct ls_param params;
 	char *target;
 
+	setlocale(LC_ALL, "");
+
 	init_param(&params);
 	parse_params(argc, argv, &params);
 
@@ -409,12 +468,16 @@ int main(int argc, char **argv)
 		#ifdef LS_DEBUG
 		printf("argv[%d]: %s\n", optind, argv[optind]);
 		#endif
-		printf("%s:\n", argv[optind]);
+		if (params.recursive)
+			printf("%s:\n", argv[optind]);
 		ret = list_dir(argv[optind], &params);
 		optind++;
 		if (argv[optind])
 			printf("\n");
 	}
+
+	if (isatty(STDOUT_FILENO))
+		print_all();
 
 	return ret;
 }
