@@ -14,11 +14,12 @@
 #include <libgen.h>
 #include <locale.h>
 #include <termios.h>
+#include <selinux/selinux.h>
 
 #define _GNU_SOURCE
 
 int max_filesize;
-int max_links;
+int max_links = 0;
 
 struct ls_param {
 	int all;
@@ -115,9 +116,9 @@ int parse_params(int argc, char **argv, struct ls_param *params)
 	return 0;
 }
 
-void file_llist(char *dir, struct stat *stat)
+void file_llist(char *dir, struct stat *stat, int secon)
 {
-	char s[11];
+	char s[12];
 	char times[20];
 	struct passwd *pwd;
 	struct group *grp;
@@ -181,7 +182,14 @@ void file_llist(char *dir, struct stat *stat)
 	else
 		s[9] = '-';
 
-	s[10] = '\0';
+	if (secon) {
+		s[10] = '.';
+		s[11] = '\0';
+	}
+	else {
+		s[10] = ' ';
+		s[11] = '\0';
+	}
 
 	pwd = getpwuid(stat->st_uid);
 	grp = getgrgid(stat->st_gid);
@@ -191,7 +199,7 @@ void file_llist(char *dir, struct stat *stat)
 	memset(times, 0, 20);
 	snprintf(times, 20, "%d", max_links);
 	#ifdef LS_DEBUG
-	printf("%d, %s, %d\n", max_links, times, strlen(times));
+	printf("maxlinks %d, %s, %d\n", max_links, times, strlen(times));
 	#endif
 	printf("%1$*2$d ", stat->st_nlink, strlen(times));
 
@@ -241,6 +249,9 @@ void print_all()
 	int longest_item = 0;
 	int tt_length = 0;
 	int min_rows, max_rows, max_cols;
+
+	if (obindex == 0)
+		return;
 
 	ret = ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws);
 	if (ret != 0) {
@@ -336,6 +347,8 @@ int list_dir(char *dir, struct ls_param *params)
 	struct dirent **namelist;
 	int n = 0, i = 0, j = 0, dirno = 0;
 	char *dirs[BUFSIZ];
+	int tt_blks = 0;
+	int blk_size = 0;
 
 	#ifdef LS_DEBUG
 	printf("dir %s\n", dir);
@@ -352,7 +365,13 @@ int list_dir(char *dir, struct ls_param *params)
 	} else {
 		while (i < n) {
 			char *item = (char *)malloc(BUFSIZ);
+			char *dir_copy;
+			char *bname;
+			int ignore = 0;
+
 			sprintf(item, "%s/%s", dir,namelist[i]->d_name);
+			dir_copy = strdup(item);
+			bname = basename(dir_copy);
 
 			ret = stat(item, &buf);
 			if (ret != 0) {
@@ -361,27 +380,42 @@ int list_dir(char *dir, struct ls_param *params)
 				i++;
 				continue;
 			}
-		
-			if (S_ISDIR(buf.st_mode)) { 
-				char *dir_copy = strdup(item);
-				char *bname = basename(dir_copy);
 
+			if (bname[0] == '.' && params->all == 0)
+				ignore = 1;
+						
+			if (S_ISDIR(buf.st_mode)) { 
 				if (strcmp(bname, ".") != 0 &&
 				    strcmp(bname, "..") != 0)
 					dirno++;
 			}
 
-			if (buf.st_size > max_filesize)
+			if (buf.st_size > max_filesize && ignore == 0)
 				max_filesize = buf.st_size;
 		
-			if (buf.st_nlink > max_links)
+			if (buf.st_nlink > max_links && ignore == 0)
 				max_links = buf.st_nlink;
+
+			if (ignore == 0) {
+				#ifdef LS_DEBUG
+				printf("%s blks:%ld\n", item, buf.st_blocks);
+				#endif
+				tt_blks += buf.st_blocks;
+			}
+			blk_size = buf.st_blksize;
+			#ifdef LS_DEBUG
+			printf("blksize:%ld\n", blk_size);
+			#endif
 		
 			free(namelist[i]);
 			free(item);
 			i++;
 		}
 		free(namelist);
+	}
+
+	if (params->long_list) {
+		printf("total %d\n", tt_blks / 2);
 	}
 
 	for (i = 0; i < dirno; i++)
@@ -410,6 +444,13 @@ int list_dir(char *dir, struct ls_param *params)
 			continue;
 		}
 	
+		security_context_t con;
+		int secon = 0;
+		if (getfilecon(item, &con) > 0) {
+			secon = 1;
+			freecon(con);
+		}
+
 		if (S_ISDIR(buf.st_mode)) {
 			char *dir_copy = strdup(item);
 			char *bname = basename(dir_copy);
@@ -419,7 +460,7 @@ int list_dir(char *dir, struct ls_param *params)
 			if (strcmp(bname, ".") == 0) {
 				if (params->all) {
 					if (params->long_list)
-						file_llist(item, &buf);
+						file_llist(item, &buf, secon);
 					else
 						file_slist(bname);
 						//printf("%s  ", bname);
@@ -433,7 +474,7 @@ int list_dir(char *dir, struct ls_param *params)
 			if (strcmp(bname, "..") == 0) {
 				if (params->all) {
 					if (params->long_list)
-						file_llist(item, &buf);
+						file_llist(item, &buf, secon);
 					else
 						file_slist(bname);
 						//printf("%s  ", bname);
@@ -450,7 +491,7 @@ int list_dir(char *dir, struct ls_param *params)
 			 		* show before recurse for directory
 			 		*/
 					if (params->long_list)
-						file_llist(item, &buf);
+						file_llist(item, &buf, secon);
 					else {
 						file_slist(bname);
 						//printf("%s  ", bname);
@@ -469,7 +510,7 @@ int list_dir(char *dir, struct ls_param *params)
 			 * show before recurse for directory
 			 */
 			if (params->long_list)
-				file_llist(item, &buf);
+				file_llist(item, &buf, secon);
 			else {
 				file_slist(bname);
 				//printf("%s  ", bname);
@@ -490,7 +531,7 @@ int list_dir(char *dir, struct ls_param *params)
 			 		* show . start files
 			 		*/
 					if (params->long_list)
-						file_llist(item, &buf);
+						file_llist(item, &buf, secon);
 					else
 						file_slist(bname);
 				}
@@ -500,7 +541,7 @@ int list_dir(char *dir, struct ls_param *params)
 				continue;
 			}
 			if (params->long_list)
-				file_llist(item, &buf);
+				file_llist(item, &buf, secon);
 			else {
 				char *s = strdup(item);
 				file_slist(basename(s));
