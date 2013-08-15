@@ -217,6 +217,14 @@ void file_llist(char *dir, struct stat *stat)
 char out_buff[BUFSIZ][BUFSIZ];
 static int obindex;
 
+void init_ob()
+{
+	int i;
+	obindex = 0;
+	while (i < BUFSIZ) 
+		memset(out_buff[i++], '\0', BUFSIZ);
+}
+
 void file_slist(char *bname)
 {
 	if (isatty(STDOUT_FILENO)) {
@@ -232,7 +240,7 @@ void print_all()
 	int ret;
 	int longest_item = 0;
 	int tt_length = 0;
-	int min_rows, max_rows;
+	int min_rows, max_rows, max_cols;
 
 	ret = ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws);
 	if (ret != 0) {
@@ -240,13 +248,14 @@ void print_all()
 		return;
 	}
 	#ifdef LS_DEBUG
-	printf("row %d, col %d\n", ws.ws_row, ws.ws_col);
+	printf("row %d, col %d, oni %d\n", ws.ws_row, ws.ws_col, obindex);
 	#endif
 
 	for(ret = 0; ret < obindex; ret++) {
 		int item_leng = strlen(out_buff[ret]);
 		#ifdef LS_DEBUG
-		printf("out_buff[%d]:%s\n", ret, out_buff[ret]);
+		printf("out_buff[%d]:%s,", ret, out_buff[ret]);
+		printf("len %d\n", strlen(out_buff[ret]));
 		#endif
 
 		tt_length += item_leng;
@@ -256,15 +265,68 @@ void print_all()
 		#ifdef LS_DEBUG
 		printf("tt %d, li %d\n", tt_length, longest_item);
 		#endif
-	}	
+	}
 
 	min_rows = tt_length / ws.ws_col + 1;
-	max_rows = longest_item * (obindex - 1) / ws.ws_col + 1;
+	max_rows = (longest_item + 2) * obindex / ws.ws_col + 1;
+	max_cols = obindex / min_rows + 1;
 
 	#ifdef LS_DEBUG
 	printf("min/max rows:%d %d\n", min_rows, max_rows);
 	#endif
 	
+	/* figure out the best rows number*/
+	int best_row = 0;
+	int col_len[max_cols];
+	for (ret = min_rows; ret <= max_rows; ret++) {
+		int smax_col_len = 0;
+		int i, j;
+
+		for (i = 0; i < max_cols; i++)
+			col_len[i] = 0;
+		int k = 0;
+		for (i = 0 + ret; ; i = i + ret) {
+			int max_col_len = 0;
+			for (j = i - ret; j < i && j < obindex; j++) {
+				int item_len = strlen(out_buff[j]);
+				#ifdef LS_DEBUG
+				//printf("item %d len %d\n", j, item_len);
+				#endif
+				if (max_col_len < item_len)
+					max_col_len = item_len;
+			}
+			if (max_col_len == 0)
+				break;
+
+			smax_col_len += max_col_len;
+			smax_col_len += 2;
+			#ifdef LS_DEBUG
+			printf("col %d,len %d,", k, max_col_len);
+			printf("smax_col_len %d\n", smax_col_len);
+			#endif
+			col_len[k++] = max_col_len;
+		}
+		if (smax_col_len < ws.ws_col) {
+			#ifdef LS_DEBUG
+			printf("best rows: %d, smcl %d\n", ret, smax_col_len);
+			#endif
+			best_row = ret;
+			break;
+		}
+		/* min/max cols cal may not be right*/
+		if (ret == max_rows && best_row == 0)
+			max_rows++;
+	}
+
+	/* print according to best_row*/
+	int i, j, k = 0;
+	for (i = 0; i < best_row; i++) {
+		for (j = i, k = 0; j < obindex; j = j + best_row) {
+			//printf("%1$*2$s  ", out_buff[j], col_len[i]);
+			printf("%-*s  ", col_len[k++], out_buff[j]);
+		}
+		printf("\n");
+	}
 }
 
 int list_dir(char *dir, struct ls_param *params)
@@ -294,8 +356,10 @@ int list_dir(char *dir, struct ls_param *params)
 
 			ret = stat(item, &buf);
 			if (ret != 0) {
-				printf("stat error: %s\n", strerror(errno));
-				return -1;
+				printf("stat error:%s %s\n", item, 
+						strerror(errno));
+				i++;
+				continue;
 			}
 		
 			if (S_ISDIR(buf.st_mode)) { 
@@ -341,8 +405,9 @@ int list_dir(char *dir, struct ls_param *params)
 
 		ret = stat(item, &buf);
 		if (ret != 0) {
-			printf("stat error: %s\n", strerror(errno));
-			return -1;
+			printf("stat error:%s %s\n", item, strerror(errno));
+			i++;
+			continue;
 		}
 	
 		if (S_ISDIR(buf.st_mode)) {
@@ -417,6 +482,23 @@ int list_dir(char *dir, struct ls_param *params)
 			free(dir_copy1);
 		}
 		else {
+			char *dir_copy = strdup(item);
+			char *bname = basename(dir_copy);
+			if (bname[0] == '.' && strlen(bname) > 1) {
+				if (params->all) {
+					/*
+			 		* show . start files
+			 		*/
+					if (params->long_list)
+						file_llist(item, &buf);
+					else
+						file_slist(bname);
+				}
+				free(namelist[i]);
+				free(item);
+				i++;
+				continue;
+			}
 			if (params->long_list)
 				file_llist(item, &buf);
 			else {
@@ -434,12 +516,15 @@ int list_dir(char *dir, struct ls_param *params)
 	free(namelist);
 
 	//if (params->long_list == 0)
-	printf("\n");
+	//printf("\n");
 
 	for (i = 0; i < j; i++) {
 		#ifdef LS_DEBUG
 		printf("dirs[%d]: %s\n", i, dirs[i]);
 		#endif
+		print_all();
+		printf("\n");
+		init_ob();
 		list_dir(dirs[i], params);
 	}
 
@@ -461,23 +546,32 @@ int main(int argc, char **argv)
 	init_param(&params);
 	parse_params(argc, argv, &params);
 
-	if (argv[optind] == NULL)
+	if (argv[optind] == NULL) {
 		ret = list_dir(".", &params);
-
-	while (argv[optind]) {
-		#ifdef LS_DEBUG
-		printf("argv[%d]: %s\n", optind, argv[optind]);
-		#endif
-		if (params.recursive)
-			printf("%s:\n", argv[optind]);
-		ret = list_dir(argv[optind], &params);
-		optind++;
-		if (argv[optind])
-			printf("\n");
+		if (isatty(STDOUT_FILENO))
+			print_all();
 	}
 
-	if (isatty(STDOUT_FILENO))
-		print_all();
+	int dflag = 0;
+	while (argv[optind]) {
+		#ifdef LS_DEBUG
+		printf("argc %d, argv[%d]: %s\n", argc, optind, argv[optind]);
+		#endif
+		init_ob();
+		if (argv[optind + 1])
+			dflag = 1;
+
+		if (params.recursive || dflag)
+			printf("%s:\n", argv[optind]);
+
+		ret = list_dir(argv[optind], &params);
+
+		if (isatty(STDOUT_FILENO))
+			print_all();
+		if (argv[optind + 1] != NULL)
+			printf("\n");
+		optind++;
+	}
 
 	return ret;
 }
