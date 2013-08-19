@@ -18,8 +18,10 @@
 
 #define _GNU_SOURCE
 
-int max_filesize;
+int max_filesize = 0;
 int max_links = 0;
+int longest_usr = 0;
+int longest_grp = 0;
 int have_secon = 0;
 
 struct ls_param {
@@ -207,7 +209,8 @@ void file_llist(char *dir, struct stat *stat, int secon)
 	#endif
 	printf("%1$*2$d ", stat->st_nlink, strlen(times));
 
-	printf("%s %s ", pwd->pw_name, grp->gr_name);
+	printf("%1$-*2$s ", pwd->pw_name, longest_usr);
+	printf("%1$-*2$s ", grp->gr_name, longest_grp);
 
 	memset(times, 0, 20);
 	snprintf(times, 20, "%d", max_filesize);
@@ -217,11 +220,24 @@ void file_llist(char *dir, struct stat *stat, int secon)
 	printf("%1$*2$ld ", stat->st_size, strlen(times));
 
 	memset(times, 0, 20);
-	strftime(times, 20, "%b %d %R", localtime(&stat->st_mtime));
+	strftime(times, 20, "%b %e", localtime(&stat->st_mtime));
+	printf("%s ", times);
+
+	memset(times, 0, 20);
+	time_t now;
+	now = time(NULL);
+	if (now - stat->st_mtime <= 15552000)
+		strftime(times, 20, "%R", localtime(&stat->st_mtime));
+	else
+		strftime(times, 20, "%Y", localtime(&stat->st_mtime));
+	#ifdef LS_DEBUG
+	printf("time%ld, now %ldit", stat->st_mtime, now);
+	#endif
+	printf("%1$*2$s ", times, 5);
 
 	tmp = strdup(dir);
 	if (tmp) {
-		printf("%s %s\n", times, basename(tmp));
+		printf("%s\n", basename(tmp));
 		free(tmp);
 	}
 }
@@ -259,7 +275,7 @@ void print_all()
 
 	ret = ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws);
 	if (ret != 0) {
-		perror("ioctl error");
+		//fprintf(stderr, "ioctl:%s\n", strerror(errno));
 		return;
 	}
 	#ifdef LS_DEBUG
@@ -367,6 +383,9 @@ int list_dir(char *dir, struct ls_param *params)
 	#ifdef LS_DEBUG
 	printf("dir %s\n", dir);
 	#endif
+	max_filesize = 0;
+	max_links = 0;
+	have_secon = 0;
 
 	if (params->recursive) {
 		printf("%s:\n", dir);
@@ -374,7 +393,7 @@ int list_dir(char *dir, struct ls_param *params)
 
 	n = scandir(dir, &namelist, 0, alphasort);
 	if (n < 0) {
-		perror("scandir");
+		//fprintf(stderr, "scandr:%s\n", strerror(errno));
 		//free(namelist);
 	} else {
 		while (i < n) {
@@ -382,6 +401,8 @@ int list_dir(char *dir, struct ls_param *params)
 			char *dir_copy;
 			char *bname;
 			int ignore = 0;
+			struct passwd *pwd;
+			struct group *grp;
 
 			sprintf(item, "%s/%s", dir,namelist[i]->d_name);
 			dir_copy = strdup(item);
@@ -389,15 +410,24 @@ int list_dir(char *dir, struct ls_param *params)
 
 			ret = stat(item, &buf);
 			if (ret != 0) {
-				printf("stat error:%s %s\n", item, 
-						strerror(errno));
+				//printf("stat error:%s %s\n", item, 
+						//strerror(errno));
 				i++;
 				continue;
 			}
 
 			if (bname[0] == '.' && params->all == 0)
 				ignore = 1;
-						
+
+			if (ignore == 0) {
+				pwd = getpwuid(buf.st_uid);
+				grp = getgrgid(buf.st_gid);
+				if (longest_usr < strlen(pwd->pw_name))
+					longest_usr = strlen(pwd->pw_name);
+				if (longest_grp < strlen(grp->gr_name))
+					longest_grp = strlen(grp->gr_name);
+			}
+
 			security_context_t con;
 			if (have_secon == 0 && ignore == 0
 				&& getfilecon(item, &con) > 0) {
@@ -447,7 +477,7 @@ int list_dir(char *dir, struct ls_param *params)
 	n = 0;
 	n = scandir(dir, &namelist, 0, alphasort);
 	if (n < 0) {
-		perror("scandir");
+		//fprintf(stderr, "scandir:%s\n", strerror(errno));
 		//free(namelist);
 		return -1;
 	} 
@@ -460,7 +490,7 @@ int list_dir(char *dir, struct ls_param *params)
 
 		ret = stat(item, &buf);
 		if (ret != 0) {
-			printf("stat error:%s %s\n", item, strerror(errno));
+			//printf("stat error:%s %s\n", item, strerror(errno));
 			i++;
 			continue;
 		}
@@ -624,8 +654,8 @@ int main(int argc, char **argv)
 		if (argv[optind + 1])
 			dflag = 1;
 
-		if (params.recursive || dflag)
-			printf("%s:\n", argv[optind]);
+		//if (params.recursive || dflag)
+		//	printf("%s:\n", argv[optind]);
 
 		ret = list_dir(argv[optind], &params);
 
