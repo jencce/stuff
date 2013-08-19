@@ -8,6 +8,10 @@ prog: ls.c
 debug: ls.c
 	cc -g -o ls -DLS_DEBUG ls.c -lselinux 
 
+.PHONY: test
+test:
+	/bin/bash test.sh
+
 .PHONY: clean
 clean:
 	rm -f ls

@@ -20,6 +20,7 @@
 
 int max_filesize;
 int max_links = 0;
+int have_secon = 0;
 
 struct ls_param {
 	int all;
@@ -187,8 +188,11 @@ void file_llist(char *dir, struct stat *stat, int secon)
 		s[11] = '\0';
 	}
 	else {
-		s[10] = ' ';
-		s[11] = '\0';
+		if (have_secon) {
+			s[10] = ' ';
+			s[11] = '\0';
+		} else
+			s[10] = '\0';
 	}
 
 	pwd = getpwuid(stat->st_uid);
@@ -199,7 +203,7 @@ void file_llist(char *dir, struct stat *stat, int secon)
 	memset(times, 0, 20);
 	snprintf(times, 20, "%d", max_links);
 	#ifdef LS_DEBUG
-	printf("maxlinks %d, %s, %d\n", max_links, times, strlen(times));
+	printf("maxlinks %d, %s, %dem", max_links, times, strlen(times));
 	#endif
 	printf("%1$*2$d ", stat->st_nlink, strlen(times));
 
@@ -208,7 +212,7 @@ void file_llist(char *dir, struct stat *stat, int secon)
 	memset(times, 0, 20);
 	snprintf(times, 20, "%d", max_filesize);
 	#ifdef LS_DEBUG
-	printf("%d, %s, %d\n", max_filesize, times, strlen(times));
+	printf("mf%d, %s, %dfm", max_filesize, times, strlen(times));
 	#endif
 	printf("%1$*2$ld ", stat->st_size, strlen(times));
 
@@ -340,6 +344,16 @@ void print_all()
 	}
 }
 
+int file_secon(char *item)
+{
+	security_context_t con;
+	if (getfilecon(item, &con) > 0) {
+		freecon(con);
+		return 1;
+	}
+	return 0;
+}
+
 int list_dir(char *dir, struct ls_param *params)
 {
 	struct stat buf;
@@ -384,6 +398,13 @@ int list_dir(char *dir, struct ls_param *params)
 			if (bname[0] == '.' && params->all == 0)
 				ignore = 1;
 						
+			security_context_t con;
+			if (have_secon == 0 && ignore == 0
+				&& getfilecon(item, &con) > 0) {
+				freecon(con);
+				have_secon = 1;
+			}
+
 			if (S_ISDIR(buf.st_mode)) { 
 				if (strcmp(bname, ".") != 0 &&
 				    strcmp(bname, "..") != 0)
@@ -444,13 +465,6 @@ int list_dir(char *dir, struct ls_param *params)
 			continue;
 		}
 	
-		security_context_t con;
-		int secon = 0;
-		if (getfilecon(item, &con) > 0) {
-			secon = 1;
-			freecon(con);
-		}
-
 		if (S_ISDIR(buf.st_mode)) {
 			char *dir_copy = strdup(item);
 			char *bname = basename(dir_copy);
@@ -459,9 +473,10 @@ int list_dir(char *dir, struct ls_param *params)
 	
 			if (strcmp(bname, ".") == 0) {
 				if (params->all) {
-					if (params->long_list)
+					if (params->long_list) {
+						int secon = file_secon(item);
 						file_llist(item, &buf, secon);
-					else
+					} else
 						file_slist(bname);
 						//printf("%s  ", bname);
 				}
@@ -473,9 +488,10 @@ int list_dir(char *dir, struct ls_param *params)
 	
 			if (strcmp(bname, "..") == 0) {
 				if (params->all) {
-					if (params->long_list)
+					if (params->long_list) {
+						int secon = file_secon(item);
 						file_llist(item, &buf, secon);
-					else
+					} else
 						file_slist(bname);
 						//printf("%s  ", bname);
 				}
@@ -490,9 +506,10 @@ int list_dir(char *dir, struct ls_param *params)
 					/*
 			 		* show before recurse for directory
 			 		*/
-					if (params->long_list)
+					if (params->long_list) {
+						int secon = file_secon(item);
 						file_llist(item, &buf, secon);
-					else {
+					} else {
 						file_slist(bname);
 						//printf("%s  ", bname);
 					}
@@ -509,9 +526,10 @@ int list_dir(char *dir, struct ls_param *params)
 			/*
 			 * show before recurse for directory
 			 */
-			if (params->long_list)
+			if (params->long_list) {
+				int secon = file_secon(item);
 				file_llist(item, &buf, secon);
-			else {
+			} else {
 				file_slist(bname);
 				//printf("%s  ", bname);
 			}
@@ -530,9 +548,10 @@ int list_dir(char *dir, struct ls_param *params)
 					/*
 			 		* show . start files
 			 		*/
-					if (params->long_list)
+					if (params->long_list) {
+						int secon = file_secon(item);
 						file_llist(item, &buf, secon);
-					else
+					} else
 						file_slist(bname);
 				}
 				free(namelist[i]);
@@ -540,9 +559,10 @@ int list_dir(char *dir, struct ls_param *params)
 				i++;
 				continue;
 			}
-			if (params->long_list)
+			if (params->long_list) {
+				int secon = file_secon(item);
 				file_llist(item, &buf, secon);
-			else {
+			} else {
 				char *s = strdup(item);
 				file_slist(basename(s));
 				//printf("%s  ", basename(s));
@@ -588,6 +608,7 @@ int main(int argc, char **argv)
 	parse_params(argc, argv, &params);
 
 	if (argv[optind] == NULL) {
+		have_secon = 0;
 		ret = list_dir(".", &params);
 		if (isatty(STDOUT_FILENO))
 			print_all();
@@ -599,6 +620,7 @@ int main(int argc, char **argv)
 		printf("argc %d, argv[%d]: %s\n", argc, optind, argv[optind]);
 		#endif
 		init_ob();
+		have_secon = 0;
 		if (argv[optind + 1])
 			dflag = 1;
 
