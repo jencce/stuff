@@ -298,7 +298,9 @@ void print_all()
 		#endif
 	}
 
-	min_rows = tt_length / ws.ws_col + 1;
+	min_rows = tt_length / ws.ws_col;
+	if (min_rows == 0)
+		min_rows = 1;
 	max_rows = (longest_item + 2) * obindex / ws.ws_col + 1;
 	max_cols = obindex / min_rows + 1;
 
@@ -326,8 +328,10 @@ void print_all()
 				if (max_col_len < item_len)
 					max_col_len = item_len;
 			}
-			if (max_col_len == 0)
+			if (max_col_len == 0) {
+				smax_col_len -= 2;
 				break;
+			}
 
 			smax_col_len += max_col_len;
 			smax_col_len += 2;
@@ -354,7 +358,9 @@ void print_all()
 	for (i = 0; i < best_row; i++) {
 		for (j = i, k = 0; j < obindex; j = j + best_row) {
 			//printf("%1$*2$s  ", out_buff[j], col_len[i]);
-			printf("%-*s  ", col_len[k++], out_buff[j]);
+			printf("%-*s", col_len[k++], out_buff[j]);
+			if (j + best_row < obindex)
+				printf("  ");
 		}
 		printf("\n");
 	}
