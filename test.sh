@@ -21,6 +21,8 @@ function do_case()
 	then
 		echo case $1 $2 failed rd=$rd
 		#diff -u /tmp/{zx,}ls$1$rd
+	else
+		rm -f /tmp/{zx,}ls$rd
 	fi
 }
 

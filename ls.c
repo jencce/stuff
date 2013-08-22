@@ -14,7 +14,10 @@
 #include <libgen.h>
 #include <locale.h>
 #include <termios.h>
+
+#ifdef SELINUX
 #include <selinux/selinux.h>
+#endif
 
 #define _GNU_SOURCE
 
@@ -237,7 +240,20 @@ void file_llist(char *dir, struct stat *stat, int secon)
 
 	tmp = strdup(dir);
 	if (tmp) {
-		printf("%s\n", basename(tmp));
+		if (s[0] != 'l')
+			printf("%s\n", basename(tmp));
+		else {
+			char lbuf[BUFSIZ];
+			memset(lbuf, 0, BUFSIZ);
+
+			ssize_t st = readlink(dir, lbuf, BUFSIZ);
+			if (st != -1)
+				printf("%s -> %s\n", basename(tmp), lbuf);
+			#ifdef LS_DEBUG
+			else
+				printf("readlink error\n");
+			#endif
+		}
 		free(tmp);
 	}
 }
@@ -247,7 +263,7 @@ static int obindex;
 
 void init_ob()
 {
-	int i;
+	int i = 0;
 	obindex = 0;
 	while (i < BUFSIZ) 
 		memset(out_buff[i++], '\0', BUFSIZ);
@@ -368,11 +384,13 @@ void print_all()
 
 int file_secon(char *item)
 {
+	#ifdef SELINUX
 	security_context_t con;
 	if (getfilecon(item, &con) > 0) {
 		freecon(con);
 		return 1;
 	}
+	#endif
 	return 0;
 }
 
@@ -434,12 +452,14 @@ int list_dir(char *dir, struct ls_param *params)
 					longest_grp = strlen(grp->gr_name);
 			}
 
+			#ifdef SELINUX
 			security_context_t con;
 			if (have_secon == 0 && ignore == 0
 				&& getfilecon(item, &con) > 0) {
 				freecon(con);
 				have_secon = 1;
 			}
+			#endif
 
 			if (S_ISDIR(buf.st_mode)) { 
 				if (strcmp(bname, ".") != 0 &&
@@ -494,7 +514,7 @@ int list_dir(char *dir, struct ls_param *params)
 		printf("item %s\n", item);
 		#endif
 
-		ret = stat(item, &buf);
+		ret = lstat(item, &buf);
 		if (ret != 0) {
 			//printf("stat error:%s %s\n", item, strerror(errno));
 			i++;

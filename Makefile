@@ -3,10 +3,16 @@
 all: prog
 
 prog: ls.c
-	cc -o ls ls.c -lselinux 
+	cc -o ls ls.c
+
+se: ls.c
+	cc -o ls ls.c -DSELINUX -lselinux
 
 debug: ls.c
-	cc -g -o ls -DLS_DEBUG ls.c -lselinux 
+	cc -g -o ls -DLS_DEBUG ls.c
+
+sedebug: ls.c
+	cc -g -o ls -DLS_DEBUG -DSELINUX ls.c -lselinux 
 
 .PHONY: test
 test:
