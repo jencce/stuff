@@ -415,9 +415,34 @@ int list_dir(char *dir, struct ls_param *params)
 		printf("%s:\n", dir);
 	}
 
+	ret = lstat(dir, &buf);
+	if (ret != 0) {
+		#ifdef LS_DEBUG
+		printf("stat error:%s %s\n", item, strerror(errno));
+		#endif
+	}
+
+	if (! S_ISDIR(buf.st_mode)) {
+		char *dir_copy = strdup(dir);
+		char *bname = basename(dir_copy);
+		if (params->long_list) {
+			int secon = file_secon(dir);
+			file_llist(dir, &buf, secon);
+		} else
+			file_slist(bname);
+		return;
+	}
+
+	if (params->long_list) {
+		printf("total %d\n", tt_blks / 2);
+	}
+
+
 	n = scandir(dir, &namelist, 0, alphasort);
 	if (n < 0) {
-		//fprintf(stderr, "scandr:%s\n", strerror(errno));
+		#ifdef LS_DEBUG
+		fprintf(stderr, "scandr:%s\n", strerror(errno));
+		#endif
 		//free(namelist);
 	} else {
 		while (i < n) {
@@ -434,8 +459,10 @@ int list_dir(char *dir, struct ls_param *params)
 
 			ret = stat(item, &buf);
 			if (ret != 0) {
-				//printf("stat error:%s %s\n", item, 
-						//strerror(errno));
+				#ifdef LS_DEBUG
+				printf("stat error:%s %s\n", item, 
+						strerror(errno));
+				#endif
 				i++;
 				continue;
 			}
@@ -491,10 +518,6 @@ int list_dir(char *dir, struct ls_param *params)
 		free(namelist);
 	}
 
-	if (params->long_list) {
-		printf("total %d\n", tt_blks / 2);
-	}
-
 	for (i = 0; i < dirno; i++)
 		while (dirs[i] == NULL)
 			dirs[i] = (char *)malloc(BUFSIZ);
@@ -503,7 +526,9 @@ int list_dir(char *dir, struct ls_param *params)
 	n = 0;
 	n = scandir(dir, &namelist, 0, alphasort);
 	if (n < 0) {
-		//fprintf(stderr, "scandir:%s\n", strerror(errno));
+		#ifdef LS_DEBUG
+		fprintf(stderr, "scandir:%s\n", strerror(errno));
+		#endif
 		//free(namelist);
 		return -1;
 	} 
@@ -516,7 +541,9 @@ int list_dir(char *dir, struct ls_param *params)
 
 		ret = lstat(item, &buf);
 		if (ret != 0) {
-			//printf("stat error:%s %s\n", item, strerror(errno));
+			#ifdef LS_DEBUG
+			printf("stat error:%s %s\n", item, strerror(errno));
+			#endif
 			i++;
 			continue;
 		}
