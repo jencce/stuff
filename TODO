@@ -4,6 +4,7 @@ list single file
 list st* files
 #setuid bit s bit
 #time display year or day exactly
-symblink sizes
+#symblink sizes
+timer in bash
 free dirs
 android BG message app
