@@ -551,7 +551,7 @@ int list_dir(char *dir, struct ls_param *params)
 			if (buf.st_nlink > max_links && ignore == 0)
 				max_links = buf.st_nlink;
 
-			if (ignore == 0 && ! S_ISLNK(buf.st_mode)) {
+			if (ignore == 0) {
 				#ifdef LS_DEBUG
 				printf("%s xblks:%ld ttblks:%d\n",
 					item, buf.st_blocks, tt_blks);
