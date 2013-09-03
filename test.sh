@@ -11,7 +11,7 @@ function do_case()
 
 	#echo arg1 $1 arg2 $2
 
-	rd=$RANDOM
+	rd=$(($RANDOM % 100))
 
 	./ls $1 $2 > /tmp/zxls$rd
 	\ls $1 $2 > /tmp/ls$rd

@@ -130,6 +130,10 @@ void file_llist(char *dir, struct stat *stat, int secon)
 	struct group *grp;
 	char *tmp = NULL;
 
+	#ifdef LS_DEBUG
+	printf("file_llist %s\n", dir);
+	#endif
+
 	memset(s, 0, 10);
 
 	if (S_ISREG(stat->st_mode))
@@ -229,7 +233,26 @@ void file_llist(char *dir, struct stat *stat, int secon)
 	memset(times, 0, 20);
 	time_t now;
 	now = time(NULL);
-	if (now - stat->st_mtime <= 15552000)
+	#if 0
+	struct tm tmnow;
+	struct tm tmmtime;
+
+	localtime_r(&now, &tmnow);
+	localtime_r(&stat->st_mtime, &tmmtime);
+
+	if ((tmnow.tm_year == tmmtime.tm_year &&
+	     tmnow.tm_mon - tmmtime.tm_mon < 6) || 
+		(tmnow.tm_year == tmmtime.tm_year &&
+		tmnow.tm_mon - tmmtime.tm_mon == 6 &&
+		tmnow.tm_mday - tmmtime.tm_mday < 0) ||
+		(tmnow.tm_year == tmmtime.tm_year &&
+		tmnow.tm_mon - tmmtime.tm_mon == 6 &&
+		tmnow.tm_mday - tmmtime.tm_mday == 0 &&
+		tmnow.tm_hour - tmmtime.tm_hour > 0))
+	#endif
+	/* A Gregorian year has 365.2425 * 24 * 60 * 60 ==
+	         31556952 seconds on the average. */
+	if (now - stat->st_mtime < 31556952 / 2)
 		strftime(times, 20, "%R", localtime(&stat->st_mtime));
 	else
 		strftime(times, 20, "%Y", localtime(&stat->st_mtime));
@@ -386,7 +409,7 @@ int file_secon(char *item)
 {
 	#ifdef SELINUX
 	security_context_t con;
-	if (getfilecon(item, &con) > 0) {
+	if (lgetfilecon(item, &con) > 0) {
 		freecon(con);
 		return 1;
 	}
@@ -418,7 +441,7 @@ int list_dir(char *dir, struct ls_param *params)
 	ret = lstat(dir, &buf);
 	if (ret != 0) {
 		#ifdef LS_DEBUG
-		printf("stat error:%s %s\n", item, strerror(errno));
+		printf("stat error:%s %s\n", dir, strerror(errno));
 		#endif
 	}
 
@@ -431,10 +454,6 @@ int list_dir(char *dir, struct ls_param *params)
 		} else
 			file_slist(bname);
 		return;
-	}
-
-	if (params->long_list) {
-		printf("total %d\n", tt_blks / 2);
 	}
 
 
@@ -508,7 +527,7 @@ int list_dir(char *dir, struct ls_param *params)
 			}
 			blk_size = buf.st_blksize;
 			#ifdef LS_DEBUG
-			printf("blksize:%ld\n", blk_size);
+			printf("blksize:%d\n", blk_size);
 			#endif
 		
 			free(namelist[i]);
@@ -516,6 +535,10 @@ int list_dir(char *dir, struct ls_param *params)
 			i++;
 		}
 		free(namelist);
+	}
+
+	if (params->long_list) {
+		printf("total %d\n", tt_blks / 2);
 	}
 
 	for (i = 0; i < dirno; i++)
