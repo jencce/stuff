@@ -161,10 +161,22 @@ void file_llist(char *dir, struct stat *stat, int secon)
 		s[2] = 'w';
 	else
 		s[2] = '-';
-	if (stat->st_mode & S_IXUSR)
-		s[3] = 'x';
-	else
-		s[3] = '-';
+	if (stat->st_mode & S_IXUSR) {
+		if (stat->st_mode & S_ISUID) 
+			s[3] = 's';
+		//else if (stat->st_mode & S_ISVTX) 
+		//	s[3] = 't';
+		else
+			s[3] = 'x';
+	}
+	else {
+		if (stat->st_mode & S_ISUID) 
+			s[3] = 'S';
+		//else if (stat->st_mode & S_ISVTX) 
+		//	s[3] = 'T';
+		else
+			s[3] = '-';
+	}
 	
 	if (stat->st_mode & S_IRGRP)
 		s[4] = 'r';
@@ -174,10 +186,22 @@ void file_llist(char *dir, struct stat *stat, int secon)
 		s[5] = 'w';
 	else
 		s[5] = '-';
-	if (stat->st_mode & S_IXGRP)
-		s[6] = 'x';
-	else
-		s[6] = '-';
+	if (stat->st_mode & S_IXGRP) {
+		if (stat->st_mode & S_ISGID) 
+			s[6] = 's';
+		//else if (stat->st_mode & S_ISVTX) 
+		//	s[6] = 't';
+		else
+			s[6] = 'x';
+	}
+	else {
+		if (stat->st_mode & S_ISGID) 
+			s[6] = 'S';
+		//else if (stat->st_mode & S_ISVTX) 
+		//	s[6] = 'T';
+		else
+			s[6] = '-';
+	}
 
 	if (stat->st_mode & S_IROTH)
 		s[7] = 'r';
@@ -187,10 +211,18 @@ void file_llist(char *dir, struct stat *stat, int secon)
 		s[8] = 'w';
 	else
 		s[8] = '-';
-	if (stat->st_mode & S_IXOTH)
-		s[9] = 'x';
-	else
-		s[9] = '-';
+	if (stat->st_mode & S_IXOTH) {
+		if (stat->st_mode & S_ISVTX) 
+			s[9] = 't';
+		else
+			s[9] = 'x';
+	}
+	else {
+		if (stat->st_mode & S_ISVTX) 
+			s[9] = 'T';
+		else
+			s[9] = '-';
+	}
 
 	if (secon) {
 		s[10] = '.';
