@@ -241,7 +241,7 @@ void file_llist(char *dir, struct stat *stat, int secon)
 	localtime_r(&stat->st_mtime, &tmmtime);
 
 	if ((tmnow.tm_year == tmmtime.tm_year &&
-	     tmnow.tm_mon - tmmtime.tm_mon < 6) || 
+	     tmnow.tm_mon - tmmtime.tm_mon < 6) ||
 		(tmnow.tm_year == tmmtime.tm_year &&
 		tmnow.tm_mon - tmmtime.tm_mon == 6 &&
 		tmnow.tm_mday - tmmtime.tm_mday < 0) ||
@@ -476,7 +476,7 @@ int list_dir(char *dir, struct ls_param *params)
 			dir_copy = strdup(item);
 			bname = basename(dir_copy);
 
-			ret = stat(item, &buf);
+			ret = lstat(item, &buf);
 			if (ret != 0) {
 				#ifdef LS_DEBUG
 				printf("stat error:%s %s\n", item, 
@@ -519,9 +519,10 @@ int list_dir(char *dir, struct ls_param *params)
 			if (buf.st_nlink > max_links && ignore == 0)
 				max_links = buf.st_nlink;
 
-			if (ignore == 0) {
+			if (ignore == 0 && ! S_ISLNK(buf.st_mode)) {
 				#ifdef LS_DEBUG
-				printf("%s blks:%ld\n", item, buf.st_blocks);
+				printf("%s xblks:%ld ttblks:%d\n",
+					item, buf.st_blocks, tt_blks);
 				#endif
 				tt_blks += buf.st_blocks;
 			}

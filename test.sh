@@ -1,6 +1,6 @@
 #! /bin/bash
 declare -a params=( -a -l -R -al -aR -lR -alR )
-declare -a dirs=( . ~/c /boot )
+declare -a dirs=( . ~/c /boot  )
 
 function do_case()
 {
