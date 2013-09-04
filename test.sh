@@ -30,6 +30,9 @@ for dir in ${dirs[*]}
 do
 	#echo $par $dir
 	do_case " " "$dir"
+	#(trap "echo Timeout; exit" USR1 && do_case " " "$dir") &
+	#(sleep 30 && kill -USR1 $! > /dev/null 2>&1) &
+	#sleep 1
 done
 
 for par in ${params[*]}
@@ -38,6 +41,23 @@ do
 	do
 		#echo $par $dir
 		do_case "$par" "$dir"
+		#(trap "echo Timeout; exit" USR1 && do_case "$par" "$dir") &
+		#(sleep 30 && kill -USR1 $! > /dev/null 2>&1) &
+		#sleep 1
 	done
 done
 
+# multifiles test case
+{
+cd
+/home/zx/git/coreutils/ls  work/ mail/  neiwangbackup/ not /tmp/zxls59 /home/zx/git/sharkserver.log mods dead.letter /home/zx/c/stoaa > /tmp/zxlsmf
+\ls  work/ mail/  neiwangbackup/ not /tmp/zxls59 /home/zx/git/sharkserver.log mods dead.letter /home/zx/c/stoaa > /tmp/lsmf
+
+diff /tmp/{zx,}lsmf > /dev/null  2>&1
+if [ ! $? -eq 0 ]
+then
+	echo multifiles case failed, rd=mf
+else
+	rm -f /tmp/{zx,}lsmf
+fi
+}

@@ -326,23 +326,51 @@ void init_ob()
 
 void file_slist(char *bname)
 {
+	#if 0
 	if (isatty(STDOUT_FILENO)) {
 		sprintf(out_buff[obindex++], "%s", bname);
 	} else {
 		printf("%s\n", bname);
 	}
+	#else
+	sprintf(out_buff[obindex++], "%s", bname);
+	#endif
+}
+
+static int cmpstr(const void *s1, const void *s2)
+{
+	char *p1 = (char *)s1;
+	char *p2 = (char *)s2;
+	while (! isalpha(*p1))
+		p1++;
+	while (! isalpha(*p2))
+		p2++;
+
+	//return strcmp(*(char * const *)s1, *(char * const *)s2);
+	return strcasecmp(p1, p2);
+}
+
+void sort_all(char **buff, int max)
+{
+	//qsort(out_buff, obindex, sizeof(out_buff[0]), cmpstr);
+	qsort(buff, max, BUFSIZ, cmpstr);
 }
 
 void print_all()
 {
 	struct winsize ws;
-	int ret;
+	int ret = 0, z;
 	int longest_item = 0;
 	int tt_length = 0;
 	int min_rows, max_rows, max_cols;
 
 	if (obindex == 0)
 		return;
+	if (! isatty(STDOUT_FILENO)) {
+		for (z = 0; z < obindex; z++)
+			printf("%s\n", out_buff[z]);
+		return;
+	}
 
 	ret = ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws);
 	if (ret != 0) {
@@ -737,9 +765,10 @@ int list_dir(char *dir, struct ls_param *params)
 int main(int argc, char **argv)
 {
 	int list;
-	int ret = 0;
+	int ret = 0, i, mdirs = 0, nfiles = 0;
 	struct ls_param params;
 	char *target;
+	struct stat buf;
 
 	setlocale(LC_ALL, "");
 
@@ -749,22 +778,104 @@ int main(int argc, char **argv)
 	if (argv[optind] == NULL) {
 		have_secon = 0;
 		ret = list_dir(".", &params);
-		if (isatty(STDOUT_FILENO))
-			print_all();
+		print_all();
 	}
 
-	int dflag = 0;
+	/* take a glance at all argvs, tell files out from dirs.
+	 * display the files as a group first, alphabetically default.
+	 * then the dirs one by one is handled, both dir name and dir
+	 * content are displayed aplhabetically default.
+	 */
+
+	init_ob();
+	for (i = optind; i < argc; i++) {
+		//printf("argv %d: %s\n", i, argv[i]);
+		memset(&buf, 0, sizeof(struct stat));
+		ret = lstat(argv[i], &buf);
+		if (ret != 0) {
+			#ifdef LS_DEBUG
+			printf("stat error:%s %s\n", argv[i], strerror(errno));
+			#endif
+			continue;
+		}
+
+		if (! S_ISDIR(buf.st_mode)) {
+			//printf("not dir %s\n", argv[i]);
+			nfiles++;
+			if (params.long_list) {
+				int secon = file_secon(argv[i]);
+				file_llist(argv[i], &buf, secon);
+			} else
+				file_slist(argv[i]);
+		} else
+			mdirs++;
+	}
+
+	sort_all((char **)out_buff, obindex);
+	print_all();
+
+	if (nfiles  > 0 && mdirs > 0)
+		printf("\n");
+
+	/* now the dirs */
+	char tmpdirs[mdirs][BUFSIZ];
+	int k = 0;
+
+	for (i = 0; i < mdirs; i++)
+		memset(tmpdirs[i], 0, BUFSIZ);
+
+	for (i = optind; i < argc; i++) {
+		//printf("argv %d: %s\n", i, argv[i]);
+		memset(&buf, 0, sizeof(struct stat));
+		ret = lstat(argv[i], &buf);
+		if (ret != 0) {
+			#ifdef LS_DEBUG
+			printf("stat error:%s %s\n", argv[i], strerror(errno));
+			#endif
+			continue;
+		}
+
+		if (S_ISDIR(buf.st_mode)) {
+			#ifdef LS_DEBUG
+			printf("dir %d: %s\n", k, argv[i]);
+			#endif
+			sprintf(tmpdirs[k++], "%s", argv[i]);
+		}
+	}
+
+	sort_all((char **)tmpdirs, k);
+	for (i = 0; i < k; i++) {
+		//printf("dir %d: %s\n", i, tmpdirs[i]);
+		memset(&buf, 0, sizeof(struct stat));
+		ret = lstat(tmpdirs[i], &buf);
+		if (ret != 0) {
+			#ifdef LS_DEBUG
+			printf("stat error:%s %s\n", argv[i], strerror(errno));
+			#endif
+			continue;
+		}
+
+		init_ob();
+		have_secon = 0;
+
+		if (mdirs > 1)
+			printf("%s:\n", tmpdirs[i]);
+
+		ret = list_dir(tmpdirs[i], &params);
+
+		print_all();
+
+		if (i + 1 < k)
+			printf("\n");
+	}
+
+	#if 0
 	while (argv[optind]) {
 		#ifdef LS_DEBUG
 		printf("argc %d, argv[%d]: %s\n", argc, optind, argv[optind]);
 		#endif
 		init_ob();
 		have_secon = 0;
-		if (argv[optind + 1])
-			dflag = 1;
-
-		//if (params.recursive || dflag)
-		//	printf("%s:\n", argv[optind]);
 
 		ret = list_dir(argv[optind], &params);
 
@@ -774,6 +885,7 @@ int main(int argc, char **argv)
 			printf("\n");
 		optind++;
 	}
+	#endif
 
 	return ret;
 }
