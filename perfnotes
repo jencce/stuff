@@ -1,0 +1,50 @@
+perf notes
+
+获得编译安装：
+在kernel的git目录下：make perf-targz-src-pkg，得到压缩包；
+解压；
+cd perf-xxx/tools/perf
+make
+./perf就可以用了。
+
+perf是用来分析Linux的性能的工具。是Linux的一部分。
+
+使用：
+像git，perf有很多子命令：
+
+list
+列出可以记录的事件，symbolic event types。
+事件被指定时可以带一个或者多个修饰符，被冒号分隔：
+u 用户空间记录
+k 内核空间记录
+h hypervisor记录
+G kvm guest记录
+H kvm host记录
+p 精确度
+p可以出现多次，指定指令的地址应该有多精确，0-4次越来越精确。由于cpu
+的限制顶多2。
+
+有些事件和cpu模型相关，不能直接写成symbolic form，就要使用模型相关
+的编号，称为raw hardware event。
+这些编号和其对应的事件，需要去cpu的软件开发手册中查找。
+
+
+record 
+运行一个命令，记录下其性能数据到perf.data。
+
+-e和--event选项可以指定需要记录的事件，包含三种类型的事件：
+1是symbolic event，也就是perf list可以列出来所有的events；
+2是raw hardware events；
+3是hardware breakpoint，比如\mem:addr[:access]，如果想记录地址
+0x100的读写操作，那么对应的event就是\mem:0x100:rw
+
+-a 从全系统所有的cpu中收集信息
+
+-l scale counter values?
+
+-p/-t/-u 指定pid/thread id/user id收集
+
+-c
+
+-F
+
