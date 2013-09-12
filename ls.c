@@ -28,6 +28,7 @@ int longest_grp = 0;
 int have_secon = 0;
 int block_size_int = 0;
 char block_size_unit[3];
+int list_size = 0;
 
 struct ls_param {
 	int all;
@@ -35,6 +36,7 @@ struct ls_param {
 	int long_list;
 	int recursive;
 	int dot;
+	int blk_size;
 };
 
 void init_param(struct ls_param *params)
@@ -44,6 +46,7 @@ void init_param(struct ls_param *params)
 	params->long_list = 0;
 	params->recursive = 0;
 	params->dot = 0;
+	params->blk_size = 0;
 }
 
 int parse_params(int argc, char **argv, struct ls_param *params)
@@ -117,12 +120,16 @@ int parse_params(int argc, char **argv, struct ls_param *params)
 			printf("\n");
 			#endif
 			if (optarg == NULL) {
+				printf("ls: invalid --block-size"
+					"argument '%s'\n", optarg);
+				exit(-1);
 			}
+			params->blk_size = 1;
 			memset(block_size_unit, 0, sizeof(block_size_unit));
 			if (isdigit(optarg[0])) {
 				int ret = sscanf(optarg, "%d%[mMkKgGtTPEZYB]",
 					&block_size_int, block_size_unit);
-				if (ret < 2) {
+				if (ret < 2 && block_size_int == 0) {
 					printf("ls: invalid --block-size"
 						"argument '%s'\n", optarg);
 					exit(-1);
@@ -137,6 +144,7 @@ int parse_params(int argc, char **argv, struct ls_param *params)
 					exit(-1);
 				}
 			}
+			list_size = get_list_size(params);
 			//printf("%d %s\n", block_size_int, block_size_unit);
 			break;
 		case 'a':
@@ -163,15 +171,28 @@ int parse_params(int argc, char **argv, struct ls_param *params)
 	return 0;
 }
 
-int get_list_size()
+int get_list_size(struct ls_param *params)
 {
 	int cnt = 0;
+
+	if (params->blk_size != 1)
+		return -1;
+
 	if (block_size_int == 0)
 		cnt = 1;
 	else
 		cnt = block_size_int;
 
 	switch (block_size_unit[0]) {
+		case 0	:
+			if (cnt > 1)
+				return cnt;
+			else {
+				printf("ls: invalid --block-size argument"
+					"'%d%s'\n", block_size_int,
+					block_size_unit);
+				exit(-1);
+			}
 		case 'k':
 		case 'K':
 			if (block_size_unit[1] == 'B')
@@ -190,10 +211,20 @@ int get_list_size()
 				return cnt*1000*1000*1000;
 			else
 				return cnt*1024*1024*1024;
+		case 't':
+		case 'T':
+		case 'P':
+		case 'E':
+		case 'Z':
+		case 'Y':
+			printf("ls: --block-size argument '%d%s' too large\n",
+				block_size_int, block_size_unit);
+			exit(-1);
 		default :
-			break;
+			printf("ls: invalid --block-size argument '%d%s'\n",
+				block_size_int, block_size_unit);
+			exit(-1);
 	}
-	return 0;
 }
 
 void file_llist(char *dir, struct stat *stat, int secon)
@@ -325,14 +356,20 @@ void file_llist(char *dir, struct stat *stat, int secon)
 	printf("%1$-*2$s ", pwd->pw_name, longest_usr);
 	printf("%1$-*2$s ", grp->gr_name, longest_grp);
 
-	memset(times, 0, 20);
-	snprintf(times, 20, "%d", max_filesize);
-	int list_size = get_list_size();
 	#ifdef LS_DEBUG
-	printf("mf%d, %s, %dfm", max_filesize, times, strlen(times));
+	//printf("mf%d, %s, %dfm", max_filesize, times, strlen(times));
 	printf("list_size %d\n", list_size);
 	#endif
-	printf("%1$*2$ld ", stat->st_size/list_size + 1, strlen(times));
+	if (list_size == 0) {
+		memset(times, 0, 20);
+		snprintf(times, 20, "%d", max_filesize);
+		printf("%1$*2$ld ", stat->st_size, strlen(times));
+	}
+	else {
+		memset(times, 0, 20);
+		snprintf(times, 20, "%d", max_filesize/list_size + 1);
+		printf("%1$*2$ld ", stat->st_size/list_size + 1, strlen(times));
+	}
 
 	memset(times, 0, 20);
 	strftime(times, 20, "%b %e", localtime(&stat->st_mtime));
@@ -683,7 +720,10 @@ int list_dir(char *dir, struct ls_param *params)
 	}
 
 	if (params->long_list) {
-		printf("total %d\n", tt_blks / 2);
+		if (list_size == 0)
+			printf("total %d\n", tt_blks/2);
+		else
+			printf("total %d\n", tt_blks*512/list_size);
 	}
 
 	for (i = 0; i < dirno; i++)
