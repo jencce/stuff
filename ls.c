@@ -26,9 +26,12 @@ int max_links = 0;
 int longest_usr = 0;
 int longest_grp = 0;
 int have_secon = 0;
+int block_size_int = 0;
+char block_size_unit[3];
 
 struct ls_param {
 	int all;
+	int almost;
 	int long_list;
 	int recursive;
 	int dot;
@@ -37,6 +40,7 @@ struct ls_param {
 void init_param(struct ls_param *params)
 {
 	params->all = 0;
+	params->almost = 0;
 	params->long_list = 0;
 	params->recursive = 0;
 	params->dot = 0;
@@ -47,62 +51,99 @@ int parse_params(int argc, char **argv, struct ls_param *params)
 	int c;
 
 	struct option longopts[] = {
-		{ "all",		no_argument,		0, 'a'	},
-		{ "almost-all",		no_argument,		0, 'A'	},
-		{ "author",		no_argument,		0, 0	},
-		{ "escape",		no_argument,		0, 'b'	},
-		{ "block-size",		required_argument,	0, 0	},
-		{ "ignore-backups",	no_argument,		0, 'B'	},
-		{ "color",		optional_argument,	0, 0	},
-		{ "directory",		no_argument,		0, 'd'	},
-		{ "dired",		no_argument,		0, 'D'	},
-		{ "classify",		no_argument,		0, 'F'	},
-		{ "file-type",		no_argument,		0, 0	},
-		{ "format",		required_argument,	0, 0	},
-		{ "full-time",		no_argument,		0, 0	},
-		{ "group-dir-first",	no_argument,		0, 0	},
-		{ "no-group",		no_argument,		0, 'G'	},
-		{ "human-readable",	no_argument,		0, 'h'	},
-		{ "si",			no_argument,		0, 0	},
-		{ "derefrence-cmdline",	no_argument,		0, 'H'	},
-		{ "hide",		required_argument,	0, 0	},
-		{ "indicator-style",	required_argument,	0, 0	},
-		{ "inode",		no_argument,		0, 'i'	},
-		{ "ignore",		required_argument,	0, 'I'	},
-		{ "derefrence",		no_argument,		0, 'L'	},
-		{ "numeric-ids",	no_argument,		0, 'n'	},
-		{ "literal",		no_argument,		0, 'N'	},
-		{ "hide-ctl-ch",	no_argument,		0, 'q'	},
-		{ "show-ctl-ch",	no_argument,		0, 0	},
-		{ "quote-name",		no_argument,		0, 'Q'	},
-		{ "quoting-style",	required_argument,	0, 0	},
-		{ "reverse",		no_argument,		0, 'r'	},
-		{ "recursive",		no_argument,		0, 'R'	},
-		{ "size",		no_argument,		0, 's'	},
-		{ "sort",		required_argument,	0, 0	},
-		{ "time",		required_argument,	0, 0	},
-		{ "time-style",		required_argument,	0, 0	},
-		{ "tabsize",		required_argument,	0, 'T'	},
-		{ "width",		required_argument,	0, 'w'	},
-		{ "content",		no_argument,		0, 'Z'	},
-		{ "version",		no_argument,		0, 0	},
-		{ "help",		no_argument,		0, 0	},
-		{ 0,		0,			0, 0	}
+		{ "all",		no_argument,	NULL, 'a'	},
+		{ "almost-all",		no_argument,	NULL, 'A'	},
+		{ "author",		no_argument,	NULL, 0	},
+		{ "escape",		no_argument,	NULL, 'b'	},
+		{ "block-size",		required_argument,NULL, 1	},
+		{ "ignore-backups",	no_argument,	NULL, 'B'	},
+		{ "color",		optional_argument,NULL, 0	},
+		{ "directory",		no_argument,	NULL, 'd'	},
+		{ "dired",		no_argument,	NULL, 'D'	},
+		{ "classify",		no_argument,	NULL, 'F'	},
+		{ "file-type",		no_argument,	NULL, 0	},
+		{ "format",		required_argument,NULL, 0	},
+		{ "full-time",		no_argument,	NULL, 0	},
+		{ "group-dir-first",	no_argument,	NULL, 0	},
+		{ "no-group",		no_argument,	NULL, 'G'	},
+		{ "human-readable",	no_argument,	NULL, 'h'	},
+		{ "si",			no_argument,	NULL, 0	},
+		{ "derefrence-cmdline",	no_argument,	NULL, 'H'	},
+		{ "hide",		required_argument,NULL, 0	},
+		{ "indicator-style",	required_argument,NULL, 0	},
+		{ "inode",		no_argument,	NULL, 'i'	},
+		{ "ignore",		required_argument,NULL, 'I'	},
+		{ "derefrence",		no_argument,	NULL, 'L'	},
+		{ "numeric-ids",	no_argument,	NULL, 'n'	},
+		{ "literal",		no_argument,	NULL, 'N'	},
+		{ "hide-ctl-ch",	no_argument,	NULL, 'q'	},
+		{ "show-ctl-ch",	no_argument,	NULL, 0	},
+		{ "quote-name",		no_argument,	NULL, 'Q'	},
+		{ "quoting-style",	required_argument,NULL, 0	},
+		{ "reverse",		no_argument,	NULL, 'r'	},
+		{ "recursive",		no_argument,	NULL, 'R'	},
+		{ "size",		no_argument,	NULL, 's'	},
+		{ "sort",		required_argument,NULL, 0	},
+		{ "time",		required_argument,NULL, 0	},
+		{ "time-style",		required_argument,NULL, 0	},
+		{ "tabsize",		required_argument,NULL, 'T'	},
+		{ "width",		required_argument,NULL, 'w'	},
+		{ "content",		no_argument,	NULL, 'Z'	},
+		{ "version",		no_argument,	NULL, 0	},
+		{ "help",		no_argument,	NULL, 0	},
+		{ 0,	0,		NULL, 0	}
 	};
 
 	char optstring[] = "aAbcCdDfFgGhHi:I:klmopqQSrRstT:uUvw:xXZ1";
+	int opt_index = 0;
 
 	while (1) {
-		c = getopt_long (argc, argv, optstring, longopts, NULL);
+		c = getopt_long (argc, argv, optstring, longopts, &opt_index);
 		if (c == -1)
 			break;
 
 		switch (c) {
-		case '0':
-			printf("option: %s\n", longopts[0].name);
+		case 0:
+			printf("option: %s ", longopts[opt_index].name);
+			if (optarg)
+				printf("with arg %s", optarg);
+			printf("\n");
+			break;
+		case 1: /* --block-size */
+			#ifdef LS_DEBUG
+			printf("option: %s ", longopts[opt_index].name);
+			if (optarg)
+				printf("with arg %s", optarg);
+			printf("\n");
+			#endif
+			if (optarg == NULL) {
+			}
+			memset(block_size_unit, 0, sizeof(block_size_unit));
+			if (isdigit(optarg[0])) {
+				int ret = sscanf(optarg, "%d%[mMkKgGtTPEZYB]",
+					&block_size_int, block_size_unit);
+				if (ret < 2) {
+					printf("ls: invalid --block-size"
+						"argument '%s'\n", optarg);
+					exit(-1);
+				}
+			}
+			else {
+				int ret = sscanf(optarg, "%[mMkKgGtTPEZYB]",
+					block_size_unit);
+				if (ret < 1) {
+					printf("ls: invalid --block-size"
+						"argument '%s'\n", optarg);
+					exit(-1);
+				}
+			}
+			//printf("%d %s\n", block_size_int, block_size_unit);
 			break;
 		case 'a':
 			params->all = 1;
+			break;
+		case 'A':
+			params->almost = 1;
 			break;
 		case 'l':
 			params->long_list = 1;
@@ -115,10 +156,43 @@ int parse_params(int argc, char **argv, struct ls_param *params)
 			#ifdef LS_DEBUG
 			printf("getopt returned %c\n", c);
 			#endif
-			return -1;
+			exit(-1);
 		}
 	}
 
+	return 0;
+}
+
+int get_list_size()
+{
+	int cnt = 0;
+	if (block_size_int == 0)
+		cnt = 1;
+	else
+		cnt = block_size_int;
+
+	switch (block_size_unit[0]) {
+		case 'k':
+		case 'K':
+			if (block_size_unit[1] == 'B')
+				return cnt*1000;
+			else
+				return cnt*1024;
+		case 'm':
+		case 'M':
+			if (block_size_unit[1] == 'B')
+				return cnt*1000*1000;
+			else
+				return cnt*1024*1024;
+		case 'g':
+		case 'G':
+			if (block_size_unit[1] == 'B')
+				return cnt*1000*1000*1000;
+			else
+				return cnt*1024*1024*1024;
+		default :
+			break;
+	}
 	return 0;
 }
 
@@ -253,10 +327,12 @@ void file_llist(char *dir, struct stat *stat, int secon)
 
 	memset(times, 0, 20);
 	snprintf(times, 20, "%d", max_filesize);
+	int list_size = get_list_size();
 	#ifdef LS_DEBUG
 	printf("mf%d, %s, %dfm", max_filesize, times, strlen(times));
+	printf("list_size %d\n", list_size);
 	#endif
-	printf("%1$*2$ld ", stat->st_size, strlen(times));
+	printf("%1$*2$ld ", stat->st_size/list_size + 1, strlen(times));
 
 	memset(times, 0, 20);
 	strftime(times, 20, "%b %e", localtime(&stat->st_mtime));
@@ -549,6 +625,14 @@ int list_dir(char *dir, struct ls_param *params)
 			if (bname[0] == '.' && params->all == 0)
 				ignore = 1;
 
+			if (params->almost == 1) {
+				if (strcmp(bname, ".") == 0 ||
+					strcmp(bname, "..") == 0)
+					ignore = 1;
+				else
+					ignore = 0;
+			}
+
 			if (ignore == 0) {
 				pwd = getpwuid(buf.st_uid);
 				grp = getgrgid(buf.st_gid);
@@ -669,7 +753,7 @@ int list_dir(char *dir, struct ls_param *params)
 			}
 	
 			if (bname[0] == '.' && strlen(bname) > 1) {
-				if (params->all) {
+				if (params->all || params->almost) {
 					/*
 			 		* show before recurse for directory
 			 		*/
@@ -711,7 +795,7 @@ int list_dir(char *dir, struct ls_param *params)
 			char *dir_copy = strdup(item);
 			char *bname = basename(dir_copy);
 			if (bname[0] == '.' && strlen(bname) > 1) {
-				if (params->all) {
+				if (params->all || params->almost) {
 					/*
 			 		* show . start files
 			 		*/

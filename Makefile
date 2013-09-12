@@ -1,5 +1,4 @@
 # Makefile
-
 all: prog
 
 prog: ls.c
@@ -26,6 +25,10 @@ debug: ls.c
 .PHONY: test
 test:
 	/bin/bash test.sh
+
+.PHONY: lint
+lint:
+	splint ls.c -posix-lib -nullassign | head -n 20
 
 .PHONY: clean
 clean:
