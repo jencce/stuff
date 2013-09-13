@@ -8,13 +8,30 @@ cd perf-xxx/tools/perf
 make
 ./perf就可以用了。
 
-perf是用来分析Linux的性能的工具。是Linux的一部分。
+perf是用来分析Linux的性能的探测工具。是Linux的一部分。
 
 使用：
-像git，perf有很多子命令：
+像git，perf有很多子命令，来收集和分析 性能和跟踪 数据。
 
 list
-列出可以记录的事件，symbolic event types。
+列出可以记录的事件event，事件的来源有多个。
+
+有些是纯kernel的计数器，比如cs，mf等，这样的称为software events。
+
+
+有些事件和cpu模型相关，不能直接写成symbolic form，就要使用模型相关
+的编号，称为raw hardware event。
+这些编号和其对应的事件，需要去cpu的软件开发手册中查找。
+
+和cpu相关的事件是cpu或者cpu的Performance Monitoring Unit提供的事件。
+这些称为PMU hardware event。perf还提供了这些hw事件的一个子集，是一些平常
+的hardware event，称为hw event/hw cached events。这个子集对应的事件
+要真的被cpu支持才能生效。
+
+还有一部分是称为tracepoint events的事件，就是kernel ftrace接口实现的
+事件，只在2.6.3x中被支持。
+
+symbolic event types。
 事件被指定时可以带一个或者多个修饰符，被冒号分隔：
 u 用户空间记录
 k 内核空间记录
@@ -25,10 +42,47 @@ p 精确度
 p可以出现多次，指定指令的地址应该有多精确，0-4次越来越精确。由于cpu
 的限制顶多2。
 如 instructions:p
+所有的事件都有sub-events，有些情况下可以监测所有的子事件；事件也能有修饰符
+和过滤器，来控制时间如何被计数。
 
-有些事件和cpu模型相关，不能直接写成symbolic form，就要使用模型相关
-的编号，称为raw hardware event。
-这些编号和其对应的事件，需要去cpu的软件开发手册中查找。
+stat
+对于任何的事件，perf在进程执行期间对事件持续计数。在计数模式下，事件被简单得
+累计和输出。
+不指定事件的情况下，perf stat ls。stat收集一些普通的事件，如cs，cycles等。
+可以指定一个或多个被收集的事件，通过指定事件的symbolic name，以及可能跟随
+在后面的unit mask和modifiers。这些都是大小写敏感。
+	perf stat -e cycles:u ls
+u就是modifiers，见上面的表。
+
+指定多个事件：
+perf stat -e cycles,cs ls
+perf stat -e cycles -e cs ls
+没有个数的限制，如果事件数超过了计数器个数，内核会复用；可以同时测量多个不同来源
+的事件。只是每个时间提供一个文件描述符，或者每个线程（per-thread mode）或者
+每个cpu(system-wide)一个文件，那么可能超过kernel对每个线程打开文件数目的上
+限，这样会报错。
+
+当事件的数目超过计数器的个数时，内核使用复用，切换的频率通常是100/1000，给每个
+事件以机会被计数。复用只对PMU事件有效。复用的时候，事件不是一直被监测，而是以实
+际监测的时间和需要监测的时间估算一个值。在运行的最后，perf估算了一个scale值:
+final_cnt=raw_cnt*time_enabled/time_run。
+这是个估计值，在负载变化时可能会不准确。
+多个事件是以round-robin方式管理的。cpu的计数器也不全部一样，有的多有的少，有的
+计数器能计数所有的事件，有的只能特定的事件。避免scale的话，可以减少事件的个数。
+下面的例子显示了scaling：
+perf stat -B -e cycles,cycles ls //一般没有scaling，两个cnt一样
+perf stat -B -e cycles,cycles,cycles,cycles ls //如果显示的count不再
+一样，说明有了scaling。
+
+可以使命令运行重复运行来测试：
+perf stat -B -r 5 -e cycles ls，执行五次ls
+
+控制事件检测的环境
+四种模式：per-thread, per-process, per-cpu, system-wide。
+意思都很明显。
+涉及进程和线程的监测，perf默认跟踪继承，-i选项不跟踪。
+
+Options controlling environment selection zx
 
 
 record 
