@@ -28,7 +28,13 @@ test:
 
 .PHONY: lint
 lint:
-	splint ls.c -posix-lib -nullassign | head -n 20
+	@type splint > /dev/null 2>&1;\
+	if [ $? -e 0 ];\
+	then\
+		splint ls.c -posix-lib -nullassign | head -n 20;\
+	else\
+		echo "no lint program found";\
+	fi
 
 .PHONY: clean
 clean:
