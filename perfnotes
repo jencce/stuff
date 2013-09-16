@@ -1,0 +1,218 @@
+perf notes
+https://perf.wiki.kernel.org/index.php/Tutorial
+
+获得编译安装：
+在kernel的git目录下：make perf-targz-src-pkg，得到压缩包；
+解压；
+cd perf-xxx/tools/perf
+make
+./perf就可以用了。
+
+perf是用来分析Linux的性能的探测工具。是Linux的一部分。
+
+使用：
+像git，perf有很多子命令，来收集和分析 性能和跟踪 数据。
+
+list
+列出可以记录的事件event，事件的来源有多个。
+
+有些是纯kernel的计数器，比如cs，mf等，这样的称为software events。
+
+
+有些事件和cpu模型相关，不能直接写成symbolic form，就要使用模型相关
+的编号，称为raw hardware event。
+这些编号和其对应的事件，需要去cpu的软件开发手册中查找。
+
+和cpu相关的事件是cpu或者cpu的Performance Monitoring Unit提供的事件。
+这些称为PMU hardware event。perf还提供了这些hw事件的一个子集，是一些平常
+的hardware event，称为hw event/hw cached events。这个子集对应的事件
+要真的被cpu支持才能生效。
+
+还有一部分是称为tracepoint events的事件，就是kernel ftrace接口实现的
+事件，只在2.6.3x中被支持。
+
+symbolic event types。
+事件被指定时可以带一个或者多个修饰符，被冒号分隔：
+u 用户空间记录
+k 内核空间记录
+h hypervisor记录
+G kvm guest记录
+H kvm host记录
+p 精确度
+p可以出现多次，指定指令的地址应该有多精确，0-4次越来越精确。由于cpu
+的限制顶多2。
+如 instructions:p
+所有的事件都有sub-events，有些情况下可以监测所有的子事件；事件也能有修饰符
+和过滤器，来控制时间如何被计数。
+
+stat
+对于任何的事件，perf在进程执行期间对事件持续计数。在计数模式下，事件被简单得
+累计和输出。
+不指定事件的情况下，perf stat ls。stat收集一些普通的事件，如cs，cycles等。
+可以指定一个或多个被收集的事件，通过指定事件的symbolic name，以及可能跟随
+在后面的unit mask和modifiers。这些都是大小写敏感。
+	perf stat -e cycles:u ls
+u就是modifiers，见上面的表。
+
+指定多个事件：
+perf stat -e cycles,cs ls
+perf stat -e cycles -e cs ls
+没有个数的限制，如果事件数超过了计数器个数，内核会复用；可以同时测量多个不同来源
+的事件。只是每个时间提供一个文件描述符，或者每个线程（per-thread mode）或者
+每个cpu(system-wide)一个文件，那么可能超过kernel对每个线程打开文件数目的上
+限，这样会报错。
+
+当事件的数目超过计数器的个数时，内核使用复用，切换的频率通常是100/1000，给每个
+事件以机会被计数。复用只对PMU事件有效。复用的时候，事件不是一直被监测，而是以实
+际监测的时间和需要监测的时间估算一个值。在运行的最后，perf估算了一个scale值:
+final_cnt=raw_cnt*time_enabled/time_run。
+这是个估计值，在负载变化时可能会不准确。
+多个事件是以round-robin方式管理的。cpu的计数器也不全部一样，有的多有的少，有的
+计数器能计数所有的事件，有的只能特定的事件。避免scale的话，可以减少事件的个数。
+下面的例子显示了scaling：
+perf stat -B -e cycles,cycles ls //一般没有scaling，两个cnt一样
+perf stat -B -e cycles,cycles,cycles,cycles ls //如果显示的count不再
+一样，说明有了scaling。
+
+可以使命令运行重复运行来测试：
+perf stat -B -r 5 -e cycles ls，执行五次ls
+
+控制事件检测的环境
+四种模式：per-thread, per-process, per-cpu, system-wide。
+意思都很明显。
+涉及进程和线程的监测，perf默认跟踪继承，-i选项不跟踪。
+
+Options controlling environment selection zx
+
+
+record 
+运行一个命令，记录下其性能数据到perf.data。
+
+-e和--event选项可以指定需要记录的事件，包含三种类型的事件：
+1是symbolic event，也就是perf list可以列出来所有的events；
+2是raw hardware events；
+3是hardware breakpoint，比如\mem:addr[:access]，如果想记录地址
+0x100的读写操作，那么对应的event就是\mem:0x100:rw
+
+-a 从全系统所有的cpu中收集信息
+
+-l scale counter values?
+
+-p/-t/-u 指定pid/thread id/user id收集
+
+-c 采样的个数？
+
+-F 指定采样的频率
+
+report
+读取record命令产生的perf.data数据文件，显示其中的profile信息。
+输出的各项意思在wiki上查：
+perf report
+
+# Events: 1K cycles
+#
+# Overhead          Command                   Shared Object
+                    Symbol
+# ........  ...............  ..............................
+.....................................
+#
+   28.15%      firefox-bin  libxul.so                       [.] 0xd10b45
+    4.45%          swapper  [kernel.kallsyms]               [k] mwait_idle_with_hints
+    4.26%          swapper  [kernel.kallsyms]               [k] read_hpet
+    2.13%      firefox-bin  firefox-bin                     [.] 0x1e3d
+    1.40%  unity-panel-ser  libglib-2.0.so.0.2800.6         [.] 0x886f1
+    [...]
+The column 'Overhead' indicates the percentage of the overall samples collected in the corresponding function. 
+第一列overhead表示事件样本在各个（函数/进程）中采集到的比例；
+The second column reports the process from which the samples were collected.
+第二列表示从哪个进程采样到的事件； 
+(In per-thread/per-process mode, this is always the name of the monitored command. But in cpu-wide mode, the command can vary. )
+The third column shows the name of the ELF image where the samples came from.
+第三列表示事件进程来源的ELF文件，动态库或者kernel； 
+If a program is dynamically linked, then this may show the name of a shared library. 
+When the samples come from the kernel, then the pseudo ELF image name [kernel.kallsyms] is used. 
+The fourth column indicates the privilege level at which the sample was taken, 
+i.e. when the program was running when it was interrupted:
+第四列表示采样事件来源的优先级，如下所述：
+
+[.] : user level
+[k]: kernel level
+[g]: guest kernel level (virtualization)
+[u]: guest os user space
+[H]: hypervisor
+The final column shows the symbol name.
+最后一列是符号名称。
+
+寻找瓶颈的例子：
+1、对比自己程序和系统程序的stat:
+系统程序：
+zx@M2420@coreutils$ perf stat ls
+abc	 ls    Makefile   perf.data.old  README.md  tmp
+LICENSE  ls.c  perf.data  perfnotes	 test.sh    TODO
+
+ Performance counter stats for 'ls':
+
+          2.595600 task-clock                #    0.772 CPUs utilized          
+                 8 context-switches          #    0.003 M/sec                  
+                 0 CPU-migrations            #    0.000 M/sec                  
+               253 page-faults               #    0.097 M/sec                  
+         1,897,482 cycles                    #    0.731 GHz                     [50.75%]
+         1,215,870 stalled-cycles-frontend   #   64.08% frontend cycles idle   
+           954,658 stalled-cycles-backend    #   50.31% backend  cycles idle   
+         1,425,758 instructions              #    0.75  insns per cycle        
+                                             #    0.85  stalled cycles per insn
+           261,917 branches                  #  100.908 M/sec                  
+            14,565 branch-misses             #    5.56% of all branches         [53.51%]
+
+       0.003362527 seconds time elapsed
+
+自己程序：
+zx@M2420@coreutils$ perf stat ./ls
+abc      ls    Makefile   perf.data.old  README.md  tmp 
+LICENSE  ls.c  perf.data  perfnotes      test.sh    TODO
+
+ Performance counter stats for './ls':
+
+         63.680247 task-clock                #    0.987 CPUs utilized          
+                 9 context-switches          #    0.000 M/sec                  
+                 0 CPU-migrations            #    0.000 M/sec                  
+            16,695 page-faults               #    0.262 M/sec                  
+       105,032,319 cycles                    #    1.649 GHz                     [81.35%]
+        72,514,792 stalled-cycles-frontend   #   69.04% frontend cycles idle    [81.19%]
+        52,701,496 stalled-cycles-backend    #   50.18% backend  cycles idle    [67.46%]
+        51,685,651 instructions              #    0.49  insns per cycle        
+                                             #    1.40  stalled cycles per insn [86.93%]
+         9,379,517 branches                  #  147.291 M/sec                   [87.48%]
+            32,447 branch-misses             #    0.35% of all branches         [85.32%]
+
+       0.064535999 seconds time elapsed
+看出task-clock和page-fault相差很大，
+
+2、记录自己程序对应事件的数据：
+sudo perf record -a -g -e task-clock  -c 1 ./ls
+
+3、查看记录程序
+sudo perf report
+Events: 24K task-clock                                                                           
++  34.28%          swapper  [kernel.kallsyms]                   [k] intel_idle                  ◆
++   6.11%          swapper  [kernel.kallsyms]                   [k] poll_idle                   ▒
+-   5.92%               ls  ls                                  [.] init_ob                     ▒
+     init_ob                                                                                    ▒
+     main                                                                                       ▒
+     __libc_start_main                                                                          ▒
+-   4.45%               ls  [kernel.kallsyms]                   [k] native_flush_tlb_single     ▒
+   - native_flush_tlb_single                                                                    ▒
+      - 72.44% __kunmap_atomic                                                                  ▒
+         - 61.45% prep_new_page                                                                 ▒
+              get_page_from_freelist                                                            ▒
+            - __alloc_pages_nodemask                                                            ▒
+               - 99.59% do_anonymous_page                                                       ▒
+                    handle_pte_fault                                                            ▒
+                    handle_mm_fault                                                             ▒
+                    do_page_fault                                                               ▒
+                  - error_code                                                                  ▒
+                     - 99.39% init_ob                                                           ▒
+                          main                                                                  ▒
+                          __libc_start_main    
+
+明显可以看出init_ob函数占用了很多。
