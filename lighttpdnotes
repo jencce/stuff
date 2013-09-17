@@ -7,4 +7,15 @@ grep list by order: listen network_init.. server_init
 # better idea: grep getopt ..
 
 
-src/server.c 808
+src/server.c 808 network_init
+
+       O_CLOEXEC (Since Linux 2.6.23)
+              Enable the close-on-exec flag for the new file descriptor.  Speci-
+              fying  this  flag  permits  a program to avoid additional fcntl(2)
+              F_SETFD operations to set the FD_CLOEXEC flag.  Additionally,  use
+              of  this  flag  is  essential in some multithreaded programs since
+              using a separate fcntl(2) F_SETFD operation to set the  FD_CLOEXEC
+              flag  does  not  suffice to avoid race conditions where one thread
+              opens a file descriptor at the same time as another thread does  a
+              fork(2) plus execve(2).
+
