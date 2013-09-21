@@ -64,7 +64,13 @@ e.当会话结束，探测结束，内核模块被删除。
 事件发生时，{statements}被顺序执行，里面的语法和C语言类似，可以嵌套{}；也可以定义函数。
 
 
-3.2.1 event
+9 events
+stap events分为两种，同步和异步的。
+同步的表示内核中指令运行的同时产生的事件。如：
+syscall.system_call：syscall.open 
+vfs.file_operation：vfs.open.return
+kernel.function("func"): kernel.function("*@net/socket.c")
+module("module").function("func"): module("ext3").function("*")
 
 
 
