@@ -1,0 +1,66 @@
+systemtap
+
+1 deploy
+要使用stap，需要安装对应环境kernel包的-devel, -debuginfo, -debuginfo-common包。
+Systemtap本身需要安装systemtap, systemtap-runtime。
+yum install 和 debuginfo-install 方便。
+
+2 使用
+本机试验：stap -v -e 'probe vfs.read {printf("read performed\n");exit();}'
+
+3 cross instrumentation
+可以在一台机器上通过脚本编译生成模块，再到其他机器运行，这些机器运行的kernel版本可以不一样。
+3.1 部署
+其他机器上就不要部署麻烦的debuginfo环境，只需要安装一个systemtap-runtime的包。
+当然，这样其他机器运行kernel的debuginfo包需要安装在编译模块的机器上。
+instrumentation module, the kernel module which is built from a systemtap
+script on the host system, and will be loaded on the target kernel of 
+target system.
+3.2 编译生成
+stap -r kernel-version script -m module_name
+在host system上运行这条命令，kernel-version是target kernel的版本，script是要生成模块
+需要的脚本，module_name是给模块取的名字，命令结果会生成module_name.ko。
+3.3 运行
+在target system中，将module_name.ko拷贝过来，staprun module_name.ko就可以运行了。
+3.4 注意
+host system在编译target system的模块的时候，两者的架构和运行的kernel应该一样。
+那么-r参数有用么。。。待验证。
+
+
+4 运行systemtap脚本
+由于最终是编译成内核模块来加载，所以运行stap脚本等需要提高用户权限。全部root不科学。
+stapdev用户组允许用户使用stap运行stap脚本和使用staprun运行instrumentation module。
+stapusr用户组只允许用户使用staprun，且只允许运行/lib/modules/version/systemtap目录
+下道模块，而这个模块是属于root的。
+这样可以在不使用root权限的情况下运行stap。
+man stap man staprun
+
+5 systemtap机制
+stap脚本的背后机制就是定义event，再给他们hander，当stap运行脚本时，监控event，当其发生的
+时候，kernel以快速子程序道方式运行handler，再恢复。
+event包括：进入和退出函数，定时器到时，会话终结等；handler是一些脚本表示event发生时做些什
+么，通常包括抽取信息，保存到外部变量，打印结果等。
+
+6 systemtap步骤
+a.检查脚本，将其中引用的tapset替换掉，tapset就是系统的stap库，一些写好的脚本；
+b.将脚本翻译为c语言，再编译为内核模块；
+c.加载模块，使能所有道探测；
+d. 如果事件发生，那么handler被调用；
+e.当会话结束，探测结束，内核模块被删除。
+
+7 systemtap脚本
+脚本指明了要收集何种信息，以及信息收集好之后做什么。
+一个event和其handler合称为一个探测probe。
+脚本后缀名为.stp，通常包含如下格式道probe:
+	probe event {statements}
+每个probe可以监控多个event，事件使用逗号分开。当指出多个事件时，任何一个事件发生都会触发handler。
+事件发生时，{statements}被顺序执行，里面的语法和C语言类似，可以嵌套{}；也可以定义函数。
+
+
+3.2.1 event
+
+
+
+
+
+
