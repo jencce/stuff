@@ -1,0 +1,187 @@
+        -:    0:Source:matrixmul.c
+        -:    0:Graph:matrixmul.gcno
+        -:    0:Data:matrixmul.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include <stdio.h>
+        -:    2:#include <string.h>
+        -:    3:#include <sys/time.h>
+        -:    4:
+        -:    5:#define DMAX 8
+        -:    6:
+function nochunks called 0 returned 0% blocks executed 0%
+    #####:    7:void nochunks(int e[DMAX][DMAX], int f[DMAX][DMAX], int g[DMAX][DMAX])
+        -:    8:{
+        -:    9:	int i, j, k;
+    #####:   10:	int sum = 0;
+        -:   11:
+    #####:   12:	for(i = 0; i < DMAX; i++)
+branch  0 从未被执行
+branch  1 从未被执行
+    #####:   13:		for(j = 0; j < DMAX; j++)
+branch  0 从未被执行
+branch  1 从未被执行
+        -:   14:		{
+    #####:   15:			sum = 0;
+    #####:   16:			for(k = 0; k < DMAX; k++)
+branch  0 从未被执行
+branch  1 从未被执行
+        -:   17:			{
+    #####:   18:				sum += e[i][k] * f[k][j];
+        -:   19:			}
+    #####:   20:			g[i][j] = sum;
+        -:   21:		}
+    #####:   22:}
+        -:   23:
+        -:   24:/*
+        -:   25: * spliting matrix to several sub-matrix makes better locality
+        -:   26: * in temporal, coz hit cache more frequently.
+        -:   27: *
+        -:   28:*/
+function chunks called 1 returned 100% blocks executed 100%
+        1:   29:void chunks(int e[DMAX][DMAX], int f[DMAX][DMAX], int g[DMAX][DMAX])
+        -:   30:{
+        -:   31:	int i, j, k, ii, jj, kk;
+        1:   32:	int sum = 0;
+        -:   33:
+        9:   34:	for(i = 0; i < DMAX; i++)
+branch  0 被执行 89%
+branch  1 被执行 11% (fallthrough)
+       72:   35:	for(j = 0; j < DMAX; j++)
+branch  0 被执行 89%
+branch  1 被执行 11% (fallthrough)
+       64:   36:		g[i][j] = 0;
+        -:   37:
+        3:   38:	for(ii = 0; ii < DMAX; ii = ii + DMAX/2)
+branch  0 被执行 67%
+branch  1 被执行 33% (fallthrough)
+        -:   39:	{
+        6:   40:		for(jj = 0; jj < DMAX; jj = jj + DMAX/2)
+branch  0 被执行 67%
+branch  1 被执行 33% (fallthrough)
+        -:   41:		{
+       36:   42:			for(k = 0; k < DMAX; k++) 
+branch  0 被执行 89%
+branch  1 被执行 11% (fallthrough)
+        -:   43:			{
+      160:   44:				for(i = ii; i < ii + DMAX/2; i++)
+branch  0 被执行 80%
+branch  1 被执行 20% (fallthrough)
+        -:   45:				{
+      128:   46:					sum = g[k][i];
+      640:   47:					for(j = jj; j < jj + DMAX/2; j++)
+branch  0 被执行 80%
+branch  1 被执行 20% (fallthrough)
+        -:   48:					{
+      512:   49:						sum += e[k][j] * f[j][i];
+        -:   50:					}
+      128:   51:					g[k][i] = sum;
+        -:   52:				}
+        -:   53:			}
+        -:   54:		}
+        -:   55:	}
+        1:   56:}
+        -:   57:
+function display called 0 returned 0% blocks executed 0%
+    #####:   58:void display(int d[DMAX][DMAX])
+        -:   59:{
+        -:   60:	int i, j;
+    #####:   61:	printf("\n");
+call    0 从未被执行
+    #####:   62:	for(i = 0; i < DMAX; i++)
+branch  0 从未被执行
+branch  1 从未被执行
+        -:   63:	{
+    #####:   64:		for(j = 0; j < DMAX; j++)
+branch  0 从未被执行
+branch  1 从未被执行
+    #####:   65:			printf("%d\t", d[i][j]);
+call    0 从未被执行
+    #####:   66:		printf("\n");
+call    0 从未被执行
+        -:   67:	}
+    #####:   68:}
+        -:   69:
+        -:   70:int a[DMAX][DMAX];
+        -:   71:int b[DMAX][DMAX];
+        -:   72:int c[DMAX][DMAX];
+function main called 1 returned 100% blocks executed 68%
+        1:   73:int main(int argc, char **argv)
+        -:   74:{
+        -:   75:	int i, j, k, l, m;
+        -:   76:	struct timeval s, e;
+        1:   77:	int t = DMAX;
+        -:   78:
+        1:   79:	if(argv[1])
+branch  0 被执行 0% (fallthrough)
+branch  1 被执行 100%
+    #####:   80:		l = atoi(argv[1]);
+call    0 从未被执行
+        1:   81:	if(argv[2])
+branch  0 被执行 100% (fallthrough)
+branch  1 被执行 0%
+        1:   82:		m = atoi(argv[2]);
+call    0 返回了 100%
+        9:   83:	for(i = 0; i < DMAX; i++)
+branch  0 被执行 89%
+branch  1 被执行 11% (fallthrough)
+       72:   84:	for(j = 0; j < DMAX; j++)
+branch  0 被执行 89%
+branch  1 被执行 11% (fallthrough)
+        -:   85:	{
+       64:   86:		a[i][j] = i%4;
+       64:   87:		b[i][j] = j%4;
+       64:   88:		c[i][j] = 0;
+        -:   89:	}
+        -:   90:
+        1:   91:	if(l)
+branch  0 被执行 100% (fallthrough)
+branch  1 被执行 0%
+        -:   92:	{
+        1:   93:		gettimeofday(&s, NULL);
+call    0 返回了 100%
+        1:   94:		printf("sec %ld, usec %ld\n", s.tv_sec, s.tv_usec);
+call    0 返回了 100%
+        1:   95:		chunks(a, b, c);
+call    0 返回了 100%
+        1:   96:		gettimeofday(&e, NULL);
+call    0 返回了 100%
+        1:   97:		printf("end sec %ld, usec %ld\n", e.tv_sec, e.tv_usec);
+call    0 返回了 100%
+        -:   98:		double s1, e1;
+        1:   99:		s1 = (double)s.tv_sec + (double)(s.tv_usec/1000000.0);
+        1:  100:		e1 = (double)e.tv_sec + (double)(e.tv_usec/1000000.0);
+        1:  101:		printf("%lf  %lf\n", s1, e1);
+call    0 返回了 100%
+        1:  102:		printf("%lf\n", e1 - s1);
+call    0 返回了 100%
+        -:  103:	} else
+        -:  104:	{
+    #####:  105:		gettimeofday(&s, NULL);
+call    0 从未被执行
+    #####:  106:		printf("no sec %ld, usec %ld\n", s.tv_sec, s.tv_usec);
+call    0 从未被执行
+    #####:  107:		nochunks(a, b, c);
+call    0 从未被执行
+    #####:  108:		gettimeofday(&e, NULL);
+call    0 从未被执行
+    #####:  109:		printf("end sec %ld, usec %ld\n", e.tv_sec, e.tv_usec);
+call    0 从未被执行
+        -:  110:		double s1, e1;
+    #####:  111:		s1 = (double)s.tv_sec + (double)(s.tv_usec/1000000.0);
+    #####:  112:		e1 = (double)e.tv_sec + (double)(e.tv_usec/1000000.0);
+    #####:  113:		printf("%lf  %lf\n", s1, e1);
+call    0 从未被执行
+    #####:  114:		printf("%lf\n", e1 - s1);
+call    0 从未被执行
+        -:  115:	}
+        -:  116:	//display(a);
+        -:  117:	//display(b);
+        1:  118:	if(m)
+branch  0 被执行 0% (fallthrough)
+branch  1 被执行 100%
+    #####:  119:		display(c);
+call    0 从未被执行
+        -:  120:
+        1:  121:	return 0;
+        -:  122:}
