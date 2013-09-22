@@ -1,0 +1,54 @@
+DEBUG:root:debug
+INFO:root:info
+ERROR:root:error
+WARNING:root:warning
+ERROR:root:exception
+None
+DEBUG:./testlogging.py:testlogging.py:testlogging:12		<module>:1362489918.93:2013-03-05 21:25:18,927:927:0		-1221338368:MainThread:3981:debug
+INFO:./testlogging.py:testlogging.py:testlogging:13		<module>:1362489918.93:2013-03-05 21:25:18,927:927:0		-1221338368:MainThread:3981:info
+ERROR:./testlogging.py:testlogging.py:testlogging:14		<module>:1362489918.93:2013-03-05 21:25:18,927:927:0		-1221338368:MainThread:3981:error
+WARNING:./testlogging.py:testlogging.py:testlogging:15		<module>:1362489918.93:2013-03-05 21:25:18,927:927:0		-1221338368:MainThread:3981:warning
+ERROR:./testlogging.py:testlogging.py:testlogging:16		<module>:1362489918.93:2013-03-05 21:25:18,927:927:0		-1221338368:MainThread:3981:exception
+None
+DEBUG:./testlogging.py:testlogging.py:testlogging:12:		<module>:2013-03-05 21:28:50,324:		-1221244160:MainThread:4001:debug
+INFO:./testlogging.py:testlogging.py:testlogging:13:		<module>:2013-03-05 21:28:50,324:		-1221244160:MainThread:4001:info
+ERROR:./testlogging.py:testlogging.py:testlogging:14:		<module>:2013-03-05 21:28:50,325:		-1221244160:MainThread:4001:error
+WARNING:./testlogging.py:testlogging.py:testlogging:15:		<module>:2013-03-05 21:28:50,325:		-1221244160:MainThread:4001:warning
+ERROR:./testlogging.py:testlogging.py:testlogging:16:		<module>:2013-03-05 21:28:50,325:		-1221244160:MainThread:4001:exception
+None
+DEBUG:./testlogging.py:testlogging.py:testlogging:13:		func12:2013-03-05 21:29:40,905:		-1221059840:MainThread:4008:debug
+INFO:./testlogging.py:testlogging.py:testlogging:14:		func12:2013-03-05 21:29:40,905:		-1221059840:MainThread:4008:info
+ERROR:./testlogging.py:testlogging.py:testlogging:15:		func12:2013-03-05 21:29:40,905:		-1221059840:MainThread:4008:error
+WARNING:./testlogging.py:testlogging.py:testlogging:16:		func12:2013-03-05 21:29:40,905:		-1221059840:MainThread:4008:warning
+ERROR:./testlogging.py:testlogging.py:testlogging:17:		func12:2013-03-05 21:29:40,905:		-1221059840:MainThread:4008:exception
+None
+DEBUG:./testlogging.py:testlogging.py:testlogging:13:		func12:2013-03-05 21:30:16,870:		4013:debug
+INFO:./testlogging.py:testlogging.py:testlogging:14:		func12:2013-03-05 21:30:16,870:		4013:info
+ERROR:./testlogging.py:testlogging.py:testlogging:15:		func12:2013-03-05 21:30:16,870:		4013:error
+WARNING:./testlogging.py:testlogging.py:testlogging:16:		func12:2013-03-05 21:30:16,870:		4013:warning
+ERROR:./testlogging.py:testlogging.py:testlogging:17:		func12:2013-03-05 21:30:16,870:		4013:exception
+None
+4017DEBUG:./testlogging.py:testlogging.py:testlogging:11:func12:2013-03-05 21:30:53,891:debug
+4017INFO:./testlogging.py:testlogging.py:testlogging:12:func12:2013-03-05 21:30:53,891:info
+4017ERROR:./testlogging.py:testlogging.py:testlogging:13:func12:2013-03-05 21:30:53,891:error
+4017WARNING:./testlogging.py:testlogging.py:testlogging:14:func12:2013-03-05 21:30:53,892:warning
+4017ERROR:./testlogging.py:testlogging.py:testlogging:15:func12:2013-03-05 21:30:53,892:exception
+None
+4020DEBUG:/home/zx/py/testlogging.py:testlogging.py:testlogging:11:func12:2013-03-05 21:31:14,072:debug
+4020INFO:/home/zx/py/testlogging.py:testlogging.py:testlogging:12:func12:2013-03-05 21:31:14,072:info
+4020ERROR:/home/zx/py/testlogging.py:testlogging.py:testlogging:13:func12:2013-03-05 21:31:14,072:error
+4020WARNING:/home/zx/py/testlogging.py:testlogging.py:testlogging:14:func12:2013-03-05 21:31:14,072:warning
+4020ERROR:/home/zx/py/testlogging.py:testlogging.py:testlogging:15:func12:2013-03-05 21:31:14,072:exception
+None
+DEBUG:4024:/home/zx/py/testlogging.py:testlogging:11:func12:2013-03-05 21:31:49,343:debug
+INFO:4024:/home/zx/py/testlogging.py:testlogging:12:func12:2013-03-05 21:31:49,343:info
+ERROR:4024:/home/zx/py/testlogging.py:testlogging:13:func12:2013-03-05 21:31:49,343:error
+WARNING:4024:/home/zx/py/testlogging.py:testlogging:14:func12:2013-03-05 21:31:49,343:warning
+ERROR:4024:/home/zx/py/testlogging.py:testlogging:15:func12:2013-03-05 21:31:49,343:exception
+None
+DEBUG:4042:2013-03-05 21:33:48,995:/home/zx/py/testlogging.py:11:func12:debug
+INFO:4042:2013-03-05 21:33:48,995:/home/zx/py/testlogging.py:12:func12:info
+ERROR:4042:2013-03-05 21:33:48,995:/home/zx/py/testlogging.py:13:func12:error
+WARNING:4042:2013-03-05 21:33:48,995:/home/zx/py/testlogging.py:14:func12:warning
+ERROR:4042:2013-03-05 21:33:48,995:/home/zx/py/testlogging.py:15:func12:exception
+None
