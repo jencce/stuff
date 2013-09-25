@@ -66,14 +66,23 @@ e.当会话结束，探测结束，内核模块被删除。
 
 9 events
 stap events分为两种，同步和异步的。
-同步的表示内核中指令运行的同时产生的事件。如：
+
+同步事件
+表示内核中指令运行的同时产生的事件。如：
 syscall.system_call：syscall.open 
 vfs.file_operation：vfs.open.return
 kernel.function("func"): kernel.function("*@net/socket.c")
 module("module").function("func"): module("ext3").function("*")
 
+比如查看哪些进程在调用write：
+stap -v -e 'probe syscall.write {printf("%s %d write\n", execname(), pid());}'
 
 
+异步事件
+不和代码中的指令挂钩。一般就是定时器，计数器等。
 
+
+10 stap functions
+p23
 
 
