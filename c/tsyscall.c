@@ -3,7 +3,7 @@
 #include <sys/syscall.h>
 
 #define MAC_CAT_MAX 256
-#define __NR_mac_task_ctl 249
+#define __NR_mac_task_ctl 349
 
 /* Mandatory access controll struct  */
 struct mac_level {
@@ -59,7 +59,7 @@ int main()
 	}
 
 	tss1.mlevel.level_type = 0;
-	tss1.mlevel.level_value = 2;
+	tss1.mlevel.level_value = 4;
 	tss1.mlevel.level_catsum = 0;
 	tss1.mlevel.level_flag = 1;
 	for (i = 0; i < MAC_CAT_MAX; i++)
