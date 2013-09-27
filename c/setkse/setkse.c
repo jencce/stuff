@@ -93,6 +93,8 @@ int main()
 	pthread_attr_t pattr;
 	void *res = NULL;
 	
+	printf("Setting KUXSE file labels\n");
+
 	pt = (pthread_t *)malloc(4 * sizeof(pthread_t));
 	if (pt == NULL) {
 		perror("malloc ");
