@@ -4,7 +4,13 @@ GITPATH=/home/zx/git/linux-next
 TTPATH=/media/new/test
 
 cd $GITPATH
+
+# pull git repo
 git pull --rebase
+if [ ! $? -eq 0 ]; then
+	wall "git pull error"
+fi
+
 latesttag=`git tag -l next* | tail -n 1`
 latest=`git tag -l next* | tail -n 1 | tr -d '-'`
 
@@ -16,7 +22,14 @@ echo `uname -r` | grep $latesttag
 if [ $? -eq 0 ]; then
 	echo "up to date"
 	exit
-else
+fi
+
+# latest image already installed
+ls /boot | grep ${latesttag}
+if [ $? -eq 0 ]; then
+	echo "up to date"
+	exit
+fi
 
 # make sure the latest next srctar is ready
 if [ -d ${TTPATH}/${latest} ]; then
@@ -51,12 +64,19 @@ fi
 cd ${latest}
 
 # compile and install
-{
-	cp -f ../ttconfig .config
-	cp -f ../ttconfig .config.old
-	if [ ! $? -eq 0 ]; then
-		echo "cp ttconfig error"
+function cmp() {
+	if [ -e ./vmlinux ]; then
+		echo already compiled
 		exit
+	fi
+
+	if [ ! -e .config ]; then
+		cp -f ../ttconfig .config
+		cp -f ../ttconfig .config.old
+		if [ ! $? -eq 0 ]; then
+			echo "cp ttconfig error"
+			exit
+		fi
 	fi
 
 	echo compile begin in `pwd`
@@ -82,6 +102,13 @@ cd ${latest}
 		exit
 	fi
 
+	sed -i '/^default/s/[1-9]/0/' /boot/grub/menu.lst
+	if [ ! $? -eq 0 ]; then
+		echo "sed error"
+		exit
+	fi
+
 	echo rebooting
 	reboot
 }
+cmp
