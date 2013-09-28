@@ -1,0 +1,11 @@
+probe begin
+{
+	printf("hello\n");
+	exit();
+}
+
+probe vfs.read
+{
+	printf("vfs read called by %s(%d)\n", execname(), pid());
+	exit();
+}
