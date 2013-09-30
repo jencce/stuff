@@ -23,7 +23,7 @@ int main(int argc, char **argv)
 	memset(buf, 0, size);
 
 	ret = getxattr(argv[1], "security.selinux", buf, size - 1);
-	if (ret <= 0) {
+	if (ret == -1) {
 		perror("getxattr: ");
 	}
 	else

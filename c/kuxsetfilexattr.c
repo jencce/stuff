@@ -25,7 +25,7 @@ int main(int argc, char **argv)
 	memset(buf, 0, size);
 
 	ret = getxattr(argv[1], "security.kse", buf, size - 1);
-	if (ret <= 0) {
+	if (ret == -1) {
 		perror("getxattr: ");
 	}
 	else
@@ -37,6 +37,8 @@ int main(int argc, char **argv)
 	*cp = '1';
 	printf("xattr1 alt %s\n", buf);
 #endif
+	if (strlen(buf) == 0)
+		strcpy(buf, "2:1:c0:1");
 
 	ret = setxattr(argv[1], "security.kse", buf, strlen(buf), XATTR_REPLACE);
 	if (ret != 0) {
@@ -45,7 +47,7 @@ int main(int argc, char **argv)
 	}
 
 	ret = getxattr(argv[1], "security.kse", buf, size - 1);
-	if (ret <= 0) {
+	if (ret == -1) {
 		perror("getxattr: ");
 	}
 	else

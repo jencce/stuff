@@ -34,7 +34,7 @@ void kse_setcon(char *name)
 		exit(-1);
 	}
 	memset(buf, 0, size);
-	sprintf(buf, "%s", "HIGH:1:c1:1");
+	sprintf(buf, "%s", "1:1:c0:1");
 
 	ret = setxattr(name, "security.kse", buf, size - 1);
 	if (ret <= 0) {
