@@ -1,0 +1,5 @@
+probe timer.s(3)
+{
+	printf("%s(%d)\n", execname(), pid());
+	# exit() here makes timer nothing
+}

@@ -1,0 +1,5 @@
+probe vfs.read
+{
+	printf("%s(%d), tid%d, uid%d, cpu%d, time%d, pp%s\n", execname(), pid(), tid(), uid(), cpu(), gettimeofday_s(), pp());
+	exit();
+}

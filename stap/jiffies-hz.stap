@@ -1,0 +1,14 @@
+global counter_jiffies, counter_ms
+probe timer.jiffies(100)
+{
+	counter_jiffies++
+}
+probe timer.ms(100)
+{
+	counter_ms++
+}
+probe timer.ms(12345)
+{
+	hz = (1000*counter_jiffies)/counter_ms
+	printf("%d, %d, HZ %d\n", counter_jiffies, counter_ms, hz);
+}

@@ -1,0 +1,4 @@
+probe kernel.function(@1)
+{
+	printf("%s called %s\n", execname(), @1);
+}

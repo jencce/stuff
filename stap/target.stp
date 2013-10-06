@@ -1,0 +1,5 @@
+probe syscall.*
+{
+	if (pid() == target())
+		printf("%s(%d) called %s\n", execname(), pid(), name);
+}
