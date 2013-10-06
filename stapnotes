@@ -57,7 +57,7 @@ e.当会话结束，探测结束，内核模块被删除。
 
 7 systemtap脚本
 脚本指明了要收集何种信息，以及信息收集好之后做什么。
-一个event和其handler合称为一个探测probe。
+一个event和其handler合称为一个探测probe。一个脚本script可以有多个探测probe。
 脚本后缀名为.stp，通常包含如下格式道probe:
 	probe event {statements}
 每个probe可以监控多个event，事件使用逗号分开。当指出多个事件时，任何一个事件发生都会触发handler。
@@ -77,12 +77,50 @@ module("module").function("func"): module("ext3").function("*")
 比如查看哪些进程在调用write：
 stap -v -e 'probe syscall.write {printf("%s %d write\n", execname(), pid());}'
 
-
 异步事件
 不和代码中的指令挂钩。一般就是定时器，计数器等。
+begin,end,timers
+每三秒打印一次。
+probe timer.s(3)
+{
+	printf("%s(%d)\n", execname(), pid());
+}
 
+注意：stap一直执行探测，直到exit()被调用，或者用户ctrl+c。
 
 10 stap functions
-p23
+pid uid tid cpu time, etc..
+thread_indent 可以描述简单的调用关系，时间，名字等。
+target()当使用stap -x process id 或 stap -c command时，使用这个函数得到对应的pid
 
 
+11 基本的stap handler结构
+变量
+在一个handler内可以随便初始化变量，其类型随其值的类型而定。它的作用域和生命周期都在这个handler之内。
+全局的变量在probe之外，使用global关键字初始化。
+if/else while for == >= <= != 
+也可以使用命令行参数数字$1 字符串@1
+
+12 associative array
+就是一个唯一的key对应一个值value。必须声明为global。
+访问它的语法是：array_name[index_expression]
+index+expression最多可以有五句，由逗号分隔，也就是key可以有多重信息：
+device[pid(),execname(),uid(),ppid(),"w"]=devname
+当key以及存在时，值被更新，当key没有找到时，返回0或空串.
+
+if ("str" in array)可以判断串"str"是否是array中的key。
+
+利用associative array可以做静态累积统计计算。
+array[vars] <<< count
+这个表达式将count存入array[vars]，这个时候array的值的类型是stat，不是简单的数字，不能直接
+读出来使用，要：
+	@extractor(array[vars])
+extractor可以count, sum, min, max, avg。例如@count(array[1])就是array[1]中统计
+数据的个数，sum是和，等。
+
+13 tapsets
+是提前写好的供使用的stap脚本，它们的目的不是直接运行，而是提供其他脚本能拿来使用的库，其中有
+一些定义好的函数，handler，events等。
+它们的后缀也是.stp，在目录/usr/share/systamtap/tapset/。
+
+p38
