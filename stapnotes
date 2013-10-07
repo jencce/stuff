@@ -123,4 +123,10 @@ extractor可以count, sum, min, max, avg。例如@count(array[1])就是array[1]�
 一些定义好的函数，handler，events等。
 它们的后缀也是.stp，在目录/usr/share/systamtap/tapset/。
 
-p38
+14 call.return
+probe vfs.read.return
+{
+	$return  这里这个变量表示这个调用返回的值。这里就是读到的bytes
+}
+
+

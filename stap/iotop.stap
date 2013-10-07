@@ -1,0 +1,30 @@
+global iostat
+global read_bytes, write_bytes
+
+probe vfs.read.return
+{
+	if ($return > 0 && devname != "N/A")
+	{
+		iostat[pid(),execname(),uid(),ppid(),devname,"R"] += $return
+		read_bytes += $return
+	}
+}
+
+probe vfs.write.return
+{
+	if ($return > 0 && devname != "N/A")
+	{
+		iostat[pid(),execname(),uid(),ppid(),devname,"W"] += $return
+		write_bytes += $return
+	}
+}
+
+probe timer.s(5)
+{
+	printf("%8s %8s %8s %25s %8s %4s %12s\n", "uid", "pid", "ppid", "cmd",
+		"dev", "act", "Kbytes")
+	foreach ([pid,cmd,uid,ppid,dev,act] in iostat- limit 5)
+		printf("%8d %8d %8d %25s %8s %4s %12d\n", uid, pid, ppid, cmd,
+			dev, act, iostat[pid,cmd,uid,ppid,dev,act]/1024)
+	printf("============================================\n")
+}

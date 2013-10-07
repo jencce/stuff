@@ -1,0 +1,20 @@
+global syscalls
+
+probe syscall.*
+{
+	syscalls[name] ++
+}
+
+function print_syscalls()
+{
+	printf("%25s %15s\n", "SYSCALL", "COUNT")
+	foreach(syscall in syscalls- limit 5)
+		printf("%25s %15d\n", syscall, syscalls[syscall])
+	delete syscalls
+}
+
+probe timer.s(3)
+{
+	print_syscalls()
+	printf("-----------------------\n");
+}
