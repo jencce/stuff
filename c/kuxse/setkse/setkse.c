@@ -55,6 +55,9 @@ void process_one(char * const *name)
 		perror("fts_open: ");
 		exit(-1);
 	}
+
+	printf("dirp: %s\n", *name);
+	kse_setcon(*name);
 	
 	fsent = fts_read(handle);
 	if (fsent == NULL) {
