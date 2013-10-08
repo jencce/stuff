@@ -1,0 +1,66 @@
+global filereadin
+global filereadout
+global filewritein
+global filewriteout
+global filenames
+global filetemp
+
+probe syscall.open
+{
+	filetemp[pid()] = user_string($filename)
+	printf("%s opened\n", filetemp[pid()])
+}
+
+probe syscall.open.return
+{
+	if ($return != -1)
+		filenames[$return, pid()] = filetemp[pid()]
+	delete filetemp[pid()]
+}
+
+probe syscall.read
+{
+	t = gettimeofday_us()
+	p = pid()
+	filereadin[$fd, execname(), p, filenames[$fd, p]] = t
+}
+
+probe syscall.read.return
+{
+	t = gettimeofday_us()
+	p = pid()
+	filereadout[$fd, execname(), p] = t
+}
+
+probe syscall.write
+{
+	t = gettimeofday_us()
+	p = pid()
+	filewritein[$fd, execname(), p, filenames[$fd, p]] = t
+}
+
+probe syscall.write.return
+{
+	t = gettimeofday_us()
+	p = pid()
+	filewriteout[$fd, execname(), p] = t
+}
+
+#probe timer.s(3)
+probe syscall.close
+{
+	printf("--------------------------------------------------------\n")
+	foreach ([fd, exec, pid, fname] in filereadin)
+		if (filereadout[fd,exec,pid] > 0 && filereadin[fd,exec,pid,fname] > 0)
+			printf("%20s(%4d) read %9s for %4d\n", exec, pid, fname,
+			filereadout[fd,exec,pid] - filereadin[fd,exec,pid,fname])
+	foreach ([fd, exec, pid, fname] in filewritein)
+		if (filewriteout[fd,exec,pid] > 0 && filewritein[fd,exec,pid,fname] > 0)
+			printf("%20s(%4d) write %9s for %4d\n", exec, pid, fname,
+			filewriteout[fd,exec,pid] - filewritein[fd,exec,pid,fname])
+	printf("--------------------------------------------------------\n")
+	delete filereadout[fd,exec,pid]
+	delete filereadin[fd,exec,pid,fname]
+	delete filewriteout[fd,exec,pid]
+	delete filewritein[fd,exec,pid,fname]
+}

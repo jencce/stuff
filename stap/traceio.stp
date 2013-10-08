@@ -1,0 +1,14 @@
+global device
+
+probe begin
+{
+	devi = usrdev2kerndev($1)
+	device = MKDEV(MAJOR(devi), MINOR(devi))
+}
+
+probe vfs.read, vfs.write
+{
+	if (dev == device)
+		printf("%s(%d) %s %d\n", execname(), pid(), probefunc(),
+			dev)
+}
