@@ -68,13 +68,13 @@ int main(int argc, char **argv)
 	}
 
 	tss1.mlevel.level_type = 0;
-	tss1.mlevel.level_value = 4;
+	tss1.mlevel.level_value = 5;
 	tss1.mlevel.level_catsum = 0;
 	tss1.mlevel.level_flag = 1;
 	for (i = 0; i < MAC_CAT_MAX; i++)
 		tss1.mlevel.level_category[i] = 0;
 
-	tss1.ilevel.level_value = 3;
+	tss1.ilevel.level_value = 5;
 	
 	syscall(__NR_mac_file_ctl, 1, argv[1], &tss1);
 

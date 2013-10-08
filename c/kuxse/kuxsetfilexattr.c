@@ -31,11 +31,13 @@ int main(int argc, char **argv)
 	else
 		printf("xattr1 %s\n", buf);
 
-#if 0
-	cp = strstr(buf, "s0");
-	cp++;
-	*cp = '1';
-	printf("xattr1 alt %s\n", buf);
+#if 1
+	cp = strstr(buf, "c");
+	if (cp) {
+		cp++;
+		*cp = '2';
+		printf("buf alt %s\n", buf);
+	}
 #endif
 	if (strlen(buf) == 0)
 		strcpy(buf, "2:1:c0:1");
@@ -46,6 +48,7 @@ int main(int argc, char **argv)
 		exit(-1);
 	}
 
+	memset(buf, 0, size);
 	ret = getxattr(argv[1], "security.kse", buf, size - 1);
 	if (ret == -1) {
 		perror("getxattr: ");

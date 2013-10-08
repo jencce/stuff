@@ -32,7 +32,7 @@ void init_tss(struct task_security_struct *tss)
 	tss->mlevel.level_type = 0;
 	tss->mlevel.level_value = 0;
 	tss->mlevel.level_catsum = 0;
-	tss->mlevel.level_flag = 1;
+	tss->mlevel.level_flag = 0;
 	for (i = 0; i < MAC_CAT_MAX; i++)
 		tss->mlevel.level_category[i] = 0;
 
@@ -54,7 +54,8 @@ int main()
 		perror("1get error");
 		return -1;
 	} else {
-		printf("mv %d, iv %d\n", tss2.mlevel.level_value,
+		printf("mt %d, mv %d, mcs %d, iv %d\n", tss2.mlevel.level_type,
+			tss2.mlevel.level_value, tss2.mlevel.level_catsum,
 			tss2.ilevel.level_value);
 	}
 
