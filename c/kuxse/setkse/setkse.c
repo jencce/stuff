@@ -97,6 +97,7 @@ int main()
 	pthread_t pt[4];
 	pthread_attr_t pattr[4];
 	void *res = NULL;
+	int tmp[4];
 
 	setbuf(stdout, NULL);
 	setbuf(stderr, NULL);
@@ -122,23 +123,24 @@ int main()
 		cpu_set_t cpuset;
 		CPU_ZERO(&cpuset);
 		CPU_SET(i, &cpuset);
+		tmp[i] = i;
 
 		pthread_attr_init(&pattr[i]);
 	
-		ret = pthread_attr_setaffinity_np(&pattr[i], sizeof(cpu_set_t),
-				&cpuset);
+		ret = pthread_attr_setaffinity_np(&pattr[i],
+				sizeof(cpu_set_t), &cpuset);
 		if (ret != 0) {
 			perror("pthread_attr_set ");
 			exit(-1);
 		}
 
 		ret = pthread_create(&pt[i], &pattr[i], &process_thread,
-				&i);
+				&tmp[i]);
 		if (ret != 0) {
 			perror("pthread_create ");
 			exit(-1);
 		}
-		sleep(1);
+		//sleep(1);
 	}
 
 	for (i = 0; i < 4; i++) {
