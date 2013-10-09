@@ -4,6 +4,7 @@
 #include <string.h>
 #include <sched.h>
 #include <glob.h>
+#include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fts.h>
@@ -34,40 +35,41 @@ void kse_setcon(char *name)
 		exit(-1);
 	}
 	memset(buf, 0, size);
-	sprintf(buf, "%s", "1:1:c0:1");
+	sprintf(buf, "%s", "1:1:c0:1\0");
 
-	ret = setxattr(name, "security.kse", buf, size - 1);
-	if (ret <= 0) {
-		//perror("getxattr ");
+	ret = setxattr(name, "security.kse", buf, size - 1, 0);
+	if (ret < 0) {
+		printf("%s setxattr error: %s\n", name, strerror(errno));
+		//printf("1");
 		//exit(-1);
 	}
-	else
-		printf("xattr1 %s\n", buf);
+	free(buf);
 }
 
-void process_one(char * const *name)
+void process_one(char * name)
 {
 	FTS *handle = NULL;
 	FTSENT *fsent = NULL;
+	char * const namelist[2] = {name, NULL};
 
-	handle = fts_open(name, 0, NULL);
+	handle = fts_open((char * const *)namelist, 0, NULL);
 	if (handle == NULL) {
 		perror("fts_open: ");
 		exit(-1);
 	}
 
-	printf("dirp: %s\n", *name);
-	kse_setcon(*name);
+	printf("dirp: %s\n", name);
+	kse_setcon(name);
 	
 	fsent = fts_read(handle);
 	if (fsent == NULL) {
 		perror("fts_read: ");
 		exit(-1);
-	} else 
-		printf("rootp: %s\n", fsent->fts_path);
+	} //else 
+		//printf("rootp: %s\n", fsent->fts_path);
 
 	do {
-		printf("rootp: %s\n", fsent->fts_path);
+		//printf("rootp: %s\n", fsent->fts_path);
 		if (fsent->fts_statp)
 			kse_setcon(fsent->fts_path);
 	} while ((fsent = fts_read(handle)) != NULL);
@@ -77,14 +79,14 @@ void process_one(char * const *name)
 
 void process_thread(int *cnt)
 {
-	int i, j = *cnt;
+	int k, j = *cnt;
 
 	printf("j=%d\n", j);
-	for (i = j; i < glob_buff.gl_pathc; i += 4) {
-		//printf("%s\n", glob_buff.gl_pathv[i]);
-		if (strstr(glob_buff.gl_pathv[i], "/proc") != NULL)
+	for (k = j; k < glob_buff.gl_pathc; k += 4) {
+		//printf("%s %d ", glob_buff.gl_pathv[k], k);
+		if (strstr(glob_buff.gl_pathv[k], "proc") != NULL)
 			continue;
-		process_one(&glob_buff.gl_pathv[i]);
+		process_one(glob_buff.gl_pathv[k]);
 	}
 
 }
@@ -92,19 +94,24 @@ void process_thread(int *cnt)
 int main()
 {
 	int ret, err, i;
-	pthread_t *pt = NULL;
-	pthread_attr_t pattr;
+	pthread_t pt[4];
+	pthread_attr_t pattr[4];
 	void *res = NULL;
+
+	setbuf(stdout, NULL);
+	setbuf(stderr, NULL);
 	
 	printf("Setting KUXSE file labels\n");
 
+#if 0
 	pt = (pthread_t *)malloc(4 * sizeof(pthread_t));
 	if (pt == NULL) {
 		perror("malloc ");
 		exit(-1);
 	}
-	pthread_attr_init(&pattr);
+#endif
 
+	memset(&glob_buff, 0 , sizeof(glob_t));
 	ret = glob("/*", 0, NULL, &glob_buff);
 	if (ret != 0) {
 		perror("glob :");
@@ -115,20 +122,23 @@ int main()
 		cpu_set_t cpuset;
 		CPU_ZERO(&cpuset);
 		CPU_SET(i, &cpuset);
+
+		pthread_attr_init(&pattr[i]);
 	
-		ret = pthread_attr_setaffinity_np(&pattr, sizeof(cpu_set_t),
+		ret = pthread_attr_setaffinity_np(&pattr[i], sizeof(cpu_set_t),
 				&cpuset);
 		if (ret != 0) {
 			perror("pthread_attr_set ");
 			exit(-1);
 		}
 
-		ret = pthread_create(&pt[i], &pattr, &process_thread,
+		ret = pthread_create(&pt[i], &pattr[i], &process_thread,
 				&i);
 		if (ret != 0) {
 			perror("pthread_create ");
 			exit(-1);
 		}
+		sleep(1);
 	}
 
 	for (i = 0; i < 4; i++) {
@@ -164,5 +174,6 @@ int main()
 	}
 #endif
 
+	globfree(&glob_buff);
 	return 0;
 }
