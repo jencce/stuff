@@ -46,6 +46,7 @@ p可以出现多次，指定指令的地址应该有多精确，0-4次越来越�
 和过滤器，来控制时间如何被计数。
 
 stat
+Counting with perf stat
 对于任何的事件，perf在进程执行期间对事件持续计数。在计数模式下，事件被简单得
 累计和输出。
 不指定事件的情况下，perf stat ls。stat收集一些普通的事件，如cs，cycles等。
@@ -58,7 +59,7 @@ u就是modifiers，见上面的表。
 perf stat -e cycles,cs ls
 perf stat -e cycles -e cs ls
 没有个数的限制，如果事件数超过了计数器个数，内核会复用；可以同时测量多个不同来源
-的事件。只是每个时间提供一个文件描述符，或者每个线程（per-thread mode）或者
+的事件。只是每个事件提供一个文件描述符，或者每个线程（per-thread mode）或者
 每个cpu(system-wide)一个文件，那么可能超过kernel对每个线程打开文件数目的上
 限，这样会报错。
 
@@ -80,13 +81,27 @@ perf stat -B -r 5 -e cycles ls，执行五次ls
 控制事件检测的环境
 四种模式：per-thread, per-process, per-cpu, system-wide。
 意思都很明显。
-涉及进程和线程的监测，perf默认跟踪继承，-i选项不跟踪。
 
-Options controlling environment selection zx
+涉及进程和线程的监测，perf默认子进程继承计数器，-i选项不继承。
+-a表示所有cpu,system-wide模式，-C选项可以指定cpu的范围。。
+
+perf默认是per-thread模式，就是只对指定的命令执行的进程和所有子进程来收集计数信
+息，如果指定-a选项，表示进入system-wide模式，此时不光收集指定命令的信息，还收
+集所有cpu上运行的所有进程的计数信息，这时收集的时限就是指定命令运行的时间。
+
+-p和-t选项可以指定进程和线程来收集信息，时限是指定命令的执行时间，如果时间内指定
+的进程或者线程没有运行则不会有信息被收集到。不推荐跟踪内核线程，它们一般运行在固定
+cpu上，可以使用system-wide模式来收集cpu的信息。
+
+输出选项
+-B启用locale的数字分隔。
+-x , 输出方便程序处理的数据格式，以指定的，为分隔符。
 
 
 record 
-运行一个命令，记录下其性能数据到perf.data。
+Sampling with perf record
+运行一个命令，记录下其性能数据到perf.data。稍后使用perf report,annotate解析
+这个数据文件，可以在另外一台机器上。
 
 -e和--event选项可以指定需要记录的事件，包含三种类型的事件：
 1是symbolic event，也就是perf list可以列出来所有的events；
@@ -94,17 +109,36 @@ record
 3是hardware breakpoint，比如\mem:addr[:access]，如果想记录地址
 0x100的读写操作，那么对应的event就是\mem:0x100:rw
 
+perf_events是基于 基于事件的采样，period是以事件出现的次数来表示的，而不是时间
+tick数。当一个采样计数器溢出的时候，就记录一个采样。
+
+虽然硬件不支持64位的计数器，kernel模拟了64位计数，但是这受限与硬件真正的位数，
+需要在硬件溢出的时候产生sampling period。
+
+当计数器溢出的时候记录信息，就是一个采样，信息关于程序的执行，种类可以由工具指定。
+但是最平常的是指令指针。
+基于中断的采样的时候，采样时候存储的指针指向程序被PMU中断中断的地方，而不是计数器
+溢出的地方。这样两个采样点之间，执行的指令数不是确定的，慎重。
+
+默认事件就是cycles，周期，通过内核映射到intel/amd的cpu中的硬件事件。当cpu空
+闲idle时，不会计数。
+
+两种方式指定采样周期sampling period：
+a事件出现的次数
+b一秒采样的平均频率samples/sec, frequence
+默认使用的是平均频率，1000s/s，这种情况下内核根据频率动态调整采样周期来满足这个
+平均频率，频率可以使用-F选项指定。另外一种模式下period由用户-c选项指定，不会变。
+
+perf record默认是per-thread继承模式，事件是cycles.
+
 -a 从全系统所有的cpu中收集信息
-
 -l scale counter values?
-
 -p/-t/-u 指定pid/thread id/user id收集
-
--c 采样的个数？
-
+-c 采样的event period个数
 -F 指定采样的频率
 
 report
+Sample analysis with perf report
 读取record命令产生的perf.data数据文件，显示其中的profile信息。
 输出的各项意思在wiki上查：
 perf report
@@ -134,7 +168,6 @@ When the samples come from the kernel, then the pseudo ELF image name [kernel.ka
 The fourth column indicates the privilege level at which the sample was taken, 
 i.e. when the program was running when it was interrupted:
 第四列表示采样事件来源的优先级，如下所述：
-
 [.] : user level
 [k]: kernel level
 [g]: guest kernel level (virtualization)
@@ -142,6 +175,76 @@ i.e. when the program was running when it was interrupted:
 [H]: hypervisor
 The final column shows the symbol name.
 最后一列是符号名称。
+
+默认按照样本的多少排序的，可以通过选项指定排序key。--sort=cpu/pid/dso
+可以查看产生时间最多的cpu/pid/dso等。
+
+-k选项指定未压缩的vmlinux文件的路径，需要内核带debug symbols编译。
+report出来最后一列只有地址没有符号的，是elf被strip了，没有符号表。
+
+annotate
+Source level analysis with perf annotate
+使用这个命令可以钻到指令级别，所有的函数会被反汇编，每条指令会有其相关的事件比例。
+一眼能看出哪些指令执行的多一些。
+如果程序使用-ggdb选项编译，那么可以产生源代码级别的信息。
+如果要看内核的信息，同样需要-k指定未压缩的带debug信息的vmlinux文件。
+例子：
+         :        void init_ob()                                               ▒
+         :        {                                                            ▒
+    0.00 :         80495c8:       push   %ebp                                  ▒
+    0.00 :         80495c9:       mov    %esp,%ebp                             ▒
+    0.00 :         80495cb:       push   %edi                                  ▒
+    0.00 :         80495cc:       push   %ebx                                  ▒
+    0.00 :         80495cd:       sub    $0x10,%esp                            ▒
+         :                int i = 0;                                           ▒
+    0.00 :         80495d0:       movl   $0x0,-0xc(%ebp)                       ▒
+         :                obindex = 0;                                         ▒
+    0.00 :         80495d7:       movl   $0x0,0x804d0cc                        ▒
+         :                while (i < BUFSIZ)                                   ▒
+    0.00 :         80495e1:       jmp    8049649 <init_ob+0x81>                ▒
+         :                        memset(out_buff[i++], '\0', BUFSIZ);         ▒
+    0.00 :         80495e3:       mov    -0xc(%ebp),%eax   
+
+
+top
+Live analysis with perf top
+像top一样，“实时”显示采样的函数。默认事件是cycles，默认模式是system-wide。也
+可以使用-C选项指定cpu。
+在界面中进一步操作，看到更详细的信息，有符号表可以跟踪到函数。
+
+
+
+Troubleshooting and Tips
+
+open file limits
+perf给每个事件每个线程每个cpu打开一个文件来记录，
+perf record ./100threds
+如果是在16个cpu的系统中，那么会创建1*100*16=1600个文件
+可以使用ulimit 提高打开文件数的上限，或者控制计数事件和cpu的数量。
+
+builid-cache
+perf record会在perf.data中记录和记录过程中相关的elf文件的build-id。
+build-id由链接器ld的-Wl --build-id选项产生，可选算法，同一个程序在同一个系统
+上可以相同可以不同。build-id用来定位debug信息，找到其相关的文件。
+record在最后会去更新build-id cache，由包含采样的build-id和elf文件组成。
+cache默认在￥home/.debug。
+有时候不让record更新这个cache更好，使用-N选项。
+
+perf script
+字符界面显示report
+
+perf inject
+给现有的event stream加入额外的信息。
+
+perf sched
+Tool to trace/measure scheduler properties (latencies)
+perf sched record <cmd> 记录schedule事件
+perf sched latency 报告cmd的sched延迟和其他sched信息
+perf sched replay 模拟record的时候的负载，回放，可以多次
+perf sched map  打印一个文字上下文切换的概述，一个一个cpu，有事件的标记*，没
+事件的标记.。
+
+
 
 寻找瓶颈的例子：
 1、对比自己程序和系统程序的stat:
@@ -216,3 +319,5 @@ Events: 24K task-clock
                           __libc_start_main    
 
 明显可以看出init_ob函数占用了很多。
+编译-ggdb，使用annotate可以直接看出来。
+
