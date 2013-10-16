@@ -42,6 +42,7 @@ int main(int argc, char **argv)
 	if (strlen(buf) == 0)
 		strcpy(buf, "2:1:c0:1");
 
+	buf[strlen(buf)] = '\0';
 	ret = setxattr(argv[1], "security.kse", buf, strlen(buf), XATTR_REPLACE);
 	if (ret != 0) {
 		perror("setxattr :");

@@ -28,16 +28,41 @@ void kse_setcon(char *name)
 	if (ret < 0)
 		return;
 
-	size = 256;
+	size = 255;
 	buf = malloc(size);
 	if (buf == NULL) {
 		perror("malloc ");
 		exit(-1);
 	}
 	memset(buf, 0, size);
-	sprintf(buf, "%s", "1:1:c0:1\0");
 
-	ret = setxattr(name, "security.kse", buf, size - 1, 0);
+	if (	strncmp(name, "/bin", 4) == 0 ||
+		strncmp(name, "/sbin", 5) == 0 ||
+		strncmp(name, "/usr/bin", 8) == 0 ||
+		strncmp(name, "/usr/sbin", 9) == 0 ||
+		strncmp(name, "/usr/local/bin", 14) == 0 ||
+		strncmp(name, "/usr/local/sbin", 15) == 0)
+			sprintf(buf, "%s", "4:0:c0:15\0");
+	else if (strncmp(name, "/dev/null", 9) == 0 ||
+		strncmp(name, "/dev/zero", 9) == 0 ||
+		strncmp(name, "/dev/random", 11) == 0 ||
+		strncmp(name, "/dev/fd/0", 9) == 0 ||
+		strncmp(name, "/dev/fd/1", 9) == 0 ||
+		strncmp(name, "/dev/fd/2", 9) == 0 ||
+		strncmp(name, "/dev/fd/3", 9) == 0)
+			sprintf(buf, "%s", "4:0:c0:8\0");
+	else if (strncmp(name, "/root", 5) == 0)
+		sprintf(buf, "%s", "1:2:c0,c1:8\0");
+	else if (strncmp(name, "/home", 5) == 0) {
+		if (strncmp(name, "/home/secadm", 12) == 0)
+			sprintf(buf, "%s", "1:2:c0,c2:8\0");
+		if (strncmp(name, "/home/audadm", 12) == 0)
+			sprintf(buf, "%s", "1:2:c0,c3:8\0");
+		sprintf(buf, "%s", "1:1:c4:32\0");
+	} else
+		sprintf(buf, "%s", "2:1:c0:8\0");
+
+	ret = setxattr(name, "security.kse", buf, strlen(buf) + 1, 0);
 	if (ret < 0) {
 		printf("%s setxattr error: %s\n", name, strerror(errno));
 		//printf("1");
