@@ -1,4 +1,4 @@
 probe vfs.read
 {
-	printf("%s\n", $file->f_path->dentry->d_name->name)
+	printf("%s\n", $file->f_path->dentry->d_name)
 }

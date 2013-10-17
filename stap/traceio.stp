@@ -1,3 +1,6 @@
+# this stap needs a arg, dev no
+# which can be get like this: stat -c "%D" /dev/sda
+
 global device
 
 probe begin

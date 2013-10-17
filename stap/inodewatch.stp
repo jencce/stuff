@@ -1,0 +1,17 @@
+# this stap needs three args, device major/minor numner, file's inode number
+# use: stat -c "%D %i" /pathto/file :to get this
+# NOTE: symblic need the inode_no of target file
+
+probe begin
+{
+	printf("%d %d, %x %d\n", $1, $2, ($1 << 20 | $2), $3)
+}
+
+probe vfs.read, vfs.write
+{
+	dev_no = $file->f_path->dentry->d_inode->i_sb->s_dev
+	inode_no = $file->f_path->dentry->d_inode->i_ino
+
+	if (dev_no == ($1 << 20 | $2) && inode_no == $3)
+		printf("%s(%d) %s \n", execname(), pid(), probefunc())
+}
