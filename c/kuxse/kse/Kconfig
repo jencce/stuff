@@ -1,0 +1,20 @@
+config KUX_SECURITY_ENHANCE
+	bool "KUX Security Enhance"
+	depends on SECURITY_NETWORK && AUDIT && NET && INET
+	select NETWORK_SECMARK
+	default n
+	help
+	  This selects KUX security enhance.
+
+config SECURITY_KSE_BOOTPARAM_VALUE
+	int "KSE boot parameter default value"
+	depends on KUX_SECURITY_ENHANCE
+	range 0 1
+	default 1
+	help
+	  This option sets the default value for the kernel parameter
+	  'kse', which allows KSE to be disabled at boot.  If this
+	  option is set to 0 (zero), the KSE kernel parameter will
+	  default to 0, disabling KSE at bootup.  If this option is
+	  set to 1 (one), the KSE kernel parameter will default to 1,
+	  enabling KSE at bootup.
