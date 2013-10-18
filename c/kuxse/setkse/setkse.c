@@ -9,6 +9,11 @@
 #include <sys/stat.h>
 #include <fts.h>
 
+//#define MULP
+// noo mulp physical good
+// noo mulp logical endless
+// mulp add logical endless
+// mulp add physical bad
 
 glob_t glob_buff;
 
@@ -24,9 +29,11 @@ void kse_setcon(char *name)
 		exit(-1);
 	}
 
-	ret = stat(name, &stat_buf);
-	if (ret < 0)
+	ret = lstat(name, &stat_buf);
+	if (ret == -1) {
+		printf("%s lstat error: %s\n", name, strerror(errno));
 		return;
+	}
 
 	size = 255;
 	buf = malloc(size);
@@ -41,7 +48,7 @@ void kse_setcon(char *name)
 		strncmp(name, "/usr/bin", 8) == 0 ||
 		strncmp(name, "/usr/sbin", 9) == 0 ||
 		strncmp(name, "/usr/local/bin", 14) == 0 ||
-		strncmp(name, "/usr/local/sbin", 15) == 0)
+		strncmp(name, "/usr/local/sbin", 15)== 0)
 			sprintf(buf, "%s", "4:0:c0:15\0");
 	else if (strncmp(name, "/dev/null", 9) == 0 ||
 		strncmp(name, "/dev/zero", 9) == 0 ||
@@ -56,18 +63,22 @@ void kse_setcon(char *name)
 	else if (strncmp(name, "/home", 5) == 0) {
 		if (strncmp(name, "/home/secadm", 12) == 0)
 			sprintf(buf, "%s", "1:2:c0,c2:8\0");
-		if (strncmp(name, "/home/audadm", 12) == 0)
+		else if (strncmp(name, "/home/audadm", 12) == 0)
 			sprintf(buf, "%s", "1:2:c0,c3:8\0");
-		sprintf(buf, "%s", "1:1:c4:32\0");
+		else 
+			sprintf(buf, "%s", "1:1:c4:32\0");
 	} else
 		sprintf(buf, "%s", "2:1:c0:8\0");
 
+	//printf("%s setxattr %s\n", name, buf);
+		
 	ret = setxattr(name, "security.kse", buf, strlen(buf) + 1, 0);
 	if (ret < 0) {
 		printf("%s setxattr error: %s\n", name, strerror(errno));
 		//printf("1");
 		//exit(-1);
 	}
+
 	free(buf);
 }
 
@@ -76,53 +87,74 @@ void process_one(char * name)
 	FTS *handle = NULL;
 	FTSENT *fsent = NULL;
 	char * const namelist[2] = {name, NULL};
+	
+	//printf("dirp: %s\n", name);
 
-	handle = fts_open((char * const *)namelist, 0, NULL);
+	//handle = fts_open((char * const *)namelist, FTS_LOGICAL, NULL);
+	handle = fts_open((char * const *)namelist, FTS_PHYSICAL, NULL);
 	if (handle == NULL) {
 		perror("fts_open: ");
 		exit(-1);
 	}
 
-	printf("dirp: %s\n", name);
-	kse_setcon(name);
-	
+#if 0
 	fsent = fts_read(handle);
 	if (fsent == NULL) {
 		perror("fts_read: ");
 		exit(-1);
-	} //else 
-		//printf("rootp: %s\n", fsent->fts_path);
+	} 
 
 	do {
 		//printf("rootp: %s\n", fsent->fts_path);
 		if (fsent->fts_statp)
 			kse_setcon(fsent->fts_path);
 	} while ((fsent = fts_read(handle)) != NULL);
+#endif
+
+	while ((fsent = fts_read(handle)) != NULL) {
+		if (fsent->fts_info == FTS_DP)
+			continue;
+		//printf("rootp: %s\n", fsent->fts_path);
+		if (fsent->fts_statp)
+			kse_setcon(fsent->fts_path);
+	}
 
 	fts_close(handle);
 }
 
-void process_thread(int *cnt)
+void *process_thread(int *cnt)
 {
 	int k, j = *cnt;
 
+	setbuf(stdout, NULL);
+	setbuf(stderr, NULL);
+	
 	printf("j=%d\n", j);
+
+#ifdef MULP
 	for (k = j; k < glob_buff.gl_pathc; k += 4) {
-		//printf("%s %d ", glob_buff.gl_pathv[k], k);
+#else
+	for (k = j; k < glob_buff.gl_pathc; k++) {
+#endif
+		//printf("%s %d \n", glob_buff.gl_pathv[k], k);
 		if (strstr(glob_buff.gl_pathv[k], "proc") != NULL)
 			continue;
 		process_one(glob_buff.gl_pathv[k]);
 	}
+	fflush(stdout);
+	return;
 
 }
 
 int main()
 {
 	int ret, err, i;
+#ifdef MULP
 	pthread_t pt[4];
 	pthread_attr_t pattr[4];
 	void *res = NULL;
 	int tmp[4];
+#endif
 
 	setbuf(stdout, NULL);
 	setbuf(stderr, NULL);
@@ -138,12 +170,14 @@ int main()
 #endif
 
 	memset(&glob_buff, 0 , sizeof(glob_t));
+	//ret = glob("/tmp/tttt/*", GLOB_TILDE | GLOB_NOCHECK, NULL, &glob_buff);
 	ret = glob("/*", 0, NULL, &glob_buff);
 	if (ret != 0) {
 		perror("glob :");
 		exit(-1);
 	}
 
+#ifdef MULP
 	for (i = 0; i < 4; i++) {
 		cpu_set_t cpuset;
 		CPU_ZERO(&cpuset);
@@ -165,11 +199,13 @@ int main()
 			perror("pthread_create ");
 			exit(-1);
 		}
-		//sleep(1);
+
+		pthread_attr_destroy(&pattr[i]);
+		//sleep(2);
 	}
 
 	for (i = 0; i < 4; i++) {
-		ret = pthread_join(pt[i], &res);
+		ret = pthread_join(pt[i], NULL);
 		if (ret != 0) {
 			perror("pthread_join ");
 			exit(-1);
@@ -177,28 +213,9 @@ int main()
 		//if (res)
 		//	free(res);
 	}
-
-#if 0
-	for (i = 0; i < glob_buff.gl_pathc; i++) {
-		//printf("%s\n", glob_buff.gl_pathv[i]);
-		ret = pthread_create(&pt[i], &pattr, &process_one,
-				&glob_buff.gl_pathv[i]);
-		if (ret != 0) {
-			perror("pthread_create ");
-			exit(-1);
-		}
-			
-		//process_one(&glob_buff.gl_pathv[i]);
-	}
-
-	for (i = 0; i < glob_buff.gl_pathc; i++) {
-		ret = pthread_join(pt[i], &res);
-		if (ret != 0) {
-			perror("pthread_join ");
-			exit(-1);
-		}
-		free(res);
-	}
+#else
+	i = 0;
+	process_thread(&i);
 #endif
 
 	globfree(&glob_buff);
