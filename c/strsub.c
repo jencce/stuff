@@ -99,9 +99,52 @@ char *strsub1(char *str, char *old, char *new)
 	return tn;
 }
 
+char *strsub2(char *str, char *old, char *new)
+{
+	int tl, ol, nl, sl, i = 0;
+	char **gs;
+	char *sp = str;
+	char *tn;
+	char *tnp;
+
+	if (str == NULL || old == NULL || new == NULL)
+		return NULL;
+
+	sl = strlen(str);
+	ol = strlen(old);
+	nl = strlen(new);
+
+	if (sl < ol)
+		return NULL;
+
+	tl = sl + BUFSIZ * (nl - ol);
+	tn = (char *)malloc(tl);
+	if (tn == NULL)
+		return NULL;
+
+	tnp = tn;
+	while (*gs = strstr(sp, old)) {
+		strncat(tnp, sp, *gs - sp);
+		strcat(tnp, new);
+		sp = *gs + strlen(old);
+		i++;
+		if (i == BUFSIZ) {
+			tn = (char *)realloc(tn, 2*tl);
+			if (tn == NULL)
+				return NULL;
+			tnp = tn;
+		}
+	}
+	if (*sp != '\0')
+		strcat(tnp, sp);
+	
+	return tn;
+}
+
 int main(int argc, char **argv)
 {
 	printf("1 %s\n", strsub(argv[1], argv[2], argv[3]));
 	printf("2 %s\n", strsub1(argv[1], argv[2], argv[3]));
+	printf("3 %s\n", strsub1(argv[1], argv[2], argv[3]));
 	return 0;
 }
