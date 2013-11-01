@@ -42,21 +42,35 @@ void init_tss(struct task_security_struct *tss)
 struct task_security_struct tss1;
 struct task_security_struct tss2;
 
-int main()
+int main(int argc, char **argv)
 {
 	int i = 0;
 
 	init_tss(&tss1);
 	init_tss(&tss2);
 
-	i = syscall(__NR_mac_task_ctl, 0, &tss2);
+	i = syscall(__NR_mac_task_ctl, 0, 0, &tss2);
 	if (i < 0) {
 		perror("1get error");
 		return -1;
 	} else {
-		printf("mt %d, mv %d, mcs %d, iv %d\n", tss2.mlevel.level_type,
+		printf("self mt %d, mv %d, mcs %d, iv %d\n", tss2.mlevel.level_type,
 			tss2.mlevel.level_value, tss2.mlevel.level_catsum,
 			tss2.ilevel.level_value);
+	}
+	
+	if (argc > 1 && argv[1]) {
+		int pid = strtol(argv[1], NULL, 0);
+		printf("pid %d\n", pid);
+		i = syscall(__NR_mac_task_ctl, 0, pid, &tss1);
+		if (i < 0) {
+			perror("1get error");
+			return -1;
+		} else {
+			printf("pid %d: mt %d, mv %d, mcs %d, iv %d\n", pid,
+				tss1.mlevel.level_type, tss1.mlevel.level_value,
+				tss1.mlevel.level_catsum, tss1.ilevel.level_value);
+		}
 	}
 
 #if 0

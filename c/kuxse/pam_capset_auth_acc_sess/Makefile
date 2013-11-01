@@ -15,4 +15,3 @@ uninstall:
 
 clean:
 	rm -f $(module) $(patsubst %.so, %.o, $(module))
-

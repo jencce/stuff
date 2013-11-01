@@ -20,25 +20,41 @@
 
 #include "kseobj.h"
 
+#ifdef CONFIG_KUX_SECURITY_ENHANCE
+
 /* sys_mac_task_ctl - get/set current task mac level
  * @cmd get/set 0/1.
+ * @pid 0/pid self/other
  * @tss tss struct from user if needed.
  */
-SYSCALL_DEFINE2(mac_task_ctl, int __user, cmd,
+SYSCALL_DEFINE3(mac_task_ctl, int __user, cmd, pid_t __user, pid,
 		struct task_security_struct __user *, tss)
 {
 	pr_debug("sys_mac_task_ctl in\n");
+
+	if (kse_enabled == 0)
+		return 0;
 
 	if (tss == NULL || cmd < 0)
 		return -EINVAL;
 	
 	if (cmd == 0) {                                  /* get */
-		const struct cred *cred = current_cred();
+		const struct cred *cred;
 		struct task_security_struct *sp;
 		int ret = 0;
 
-		sp = (struct task_security_struct *)cred->security;
-		ret = copy_to_user(tss, sp, sizeof(struct task_security_struct));
+		if (pid == 0) { /* self */
+			cred = current_cred();
+			sp = cred->security;
+		} else {
+			struct task_struct *ts = find_task_by_vpid(pid);
+			if (ts == NULL)
+				return -EINVAL;
+			sp = task_cred_xxx(ts, security);
+		}
+
+		ret = copy_to_user(tss, (struct task_security_struct *)sp,
+					sizeof(struct task_security_struct));
 
 		return ret ? -EFAULT : 0;
 
@@ -48,6 +64,9 @@ SYSCALL_DEFINE2(mac_task_ctl, int __user, cmd,
 		struct task_security_struct *tsp;
 		struct cred *new = NULL;
 		int i;
+
+		if (pid != 0) /* alter self only */
+			return -EINVAL;
 
 		if (copy_from_user(&tss1, tss, sizeof(struct task_security_struct)))
 			return -EFAULT;
@@ -87,6 +106,9 @@ SYSCALL_DEFINE3(mac_file_ctl, int __user, cmd, char __user *, name,
 	int i;
 
 	pr_debug("sys_mac_file_ctl in\n");
+
+	if (kse_enabled == 0)
+		return 0;
 
 	if (iss == NULL || cmd < 0)
 		return -EINVAL;
@@ -142,3 +164,15 @@ SYSCALL_DEFINE3(mac_file_ctl, int __user, cmd, char __user *, name,
 		return 0;
 	}
 }
+#else
+SYSCALL_DEFINE3(mac_task_ctl, int __user, cmd, pid_t __user, pid,
+		struct task_security_struct __user *, tss)
+{
+	return 0;
+}
+SYSCALL_DEFINE3(mac_file_ctl, int __user, cmd, char __user *, name,
+		struct user_inode_security_struct __user *, iss)
+{
+	return 0;
+}
+#endif

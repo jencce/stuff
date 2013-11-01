@@ -61,7 +61,7 @@ void init_tss(struct task_security_struct *tss)
 	tss->ilevel.level_value = 0;
 }
 
-void alter_mil(pam_handle_t *pamh)
+void alter_mil(pam_handle_t *pamh, int f)
 {
 	int i = 0;
 	struct task_security_struct tss1;
@@ -70,7 +70,7 @@ void alter_mil(pam_handle_t *pamh)
 	init_tss(&tss1);
 	init_tss(&tss2);
 
-	i = syscall(__NR_mac_task_ctl, 0, &tss2);
+	i = syscall(__NR_mac_task_ctl, 0, 0, &tss2);
 	if (i < 0) {
 		pam_syslog(pamh, LOG_INFO, "get task sec1 fail\n");
 	} else {
@@ -78,19 +78,35 @@ void alter_mil(pam_handle_t *pamh)
 			tss2.ilevel.level_value);
 	}
 
-	tss1.mlevel.level_type = 0;
-	tss1.mlevel.level_value = 4;
-	tss1.mlevel.level_catsum = 0;
-	tss1.mlevel.level_flag = 1;
-	for (i = 0; i < MAC_CAT_MAX; i++)
-		tss1.mlevel.level_category[i] = 0;
+	if (f == 1) { /* zx 1:1:c4:8 */
+		tss1.mlevel.level_type = 1;
+		tss1.mlevel.level_value = 1;
+		tss1.mlevel.level_catsum = 1;
+		tss1.mlevel.level_flag = 0;
+		for (i = 0; i < MAC_CAT_MAX; i++)
+			tss1.mlevel.level_category[i] = 0;
+		tss1.mlevel.level_category[4] = 1;
 
-	tss1.ilevel.level_value = 3;
+		tss1.ilevel.level_value = 8;
+	}
 	
-	syscall(__NR_mac_task_ctl, 1, &tss1);
+	if (f == 0) { /* root 1:2:c0,c1:8 */
+		tss1.mlevel.level_type = 1;
+		tss1.mlevel.level_value = 2;
+		tss1.mlevel.level_catsum = 2;
+		tss1.mlevel.level_flag = 0;
+		for (i = 0; i < MAC_CAT_MAX; i++)
+			tss1.mlevel.level_category[i] = 0;
+		tss1.mlevel.level_category[0] = 1;
+		tss1.mlevel.level_category[1] = 1;
+
+		tss1.ilevel.level_value = 8;
+	}
+	
+	syscall(__NR_mac_task_ctl, 1, 0, &tss1);
 
 	init_tss(&tss2);
-	i = syscall(__NR_mac_task_ctl, 0, &tss2);
+	i = syscall(__NR_mac_task_ctl, 0, 0, &tss2);
 	if (i < 0) {
 		pam_syslog(pamh, LOG_INFO, "get task sec2 fail\n");
 	} else {
@@ -117,7 +133,10 @@ pam_sm_authenticate(pam_handle_t *pamh, int flags ,
 	pam_syslog(pamh, LOG_INFO, "user: %s\n", user);
 
 	if (strcmp(user, "zx") == 0)
-		alter_mil(pamh);
+		alter_mil(pamh, 1);
+
+	if (strcmp(user, "root") == 0)
+		alter_mil(pamh, 0);
 
 	return PAM_SUCCESS;
 }

@@ -10,8 +10,8 @@
 #include <fts.h>
 
 //#define MULP
-// noo mulp physical good
-// noo mulp logical endless
+// no mulp physical good
+// no mulp logical endless
 // mulp add logical endless
 // mulp add physical bad
 
@@ -66,15 +66,17 @@ void kse_setcon(char *name)
 		else if (strncmp(name, "/home/audadm", 12) == 0)
 			sprintf(buf, "%s", "1:2:c0,c3:8\0");
 		else 
-			sprintf(buf, "%s", "1:1:c4:32\0");
-	} else
+			sprintf(buf, "%s", "1:1:c4:8\0");
+	} else if (strncmp(name, "/tmp", 4) == 0)
+		sprintf(buf, "%s", "0:0:c0:8\0");
+	else
 		sprintf(buf, "%s", "2:1:c0:8\0");
 
 	//printf("%s setxattr %s\n", name, buf);
 		
 	ret = setxattr(name, "security.kse", buf, strlen(buf) + 1, 0);
 	if (ret < 0) {
-		printf("%s setxattr error: %s\n", name, strerror(errno));
+		printf("%s setxattr error: %s ", name, strerror(errno));
 		//printf("1");
 		//exit(-1);
 	}

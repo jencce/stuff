@@ -24,9 +24,10 @@
 #include <linux/binfmts.h>
 #include <linux/in.h>
 #include <linux/spinlock.h>
+#include <linux/lsm_audit.h>
 #include "flask.h"
 
-/* mac_level and intigrety_level resides in task_struct and
+/* mac_level and integrity_level resides in task_struct and
  * inode as annotations for access controll */
 
 #define MAC_CAT_MAX 256
@@ -41,18 +42,18 @@ struct mac_level {
 };
 
 /* Intigrety level struct */
-struct intigrety_level {
+struct integrity_level {
 	int level_value;
 };
 
 struct task_security_struct {
 	struct mac_level mlevel;
-	struct intigrety_level ilevel;
+	struct integrity_level ilevel;
 };
 
 struct inode_security_struct {
 	struct mac_level mlevel;
-	struct intigrety_level ilevel;
+	struct integrity_level ilevel;
 	int task_sid;		/* SID of creating task */
 	int initialized;	/* initialization flag */
 	struct mutex lock;
@@ -60,9 +61,19 @@ struct inode_security_struct {
 
 struct user_inode_security_struct { /* just for syscall, no mutex */
 	struct mac_level mlevel;
-	struct intigrety_level ilevel;
+	struct integrity_level ilevel;
 	int task_sid;		/* SID of creating task */
 	int initialized;	/* initialization flag */
 };
 
+extern void kse_audit(struct task_security_struct *,
+		struct task_security_struct *,
+		struct inode_security_struct *,
+		int, int, int,int, struct common_audit_data *);
+int iss_to_context(int init, struct mac_level *mlevel,
+			struct integrity_level *ilevel,
+			char **scontext, u32 *scontext_len);
+int context_to_iss(struct mac_level *mlevel, struct integrity_level *ilevel,
+			const void **scontext, ssize_t *scontext_len);
+extern int kse_enabled;
 #endif

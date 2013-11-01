@@ -49,7 +49,7 @@ int main()
 	init_tss(&tss1);
 	init_tss(&tss2);
 
-	i = syscall(__NR_mac_task_ctl, 0, &tss2);
+	i = syscall(__NR_mac_task_ctl, 0, 0, &tss2);
 	if (i < 0) {
 		perror("1get error");
 		return -1;
@@ -67,10 +67,10 @@ int main()
 
 	tss1.ilevel.level_value = 5;
 	
-	syscall(__NR_mac_task_ctl, 1, &tss1);
+	syscall(__NR_mac_task_ctl, 1, 0, &tss1);
 
 	init_tss(&tss2);
-	i = syscall(__NR_mac_task_ctl, 0, &tss2);
+	i = syscall(__NR_mac_task_ctl, 0, 0, &tss2);
 	if (i < 0) {
 		perror("2get error");
 		return -1;

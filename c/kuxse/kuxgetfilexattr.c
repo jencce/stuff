@@ -23,7 +23,7 @@ int main(int argc, char **argv)
 		return -1;
 	memset(buf, 0, size);
 
-	ret = getxattr(argv[1], "security.kse", buf, size - 1);
+	ret = getxattr(argv[1], "security.kse", buf, size);
 	if (ret == -1) {
 		perror("getxattr: ");
 	}

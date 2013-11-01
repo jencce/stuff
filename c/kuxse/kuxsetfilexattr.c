@@ -31,7 +31,7 @@ int main(int argc, char **argv)
 	else
 		printf("xattr1 %s\n", buf);
 
-#if 1
+#if 0
 	cp = strstr(buf, "c");
 	if (cp) {
 		cp++;
@@ -39,10 +39,13 @@ int main(int argc, char **argv)
 		printf("buf alt %s\n", buf);
 	}
 #endif
-	if (strlen(buf) == 0)
-		strcpy(buf, "2:1:c0:1");
+	//if (strlen(buf) == 0)
+	//	strcpy(buf, "2:1:c0:1");
+	strncpy(buf, argv[2], strlen(argv[2]));
 
 	buf[strlen(buf)] = '\0';
+	printf("buf %s\n", buf);
+
 	ret = setxattr(argv[1], "security.kse", buf, strlen(buf), XATTR_REPLACE);
 	if (ret != 0) {
 		perror("setxattr :");
