@@ -28,7 +28,11 @@ char *strstr(char *s1, char *s2)
 int strlen(const char *s)
 {
 	int len = 0;
-	while (s != NULL && *s != '\0') {
+
+	if (s == NULL)
+		return -1;
+
+	while (*s != '\0') {
 		len++;
 		s++;
 	}

@@ -102,7 +102,7 @@ char *strsub1(char *str, char *old, char *new)
 char *strsub2(char *str, char *old, char *new)
 {
 	int tl, ol, nl, sl, i = 0;
-	char **gs;
+	char *gs;
 	char *sp = str;
 	char *tn;
 	char *tnp;
@@ -123,10 +123,10 @@ char *strsub2(char *str, char *old, char *new)
 		return NULL;
 
 	tnp = tn;
-	while (*gs = strstr(sp, old)) {
-		strncat(tnp, sp, *gs - sp);
+	while (gs = strstr(sp, old)) {
+		strncat(tnp, sp, gs - sp);
 		strcat(tnp, new);
-		sp = *gs + strlen(old);
+		sp = gs + strlen(old);
 		i++;
 		if (i == BUFSIZ) {
 			tn = (char *)realloc(tn, 2*tl);
