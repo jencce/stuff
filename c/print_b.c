@@ -31,6 +31,24 @@ void print_b(int *p)
 	printf("%d\n", ((struct hs *)pp)->b);
 }
 
+void print_b1(int *p)
+{
+	int size = sizeof(struct hs);
+	unsigned long i, j, k = 0;
+	int *pp = p;
+	
+	i = log(size)/log(2) + 1;
+	printf("i %d\n", i);
+	printf("pp %p\n", pp);
+
+	for (j = 0; j < i; j++)
+		pp = (long)pp & (long)(~(1 << j));
+
+	printf("pp1 %p\n", pp);
+	
+	printf("%d\n", ((struct hs *)pp)->b);
+}
+
 int main()
 {
 	struct hs hs;
@@ -38,5 +56,6 @@ int main()
 	hs.v = 12;
 
 	print_b(&hs.v);
+	print_b1(&hs.v);
 	return 0;
 }
