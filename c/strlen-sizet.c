@@ -7,7 +7,8 @@ int main()
 	char *s = "helwsd";
 
 	printf("%u\n", strlen(s) - strlen(t) );
-y
+	printf("%d\n", strlen(s) - strlen(t) );
+
 	if ( strlen(s) - strlen(t) >=0 )
 		printf("ok\n");
 	// strlen returns a size_t type data which is a unsigned
