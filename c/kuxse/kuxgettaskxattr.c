@@ -42,6 +42,21 @@ void init_tss(struct task_security_struct *tss)
 struct task_security_struct tss1;
 struct task_security_struct tss2;
 
+void display_tss(struct task_security_struct *tss)
+{
+	int i;
+	
+	printf("multi level security type: %d\n", tss->mlevel.level_type);
+	printf("                    value: %d\n", tss->mlevel.level_value);
+	
+	printf("                 category: ");
+	for (i = 0; i < 255; i++)
+		if (tss->mlevel.level_category[i] == 1)
+			printf("c%d ", i);
+	printf("\n");
+	printf("multi level integrity value: %d\n", tss->ilevel.level_value);
+}
+
 int main(int argc, char **argv)
 {
 	int i = 0;
@@ -49,52 +64,24 @@ int main(int argc, char **argv)
 	init_tss(&tss1);
 	init_tss(&tss2);
 
+	printf("pid %d\n", getpid());
 	i = syscall(__NR_mac_task_ctl, 0, 0, &tss2);
 	if (i < 0) {
 		perror("1get error");
 		return -1;
-	} else {
-		printf("self mt %d, mv %d, mcs %d, iv %d\n", tss2.mlevel.level_type,
-			tss2.mlevel.level_value, tss2.mlevel.level_catsum,
-			tss2.ilevel.level_value);
-	}
+	} else 
+		display_tss(&tss2);
 	
 	if (argc > 1 && argv[1]) {
 		int pid = strtol(argv[1], NULL, 0);
-		printf("pid %d\n", pid);
+		printf("to get attr of pid %d\n", pid);
 		i = syscall(__NR_mac_task_ctl, 0, pid, &tss1);
 		if (i < 0) {
-			perror("1get error");
+			perror("get task attr error");
 			return -1;
-		} else {
-			printf("pid %d: mt %d, mv %d, mcs %d, iv %d\n", pid,
-				tss1.mlevel.level_type, tss1.mlevel.level_value,
-				tss1.mlevel.level_catsum, tss1.ilevel.level_value);
-		}
+		} else
+			display_tss(&tss1);
 	}
 
-#if 0
-	tss1.mlevel.level_type = 0;
-	tss1.mlevel.level_value = 4;
-	tss1.mlevel.level_catsum = 0;
-	tss1.mlevel.level_flag = 1;
-	for (i = 0; i < MAC_CAT_MAX; i++)
-		tss1.mlevel.level_category[i] = 0;
-
-	tss1.ilevel.level_value = 3;
-	
-	syscall(__NR_mac_task_ctl, 1, &tss1);
-
-	init_tss(&tss2);
-	i = syscall(__NR_mac_task_ctl, 0, &tss2);
-	if (i < 0) {
-		perror("2get error");
-		return -1;
-	} else {
-		printf("mv %d, iv %d\n", tss2.mlevel.level_value,
-			tss2.ilevel.level_value);
-	}
-#endif
 	return 0;
-
 }

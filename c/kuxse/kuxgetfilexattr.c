@@ -6,6 +6,35 @@
 #include <errno.h>
 #include <sys/xattr.h>
 
+void dis_issbuf(char *buf)
+{
+	char *s = buf;
+	int i = 0;
+	s = strtok(s, ":");
+	while (s != NULL) {
+		//printf("%s\n", s);
+
+		switch (i) {
+		case 0:
+			printf("multi level security type: %s\n", s);
+			break;
+		case 1:
+			printf("                    value: %s\n", s);
+			break;
+		case 2:
+			printf("                 category: %s\n", s);
+			break;
+		case 3:
+			printf("multi level integrity type: %s\n", s);
+			break;
+		default:
+			break;
+		}
+		s = strtok(NULL, ":");
+		i++;
+	}
+}
+
 int main(int argc, char **argv)
 {
 	char *buf;
@@ -29,6 +58,7 @@ int main(int argc, char **argv)
 	}
 	else
 		printf("xattr %s\n", buf);
+	dis_issbuf(buf);
 
 	return ret;
 }

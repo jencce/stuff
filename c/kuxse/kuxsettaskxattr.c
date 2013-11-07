@@ -42,6 +42,21 @@ void init_tss(struct task_security_struct *tss)
 struct task_security_struct tss1;
 struct task_security_struct tss2;
 
+void display_tss(struct task_security_struct *tss)
+{
+	int i;
+	
+	printf("multi level security type: %d\n", tss->mlevel.level_type);
+	printf("                    value: %d\n", tss->mlevel.level_value);
+	
+	printf("                 category: ");
+	for (i = 0; i < 255; i++)
+		if (tss->mlevel.level_category[i] == 1)
+			printf("c%d ", i);
+	printf("\n");
+	printf("multi level integrity value: %d\n", tss->ilevel.level_value);
+}
+
 int main()
 {
 	int i = 0;
@@ -53,10 +68,8 @@ int main()
 	if (i < 0) {
 		perror("1get error");
 		return -1;
-	} else {
-		printf("mv %d, iv %d\n", tss2.mlevel.level_value,
-			tss2.ilevel.level_value);
-	}
+	} else 
+		display_tss(&tss2);
 
 	tss1.mlevel.level_type = 0;
 	tss1.mlevel.level_value = 5;
@@ -74,9 +87,6 @@ int main()
 	if (i < 0) {
 		perror("2get error");
 		return -1;
-	} else {
-		printf("mv %d, iv %d\n", tss2.mlevel.level_value,
-			tss2.ilevel.level_value);
-	}
-
+	} else
+		display_tss(&tss2);
 }
