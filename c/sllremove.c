@@ -5,12 +5,14 @@
 
 typedef struct node {
 	struct node *next;
-	int v; } node_t; 
+	int v;
+} node_t; 
+
 void create_sll(node_t **head)
 {
 	int i;
 	node_t *p = *head;
-	for( i = 0; i < 5; i++ ) {
+	for (i = 0; i < 7; i++) {
 		node_t *p1 = (node_t *)malloc( sizeof(node_t) );
 		p1->v = i;
 		p->next = p1;
@@ -22,7 +24,7 @@ void create_sll(node_t **head)
 void print_sll(node_t **head)
 {
 	node_t *p = *head;
-	while( p ) {
+	while (p) {
 		printf( "%d ", p->v );
 		p = p->next;
 	}
@@ -34,7 +36,7 @@ void del_sll(node_t **head, int nd)
 	node_t *pp = *head;
 	node_t *p = pp->next;
 
-	while( p ) {
+	while (p) {
 		if( p->v == nd ) {
 			pp->next = p->next;
 			p->next = NULL;
@@ -45,7 +47,7 @@ void del_sll(node_t **head, int nd)
 	}
 }
 
-void reverse_sll(node_t **head)
+node_t *reverse_sll(node_t **head)
 {
 	node_t *p;
 	node_t *n;
@@ -57,19 +59,19 @@ void reverse_sll(node_t **head)
 	p = *head;
 	n = p->next;
 
-	while(p) {
+	while (p) {
 		if(n->next != NULL) {
 			temp = n->next;
 			n->next = p;
 			p = n;
 			n = temp;
 		} else {
-			temp = n->next;
 			n->next = p;
-			p = temp;
+			p = NULL;
 		}
 	}
 	(*head)->next = NULL;
+	return n;
 }
 
 int main()
@@ -80,14 +82,17 @@ int main()
 
 	head.v = 5;
 
-	create_sll( &ph );
-	print_sll( &ph );
+	create_sll(&ph);
+	print_sll(&ph);
 
-	del_sll( &ph, nd);
-	print_sll( &ph );
+	ph = reverse_sll(&ph);
+	print_sll(&ph);
 
-	reverse_sll(&ph);
-	print_sll( &ph );
+	del_sll(&ph, nd);
+	print_sll(&ph);
+
+	ph = reverse_sll(&ph);
+	print_sll(&ph);
 
 	return 0;
 }
