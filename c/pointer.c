@@ -101,5 +101,13 @@ int main()
 	printf("ayc %c\n", ++(*(ay+5)));
 	//printf("ayc %c\n", ++(*(++ay)));   //ay is const, ay[i] not const
 
+	const char *ccs = malloc(10);
+	strncpy(ccs, "qwe123", 6);
+	char *cs = ccs;
+	//ccs[1] = '1'; //error assignment of read-only location
+	printf("ccs %s\n", ccs);
+	cs[1] = '1';
+	printf("cs %s\n", cs);
+
 	return 0;
 }
