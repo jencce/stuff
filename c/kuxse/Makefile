@@ -1,8 +1,12 @@
-bins = kuxgetfileconsyscall kuxgetfilexattr kuxgettaskxattr kuxsetfileconsyscall kuxsetfilexattr kuxsettaskxattr kuxtsleep kuxtsleeplow
+bins = kuxgetfileconsyscall kuxgetfilexattr kuxsetfileconsyscall kuxsetfilexattr kuxsettaskxattr kuxtsleep kuxtsleeplow kuxmkfifo 
+headbins = kuxgettaskxattr kuxtestfifo
 
-all: $(bins)
+all: $(bins) $(headbins)
 
-$(bins) : % : %.c
+$(bins) : % : %.c 
+	cc -o $@ $<
+
+$(headbins) : % : %.c kuxse.h
 	cc -o $@ $<
 
 install: $(bins)

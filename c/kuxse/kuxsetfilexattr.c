@@ -42,8 +42,8 @@ int main(int argc, char **argv)
 	ssize_t size;
 	ssize_t ret;
 
-	if (argc < 2 || argv[1] == NULL) {
-		printf("one arg needed\n");
+	if (argc < 3 || argv[1] == NULL || argv[2] == NULL) {
+		printf("two arg needed\n");
 		exit(-1);
 	}
 
@@ -72,6 +72,7 @@ int main(int argc, char **argv)
 #endif
 	//if (strlen(buf) == 0)
 	//	strcpy(buf, "2:1:c0:1");
+	memset(buf, 0, size);
 	strncpy(buf, argv[2], strlen(argv[2]));
 
 	buf[strlen(buf)] = '\0';
