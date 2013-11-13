@@ -5,7 +5,9 @@
 
 int main()
 {
-	char *s = "asdf";
+	char s[] = "asdf";
+	//char *s = "asdf"; //segment fault,  const string
+
 	printf("%s\n", strfry(s));
 	return 0;
 }
