@@ -16,6 +16,8 @@ int main()
 
 	printf("t:%d\n", sizeof(struct t_node));
 
+	printf("xx:%d\n", !x);
+	printf("xx:%d\n", !x+y);
 	printf("xx:%d\n", !x+y>z);
 
 	if ( !x + y > z )
