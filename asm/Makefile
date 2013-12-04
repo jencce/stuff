@@ -11,7 +11,8 @@ boot.o : boot.S
 
 # step 2: ld link .o to .elf with ld scripts
 boot.elf : boot.o
-	$(LD) boot.o -o boot.elf -e c -T$(LDFILE)
+	#$(LD) boot.o -o boot.elf -e c -T$(LDFILE) # -e option is optional
+	$(LD) boot.o -o boot.elf -T$(LDFILE)
 
 # step 3: objcopy remove useless sections in boot.elf (like .pdr,.comment)
 #         strip all symbol info, generate boot.bin
