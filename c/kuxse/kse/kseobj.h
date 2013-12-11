@@ -1,20 +1,17 @@
 /*
- *  NSA Security-Enhanced Linux (SELinux) security module
+ *  KUX security enhance(KSE) header file
  *
- *  This file contains the SELinux security data structures for kernel objects.
+ *  This file contains the KSE header files.
  *
- *  Author(s):  Stephen Smalley, <sds@epoch.ncsc.mil>
- *		Chris Vance, <cvance@nai.com>
- *		Wayne Salamon, <wsalamon@nai.com>
- *		James Morris <jmorris@redhat.com>
+ *  Authors:  Zhou Xiong, <zhouxiong@inspur.com>
  *
- *  Copyright (C) 2001,2002 Networks Associates Technology, Inc.
- *  Copyright (C) 2003 Red Hat, Inc., James Morris <jmorris@redhat.com>
+ *  Copyright (C) 2013,2014 Inspur, inc
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License version 2,
  *	as published by the Free Software Foundation.
  */
+
 #ifndef _KUXSE_OBJSEC_H_
 #define _KUXSE_OBJSEC_H_
 
@@ -26,6 +23,7 @@
 #include <linux/spinlock.h>
 #include <linux/lsm_audit.h>
 #include "flask.h"
+#include "permissions.h"
 
 /* mac_level and integrity_level resides in task_struct and
  * inode as annotations for access controll */
@@ -76,4 +74,9 @@ int iss_to_context(int init, struct mac_level *mlevel,
 int context_to_iss(struct mac_level *mlevel, struct integrity_level *ilevel,
 			const void **scontext, ssize_t *scontext_len);
 extern int kse_enabled;
+extern int kse_noyaudit;
+int task_inode_perm(struct task_struct *tsk1, struct inode *inode,
+				struct dentry *dentry, int perm);
+int task_task_perm(struct task_struct *tsk1,
+				struct task_struct *tsk2, int perm);
 #endif

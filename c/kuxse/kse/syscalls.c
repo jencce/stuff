@@ -50,6 +50,8 @@ SYSCALL_DEFINE3(mac_task_ctl, int __user, cmd, pid_t __user, pid,
 			struct task_struct *ts = find_task_by_vpid(pid);
 			if (ts == NULL)
 				return -EINVAL;
+			if (task_task_perm(current, ts, PROCESS__GETATTR) != 0)
+				return -EACCES;
 			sp = task_cred_xxx(ts, security);
 		}
 
@@ -66,9 +68,10 @@ SYSCALL_DEFINE3(mac_task_ctl, int __user, cmd, pid_t __user, pid,
 		int i;
 
 		if (pid != 0) /* alter self only */
-			return -EINVAL;
+			return -EACCES;
 
-		if (copy_from_user(&tss1, tss, sizeof(struct task_security_struct)))
+		if (copy_from_user(&tss1, tss,
+					sizeof(struct task_security_struct)))
 			return -EFAULT;
 		
 		new = prepare_creds();
@@ -82,7 +85,8 @@ SYSCALL_DEFINE3(mac_task_ctl, int __user, cmd, pid_t __user, pid,
 		tsp->mlevel.level_catsum = tss1.mlevel.level_catsum;
 
 		for (i = 0; i < MAC_CAT_MAX; i++)
-			tsp->mlevel.level_category[i] = tss1.mlevel.level_category[i];
+			tsp->mlevel.level_category[i] =
+					tss1.mlevel.level_category[i];
 
 		tsp->ilevel.level_value = tss1.ilevel.level_value;
 
@@ -128,19 +132,22 @@ SYSCALL_DEFINE3(mac_file_ctl, int __user, cmd, char __user *, name,
 		uiss.mlevel.level_flag = isp->mlevel.level_flag;
 		uiss.mlevel.level_catsum = isp->mlevel.level_catsum;
 		for (i = 0; i < MAC_CAT_MAX; i++)
-			uiss.mlevel.level_category[i] = isp->mlevel.level_category[i];
+			uiss.mlevel.level_category[i] =
+					isp->mlevel.level_category[i];
 		uiss.ilevel.level_value = isp->ilevel.level_value;
 		uiss.task_sid = isp->task_sid;
 		uiss.initialized = isp->initialized;
 
 		path_put(&path);
-		ret = copy_to_user(iss, &uiss, sizeof(struct user_inode_security_struct));
+		ret = copy_to_user(iss, &uiss,
+				sizeof(struct user_inode_security_struct));
 
 		return ret ? -EFAULT : 0;
 
 	} else {                                         /* set */
 
-		if (copy_from_user(&uiss, iss, sizeof(struct user_inode_security_struct)))
+		if (copy_from_user(&uiss, iss,
+				sizeof(struct user_inode_security_struct)))
 			return -EFAULT;
 
 		inode = path.dentry->d_inode;
@@ -153,7 +160,8 @@ SYSCALL_DEFINE3(mac_file_ctl, int __user, cmd, char __user *, name,
 		isp->mlevel.level_catsum = uiss.mlevel.level_catsum;
 
 		for (i = 0; i < MAC_CAT_MAX; i++)
-			isp->mlevel.level_category[i] = uiss.mlevel.level_category[i];
+			isp->mlevel.level_category[i] =
+					uiss.mlevel.level_category[i];
 
 		isp->ilevel.level_value = uiss.ilevel.level_value;
 		mutex_unlock(&isp->lock);

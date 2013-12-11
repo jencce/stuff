@@ -5,4 +5,4 @@
 
 obj-$(CONFIG_KUX_SECURITY_ENHANCE) := kuxse.o
 
-kuxse-y := hooks.o syscalls.o
+kuxse-y := hooks.o syscalls.o kse_audit.o

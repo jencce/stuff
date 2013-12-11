@@ -56,5 +56,6 @@
 #define SECCLASS_CAPABILITY2                             47
 #define SECCLASS_KERNEL_SERVICE                          48
 #define SECCLASS_TUN_SOCKET                              49
+#define SECCLASS_ACL                             50 
 
 #endif

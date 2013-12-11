@@ -75,12 +75,14 @@ static void kse_dump_query(struct audit_buffer *ab, struct common_audit_data *ad
 	if (tss1 == NULL)
 		return;
 
-	rc = iss_to_context(0, &tss1->mlevel, &tss1->ilevel, &scontext, &scontext_len);
+	rc = iss_to_context(0, &tss1->mlevel, &tss1->ilevel,
+					&scontext, &scontext_len);
 	if (rc)
-		audit_log_format(ab, "source type %d ml %d il %d ",
-					tss1->mlevel.level_type,
-					tss1->mlevel.level_value,
-					tss1->ilevel.level_value);
+		audit_log_format(ab, "scontext=void");
+		//audit_log_format(ab, "source type %d ml %d il %d ",
+		//			tss1->mlevel.level_type,
+		//			tss1->mlevel.level_value,
+		//			tss1->ilevel.level_value);
 	else {
 		audit_log_format(ab, "scontext=%s ", scontext);
 		kfree(scontext);
@@ -92,12 +94,14 @@ static void kse_dump_query(struct audit_buffer *ab, struct common_audit_data *ad
 		if (tss2 == NULL)
 			return;
 
-		rc = iss_to_context(0, &tss2->mlevel, &tss2->ilevel, &scontext, &scontext_len);
+		rc = iss_to_context(0, &tss2->mlevel, &tss2->ilevel,
+						&scontext, &scontext_len);
 		if (rc)
-			audit_log_format(ab, "target type %d ml %d il %d ",
-						tss2->mlevel.level_type,
-						tss2->mlevel.level_value,
-						tss2->ilevel.level_value);
+			audit_log_format(ab, "scontext=void");
+			//audit_log_format(ab, "target type %d ml %d il %d ",
+			//			tss2->mlevel.level_type,
+			//			tss2->mlevel.level_value,
+			//			tss2->ilevel.level_value);
 		else {
 			audit_log_format(ab, "tcontext=%s ", scontext);
 			kfree(scontext);
@@ -108,12 +112,14 @@ static void kse_dump_query(struct audit_buffer *ab, struct common_audit_data *ad
 		if (iss == NULL)
 			return;
 
-		rc = iss_to_context(0, &iss->mlevel, &iss->ilevel, &scontext, &scontext_len);
+		rc = iss_to_context(0, &iss->mlevel, &iss->ilevel,
+						&scontext, &scontext_len);
 		if (rc)
-			audit_log_format(ab, "target type %d ml %d il %d ",
-						iss->mlevel.level_type,
-						iss->mlevel.level_value,
-						iss->ilevel.level_value);
+			audit_log_format(ab, "scontext=void");
+			//audit_log_format(ab, "target type %d ml %d il %d ",
+			//			iss->mlevel.level_type,
+			//			iss->mlevel.level_value,
+			//			iss->ilevel.level_value);
 		else {
 			audit_log_format(ab, "tcontext=%s ", scontext);
 			kfree(scontext);
@@ -138,8 +144,7 @@ static void kse_audit_pre_callback(struct audit_buffer *ab, void *a)
 	audit_log_format(ab, "avc:  %s ",
 			 ad->kse_audit_data.result ? "denied" : "granted");
 	kse_dump_av(ab, ad);
-	audit_log_format(ab, " for ");
-}
+	audit_log_format(ab, " for "); }
 
 /**
  * kse_audit_post_callback - SELinux specific information
@@ -204,4 +209,70 @@ void kse_audit(struct task_security_struct *tss1,
 	a->lsm_pre_audit = kse_audit_pre_callback;
 	a->lsm_post_audit = kse_audit_post_callback;
 	common_lsm_audit(a);
+}
+
+/* audit interface for capability */
+void kse_cap_audit(struct task_struct *tsk,
+			int cap, int result)
+{
+	int sclass, request;
+	struct common_audit_data ad;
+
+	if (kse_noyaudit == 1 && result == 0)
+		return;
+
+	COMMON_AUDIT_DATA_INIT(&ad, CAP);
+	ad.tsk = tsk;
+	ad.u.cap = cap;
+	request = CAP_TO_MASK(cap);
+	switch (CAP_TO_INDEX(cap)) {
+	case 0:
+		sclass = SECCLASS_CAPABILITY;
+		break;
+	case 1:
+		sclass = SECCLASS_CAPABILITY2;
+		break;
+	default:
+		printk(KERN_ERR
+		       "KUXSE:  out of range capability %d\n", cap);
+		BUG();
+	}
+
+	kse_audit(task_cred_xxx(tsk, security), NULL, NULL, 0, sclass,
+			request, result, &ad);
+}
+
+/* audit interface for acl */
+void kse_acl_audit(struct inode *inode,
+			int mask, int result)
+{
+	int sclass, request = 0;
+	struct common_audit_data ad;
+
+	if (kse_noyaudit == 1 && result == 0)
+		return;
+	if (inode == NULL)
+		return;
+
+	COMMON_AUDIT_DATA_INIT(&ad, FS);
+	ad.u.fs.inode = inode;
+
+	sclass = SECCLASS_ACL;
+	request = mask & (MAY_READ | MAY_WRITE | MAY_EXEC |
+			MAY_ACCESS | MAY_APPEND | MAY_OPEN);
+
+	if (inode->i_security == NULL)
+		kse_audit(task_cred_xxx(current, security), NULL, NULL,
+					1, sclass, request, result, &ad);
+#if 0
+	else {
+		struct inode_security_struct *isec = inode->i_security;
+		if (&isec->lock) {
+			mutex_lock(&isec->lock);
+			kse_audit(task_cred_xxx(current, security), NULL,
+					isec, 1, sclass, request, result, &ad);
+			mutex_unlock(&isec->lock);
+		}
+	}
+#endif
 }

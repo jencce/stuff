@@ -42,7 +42,6 @@
 #include <linux/sysctl.h>
 #include <linux/audit.h>
 #include <linux/string.h>
-#include <linux/kse.h>
 #include <linux/mutex.h>
 #include <linux/posix-timers.h>
 #include <linux/lsm_audit.h>
@@ -134,7 +133,7 @@ static int kse_mac_compare(struct mac_level *sml, struct mac_level *tml)
 	if (sml->level_type == MAC_TYPE_GEN &&
 		tml->level_type == MAC_TYPE_GEN &&
 		sml->level_value >= tml->level_value &&
-		sml->level_catsum == tml->level_catsum &&
+		//sml->level_catsum == tml->level_catsum &&
 		category_contain(sml->level_category, tml->level_category))
 		return 1;
 
@@ -210,7 +209,8 @@ static int kse_mac_may_write(struct mac_level *sml, struct mac_level *tml)
 static int kse_integrity_may_read(struct integrity_level *sil,
 					struct integrity_level *til)
 {
-	if (kse_integrity_compare(sil, til) == -1 || kse_integrity_compare(sil, til) == 0)
+	if (kse_integrity_compare(sil, til) == -1 ||
+		kse_integrity_compare(sil, til) == 0)
 		return 0;
 	else
 		return -1;
@@ -228,7 +228,8 @@ static int kse_integrity_may_read(struct integrity_level *sil,
 static int kse_integrity_may_write(struct integrity_level *sil,
 					struct integrity_level *til)
 {
-	if (kse_integrity_compare(sil, til) == 1 || kse_integrity_compare(sil, til) == 0)
+	if (kse_integrity_compare(sil, til) == 1 ||
+		kse_integrity_compare(sil, til) == 0)
 		return 0;
 	else
 		return -1;
@@ -338,7 +339,7 @@ static int kse_may_write(struct task_security_struct *tsp1,
  *  0: granted
  * -1: denied
  * */
-static int task_task_perm(struct task_struct *tsk1,
+int task_task_perm(struct task_struct *tsk1,
 				struct task_struct *tsk2, int perm)
 {
 	struct task_security_struct *tsp1;
@@ -368,6 +369,9 @@ static int task_task_perm(struct task_struct *tsk1,
 		ret = kse_may_write(tsp1, tsp2, NULL, 0);
 		break;
 	case PROCESS__GETSESSION:
+		ret = kse_may_read(tsp1, tsp2, NULL, 0);
+		break;
+	case PROCESS__GETATTR:
 		ret = kse_may_read(tsp1, tsp2, NULL, 0);
 		break;
 	case PROCESS__GETSCHED:
@@ -407,7 +411,7 @@ static int task_task_perm(struct task_struct *tsk1,
  *  0: granted
  * -1: denied
  * */
-static int task_inode_perm(struct task_struct *tsk1, struct inode *inode,
+int task_inode_perm(struct task_struct *tsk1, struct inode *inode,
 				struct dentry *dentry, int perm)
 {
 	struct task_security_struct *tsp1;
@@ -565,88 +569,6 @@ static void kse_inode_free_security(struct inode *inode)
  * according to attrs of current task
  * i_security to xattr string
  */
-#if 0
-int iss_to_context(int init, struct inode_security_struct *iss,
-				char **scontext, u32 *scontext_len)
-{
-	const struct task_security_struct *tss = current_security();
-	int i = 0;
-	char *cate = NULL;
-	char *cp = NULL;
-	char temp[5];
-
-	*scontext = NULL;
-	*scontext_len  = 0;
-
-	if (init && tss) {
-		copy_mlevel(&iss->mlevel, &tss->mlevel);
-		iss->ilevel.level_value = tss->ilevel.level_value;
-
-		pr_debug("zx3t,csum %d, ml %d, il %d, pid %d\n",
-			tss->mlevel.level_catsum, tss->mlevel.level_value,
-			tss->ilevel.level_value, current->pid);
-		iss->initialized = 1;
-	}
-
-	pr_debug("zx3i,csum %d, ml %d, il %d, p %d\n", iss->mlevel.level_catsum,
-		iss->mlevel.level_value, iss->ilevel.level_value, current->pid);
-
-	if (iss->mlevel.level_catsum) 
-		cp = kmalloc(iss->mlevel.level_catsum*3 - 1 + 8, GFP_KERNEL);
-	else
-		cp = kmalloc(MAC_CAT_MAX*3 - 1 + 8, GFP_KERNEL);
-
-	if (cp == NULL) {
-		pr_debug("zx31, csum %d\n", iss->mlevel.level_catsum);
-		dump_stack();
-		return -ENOMEM;
-	}
-
-	if (iss->mlevel.level_catsum) {
-		cate = kmalloc(iss->mlevel.level_catsum*3-1, GFP_KERNEL);
-		if (cate == NULL) {
-			pr_debug("zx32, csum %d\n", iss->mlevel.level_catsum);
-			dump_stack();
-			return -ENOMEM;
-		}
-		memset(cate, 0, iss->mlevel.level_catsum*3-1);
-	}
-
-	for (i = 0; cate && i < MAC_CAT_MAX; i++) {
-		if (iss->mlevel.level_category[i] == 1) {
-			if (strlen(cate) > 0)
-				strcat(cate, ",");
-			memset(temp, 0, 5);
-			sprintf(temp, "c%d", i);
-			strcat(cate, temp);
-		}
-	}
-
-	/* empty category */
-	if (cate == NULL)
-		cate = kstrdup("c10", GFP_KERNEL);
-
-	sprintf(cp, "%d:%d:%s:%d", iss->mlevel.level_type,
-		iss->mlevel.level_value, cate, iss->ilevel.level_value);
-
-	pr_debug("zx33 %d:%d:%s:%d, pid %d\n", iss->mlevel.level_type,
-		iss->mlevel.level_value, cate, iss->ilevel.level_value,
-		current->pid);
-
-	if (cp == NULL)
-		cp = kstrdup("2:2:c0:2", GFP_KERNEL);
-
-	if (cate) 
-		kfree(cate);
-	
-	*scontext = cp;
-	*scontext_len = strlen(*scontext);
-
-	return 0;
-
-}
-#endif
-
 int iss_to_context(int init, struct mac_level *mlevel,
 			struct integrity_level *ilevel,
 			char **scontext, u32 *scontext_len)
@@ -657,22 +579,31 @@ int iss_to_context(int init, struct mac_level *mlevel,
 	char *cp = NULL;
 	char temp[5];
 
+	if (mlevel == NULL || ilevel == NULL)
+		return -EINVAL;
+
 	*scontext = NULL;
 	*scontext_len  = 0;
 
+#if 1
+	if (strncmp(current->comm, "vim", 3) == 0) {
+		pr_debug("itcs pid %d\n", current->pid);
+		dump_stack();
+		pr_debug("itce pid %d\n", current->pid);
+	}
+#endif
+
 	if (init && tss) {
-		//memcpy(mlevel, &tss->mlevel, sizeof(struct mac_level));
-		//memcpy(ilevel, &tss->ilevel, sizeof(struct integrity_level));
 		copy_mlevel(mlevel, &tss->mlevel);
 		ilevel->level_value = tss->ilevel.level_value;
 
-		pr_debug("zx3t,csum %d, ml %d, il %d, pid %d\n",
+		pr_debug("itc,csum %d, ml %d, il %d, pid %d\n",
 			tss->mlevel.level_catsum, tss->mlevel.level_value,
 			tss->ilevel.level_value, current->pid);
 		//iss->initialized = 1;
 	}
 
-	pr_debug("zx3i,csum %d, ml %d, il %d, p %d\n", mlevel->level_catsum,
+	pr_debug("itc,csum %d, ml %d, il %d, p %d\n", mlevel->level_catsum,
 		mlevel->level_value, ilevel->level_value, current->pid);
 
 	if (mlevel->level_catsum) 
@@ -681,7 +612,7 @@ int iss_to_context(int init, struct mac_level *mlevel,
 		cp = kmalloc(MAC_CAT_MAX*3 - 1 + 8, GFP_KERNEL);
 
 	if (cp == NULL) {
-		pr_debug("zx31, csum %d\n", mlevel->level_catsum);
+		pr_debug("itc, cp NOMEM csum %d\n", mlevel->level_catsum);
 		dump_stack();
 		return -ENOMEM;
 	}
@@ -689,7 +620,7 @@ int iss_to_context(int init, struct mac_level *mlevel,
 	if (mlevel->level_catsum) {
 		cate = kmalloc(mlevel->level_catsum*3-1, GFP_KERNEL);
 		if (cate == NULL) {
-			pr_debug("zx32, csum %d\n", mlevel->level_catsum);
+			pr_debug("itc, cate NOMEM csum\n");
 			dump_stack();
 			return -ENOMEM;
 		}
@@ -708,14 +639,14 @@ int iss_to_context(int init, struct mac_level *mlevel,
 
 	/* empty category */
 	if (cate == NULL)
-		cate = kstrdup("c10", GFP_KERNEL);
+		//cate = kstrdup("c0", GFP_KERNEL);
+		cate = kstrdup("", GFP_KERNEL);
 
-	sprintf(cp, "%d:%d:%s:%d", mlevel->level_type,
-		mlevel->level_value, cate, ilevel->level_value);
+	sprintf(cp, "%d:%d:%s:%d", mlevel->level_type, mlevel->level_value,
+		cate, ilevel->level_value);
 
-	pr_debug("zx33 %d:%d:%s:%d, pid %d\n", mlevel->level_type,
-		mlevel->level_value, cate, ilevel->level_value,
-		current->pid);
+	pr_debug("itc %d:%d:%s:%d, pid %d\n", mlevel->level_type,
+		mlevel->level_value, cate, ilevel->level_value, current->pid);
 
 	if (cp == NULL)
 		cp = kstrdup("2:2:c0:2\0", GFP_KERNEL);
@@ -727,122 +658,9 @@ int iss_to_context(int init, struct mac_level *mlevel,
 	*scontext_len = strlen(*scontext);
 
 	return 0;
-
 }
 
 /* context string to inode->i_security  */
-#if 0
-int context_to_iss(struct inode_security_struct *iss,
-				const void **scontext, ssize_t *scontext_len)
-{
-	char *cate = NULL;
-	char *p = NULL;
-	char *cp = NULL;
-	char *tp = NULL;
-	char temp[5];
-	int i, l, ucnt, ctemp;
-
-	if ( *scontext_len < 5 || *scontext == NULL )
-		return 0;
-
-	p = (char *)*scontext;
-	ucnt = 0;
-	for (i = 0; p[i] && i < *scontext_len; i++) {
-		if (p[i] == ':')
-			ucnt++;
-	}
-	if (ucnt != 3)
-		return 0;
-
-	cp = (char *)*scontext;
-	if ( cp[0] >= '0' && cp[0] <= '9' )
-		iss->mlevel.level_type = cp[0] - '0';
-	else
-		iss->mlevel.level_type = 9;
-
-	while (*cp != ':')
-		cp++;
-	cp++;
-
-	if ( *cp >= '0' && *cp <= '9' )
-		iss->mlevel.level_value = cp[0] - '0';
-	else
-		iss->mlevel.level_value = 9;
-
-	while (*cp != ':')
-		cp++;
-	cp++;
-
-	cate = kmalloc(*scontext_len, GFP_KERNEL);
-	if (cate == NULL) {
-		pr_debug("zx1\n");
-		return -ENOMEM;
-	}
-	memset(cate, 0, (int)*scontext_len);
-	memset(temp, 0, 5);
-
-	p = cate;
-	while (*cp != ':')
-		*p++ = *cp++;
-	cp++;
-
-	if ( *cp >= '0' && *cp <= '9' )
-		iss->ilevel.level_value = cp[0] - '0';
-	else
-		iss->ilevel.level_value = 9;
-
-	pr_debug("zx11 scontext:%s, %d:%d:%s:%d, pid %d\n", (char *)*scontext,
-			iss->mlevel.level_type, iss->mlevel.level_value,
-			cate, iss->ilevel.level_value, current->pid);
-
-	for (i = 0; i < MAC_CAT_MAX; i++)
-		iss->mlevel.level_category[i] = 0;
-
-	p = cate;
-	tp = cate;
-	l = strlen(cate);
-	ctemp = 0;
-	ucnt = 0;
-	
-	for (i = 0; i < l; i++) {
-		if (cate[i] == ',') {
-			tp = &cate[i-1];
-			ucnt = tp - p + 1;
-			memset(temp, 0, 5);
-			strncpy(temp, p, ucnt);
-			sscanf(temp, "c%d", &ctemp);
-			iss->mlevel.level_category[ctemp] = 1;
-			p = &cate[i+1];
-			continue;
-		}
-		if (i == l - 1 && cate[i] != ',') {
-			tp = &cate[i];
-			ucnt = tp - p + 1;
-			memset(temp, 0, 5);
-			strncpy(temp, p, ucnt);
-			sscanf(temp, "c%d", &ctemp);
-			iss->mlevel.level_category[ctemp] = 1;
-		}
-	}
-
-	l = 0;
-	for (i = 0; i < MAC_CAT_MAX; i++)
-		if (iss->mlevel.level_category[i] == 1)
-			l++;
-	iss->mlevel.level_catsum = l;
-
-	pr_debug("zx12 %d:%d:%d:%d, pid %d\n", iss->mlevel.level_type,
-		iss->mlevel.level_value, iss->mlevel.level_catsum,
-		iss->ilevel.level_value, current->pid);
-
-	
-	if (cate && strlen(cate))
-		kfree(cate);
-
-	return 0;
-}
-#endif
-
 int context_to_iss(struct mac_level *mlevel, struct integrity_level *ilevel,
 				const void **scontext, ssize_t *scontext_len)
 {
@@ -853,8 +671,19 @@ int context_to_iss(struct mac_level *mlevel, struct integrity_level *ilevel,
 	char temp[5];
 	int i, l, ucnt, ctemp;
 
-	if ( *scontext_len < 5 || *scontext == NULL )
+	if (mlevel == NULL || ilevel == NULL)
 		return -EINVAL;
+
+	if (*scontext_len < 5 || *scontext == NULL)
+		return -EINVAL;
+
+#if 1
+	if (strncmp(current->comm, "vim", 3) == 0) {
+		pr_debug("ctis pid %d\n", current->pid);
+		dump_stack();
+		pr_debug("ctie pid %d\n", current->pid);
+	}
+#endif
 
 	p = (char *)*scontext;
 	ucnt = 0;
@@ -862,28 +691,39 @@ int context_to_iss(struct mac_level *mlevel, struct integrity_level *ilevel,
 		if (p[i] == ':')
 			ucnt++;
 	}
+	/* number of ':' == 3 */
 	if (ucnt != 3)
 		return -EINVAL;
 
+	/* first letter, mlevel->level_type */
+	ucnt = 1; //letters' counter
 	cp = (char *)*scontext;
 	if ( cp[0] >= '0' && cp[0] <= '9' )
 		mlevel->level_type = cp[0] - '0';
 	else
 		mlevel->level_type = 0;
 
-	while (*cp != ':')
+	while (*cp != ':') {
 		cp++;
+		ucnt++;
+	}
 	cp++;
+	ucnt++;
 
+	/* second letter, mlevel->level_value */
 	if ( *cp >= '0' && *cp <= '9' )
 		mlevel->level_value = cp[0] - '0';
 	else
 		mlevel->level_value = 0;
 
-	while (*cp != ':')
+	while (*cp != ':') {
 		cp++;
+		ucnt++;
+	}
 	cp++;
+	ucnt++;
 
+	/* third field, mlevel categories, like c0,c1 */
 	cate = kmalloc(*scontext_len, GFP_KERNEL);
 	if (cate == NULL)
 		return -ENOMEM;
@@ -891,16 +731,28 @@ int context_to_iss(struct mac_level *mlevel, struct integrity_level *ilevel,
 	memset(temp, 0, 5);
 
 	p = cate;
-	while (*cp != ':')
+	while (*cp != ':') {
 		*p++ = *cp++;
+		ucnt++;
+	}
 	cp++;
+	ucnt++;
 
+	if (ucnt > *scontext_len)
+		return -EINVAL;
+
+	/* fourth field, ilevel value */
 	ctemp = 0;
-	if (isdigit(cp[0])) {
-		if (isdigit(cp[1]))
+	if (ucnt == *scontext_len) {
+		if (isdigit(cp[0]))
+			ctemp = cp[0] - '0';
+		else
+			return -EINVAL;
+	} else if ((ucnt + 1) == *scontext_len) {
+		if (isdigit(cp[0]) && isdigit(cp[1]))
 			ctemp = (cp[0] - '0')*10 + cp[1] - '0';
 		else
-			ctemp = cp[0] - '0';
+			return -EINVAL;
 	} else
 		return -EINVAL;
 
@@ -909,7 +761,7 @@ int context_to_iss(struct mac_level *mlevel, struct integrity_level *ilevel,
 	else
 		return -EINVAL;
 
-	pr_debug("zx11 scontext:%s, %d:%d:%s:%d, pid %d\n", (char *)*scontext,
+	pr_debug("cti scon:%s, %d:%d:%s:%d, pid %d\n", (char *)*scontext,
 			mlevel->level_type, mlevel->level_value,
 			cate, ilevel->level_value, current->pid);
 
@@ -945,11 +797,13 @@ int context_to_iss(struct mac_level *mlevel, struct integrity_level *ilevel,
 
 	l = 0;
 	for (i = 0; i < MAC_CAT_MAX; i++)
-		if (mlevel->level_category[i] == 1)
+		if (mlevel->level_category[i] == 1) {
 			l++;
+			pr_debug("category[%d] == 1\n", i);
+		}
 	mlevel->level_catsum = l;
 
-	pr_debug("zx12 %d:%d:%d:%d, pid %d\n", mlevel->level_type,
+	pr_debug("cti %d:%d:%d:%d, pid %d\n", mlevel->level_type,
 		mlevel->level_value, mlevel->level_catsum,
 		ilevel->level_value, current->pid);
 
@@ -966,7 +820,6 @@ static int inode_doinit_with_dentry(struct inode *inode,
 {
 	struct inode_security_struct *isec = inode->i_security;
 	struct dentry *dentry;
-#define INITCONTEXTLEN 255
 	char *context = NULL;
 	unsigned len = 0;
 	int rc = 0;
@@ -977,7 +830,7 @@ static int inode_doinit_with_dentry(struct inode *inode,
 	mutex_lock(&isec->lock);
 	if (!inode->i_op->getxattr) {
 		/* no getxattr iop, so init */
-		pr_debug("no xattr iop when init\n");
+		pr_debug("no xattr iop when init, pid %d\n", current->pid);
 		isec->task_sid = current_uid();
 		init_mlevel(&isec->mlevel);
 		isec->ilevel.level_value = 0;
@@ -998,7 +851,15 @@ static int inode_doinit_with_dentry(struct inode *inode,
 		goto out;
 	}
 
-	len = INITCONTEXTLEN;
+	/* Query for the right size. */
+	rc = inode->i_op->getxattr(dentry, XATTR_NAME_KSE,
+				   NULL, 0);
+	if (rc < 0) {
+		dput(dentry);
+		goto out;
+	}
+
+	len = rc;
 	context = kmalloc(len+1, GFP_NOFS);
 	if (!context) {
 		rc = -ENOMEM;
@@ -1050,6 +911,14 @@ static int inode_doinit_with_dentry(struct inode *inode,
 		ssize_t sclen = strlen(context);
 		rc = context_to_iss(&isec->mlevel, &isec->ilevel,
 				(const void **)&context, &sclen);
+		if (rc) {
+			printk(KERN_ERR "KUXSE:  unable to map value '%s' "
+				"to context for (%s, %lu), rc=%d, size=%ld\n",
+				(char *)context, inode->i_sb->s_id,
+				inode->i_ino, -rc, sclen);
+			dump_stack();
+			return rc;
+		}
 	}
 	kfree(context);
 
@@ -1099,30 +968,6 @@ static int kse_inode_init_security(struct inode *inode, struct inode *dir,
 	return 0;
 }
 
-static int kse_inode_setxattr(struct dentry *dentry, const char *name,
-				  const void *value, size_t size, int flags)
-{
-	struct inode *inode = dentry->d_inode;
-	struct inode_security_struct *isec = inode->i_security;
-	const struct task_security_struct *tsec = current_security();
-
-	pr_debug("kux sx isec %d:%d:%d:%d, pid %d\n", isec->mlevel.level_type,
-		isec->mlevel.level_value, isec->mlevel.level_catsum,
-		isec->ilevel.level_value, current->pid);
-
-	pr_debug("kux sx tsec %d:%d:%d:%d, pid %d\n", tsec->mlevel.level_type,
-		tsec->mlevel.level_value, tsec->mlevel.level_catsum,
-		tsec->ilevel.level_value, current->pid);
-
-	if (strcmp(name, XATTR_NAME_KSE))
-		return -EINVAL;
-
-	if (!is_owner_or_cap(inode))
-		return -EPERM;
-
-	return 0;
-}
-
 static void kse_inode_post_setxattr(struct dentry *dentry, const char *name,
 					const void *value, size_t size,
 					int flags)
@@ -1148,8 +993,9 @@ static void kse_inode_post_setxattr(struct dentry *dentry, const char *name,
 	rc = context_to_iss(&isec->mlevel, &isec->ilevel, &value, &size);
 	if (rc) {
 		printk(KERN_ERR "KUXSE:  unable to map value '%s' to context"
-		       "for (%s, %lu), rc=%d\n", (char *)value,
-		       inode->i_sb->s_id, inode->i_ino, -rc);
+		       "for (%s, %lu), rc=%d, size=%ld\n", (char *)value,
+		       inode->i_sb->s_id, inode->i_ino, -rc, size);
+		dump_stack();
 		return;
 	}
 
@@ -1161,7 +1007,8 @@ static void kse_inode_post_setxattr(struct dentry *dentry, const char *name,
  *
  * Permission check is handled by kse_inode_getxattr hook.
  */
-static int kse_inode_getsecurity(const struct inode *inode, const char *name, void **buffer, bool alloc)
+static int kse_inode_getsecurity(const struct inode *inode, const char *name,
+					void **buffer, bool alloc)
 {
 	u32 size;
 	int error;
@@ -1198,118 +1045,25 @@ static int kse_inode_setsecurity(struct inode *inode, const char *name,
 		return -EACCES;
 
 	rc = context_to_iss(&isec->mlevel, &isec->ilevel, &value, &size);
-	if (rc)
+	if (rc) {
+		printk(KERN_ERR "KUXSE:  unable to map value '%s' to context"
+		       "for (%s, %lu), rc=%d, size=%ld\n", (char *)value,
+		       inode->i_sb->s_id, inode->i_ino, -rc, size);
+		dump_stack();
 		return rc;
+	}
 
 	return 0;
 }
 
-static int kse_inode_listsecurity(struct inode *inode, char *buffer, size_t buffer_size)
+static int kse_inode_listsecurity(struct inode *inode, char *buffer,
+					size_t buffer_size)
 {
 	const int len = sizeof(XATTR_NAME_KSE);
 	if (buffer && len <= buffer_size)
 		memcpy(buffer, XATTR_NAME_KSE, len);
 	return len;
 }
-
-#if 0
-static int file_alloc_security(struct file *file)
-{
-	struct file_security_struct *fsec;
-	u32 sid = current_sid();
-
-	fsec = kzalloc(sizeof(struct file_security_struct), GFP_KERNEL);
-	if (!fsec)
-		return -ENOMEM;
-
-	fsec->sid = sid;
-	fsec->fown_sid = sid;
-	file->f_security = fsec;
-
-	return 0;
-}
-
-static void file_free_security(struct file *file)
-{
-	struct file_security_struct *fsec = file->f_security;
-	file->f_security = NULL;
-	kfree(fsec);
-}
-
-static int kse_file_alloc_security(struct file *file)
-{
-	return file_alloc_security(file);
-}
-
-static void kse_file_free_security(struct file *file)
-{
-	file_free_security(file);
-}
-
-/* Check whether a task can use an open file descriptor to
-   access an inode in a given way.  Check access to the
-   descriptor itself, and then use dentry_has_perm to
-   check a particular permission to the file.
-   Access to the descriptor is implicitly granted if it
-   has the same SID as the process.  If av is zero, then
-   access to the file is not checked, e.g. for cases
-   where only the descriptor is affected like seek. */
-static int file_has_perm(const struct cred *cred,
-			 struct file *file,
-			 u32 av)
-{
-	//struct file_security_struct *fsec = file->f_security;
-	struct inode *inode = file->f_path.dentry->d_inode;
-	struct common_audit_data ad;
-	//u32 sid = cred_sid(cred);
-	int rc;
-
-	COMMON_AUDIT_DATA_INIT(&ad, FS);
-	ad.u.fs.path = file->f_path;
-
-#if 0
-	if (sid != fsec->sid) {
-		rc = avc_has_perm(sid, fsec->sid,
-				  SECCLASS_FD,
-				  FD__USE,
-				  &ad);
-		if (rc)
-			goto out;
-	}
-#endif
-
-	/* av is zero if only checking access to the descriptor. */
-	rc = 0;
-	if (av)
-		rc = inode_has_perm(cred, inode, av, &ad);
-
-//out:
-	return rc;
-}
-
-/* Convert a Linux file to an access vector. */
-static inline u32 file_to_av(struct file *file)
-{
-	u32 av = 0;
-
-	if (file->f_mode & FMODE_READ)
-		av |= FILE__READ;
-	if (file->f_mode & FMODE_WRITE) {
-		if (file->f_flags & O_APPEND)
-			av |= FILE__APPEND;
-		else
-			av |= FILE__WRITE;
-	}
-	if (!av) {
-		/*
-		 * Special file opened with flags 3 for ioctl-only use.
-		 */
-		av = FILE__IOCTL;
-	}
-
-	return av;
-}
-#endif
 
 static int kse_bprm_set_creds(struct linux_binprm *bprm)
 {
@@ -1366,8 +1120,6 @@ static int kse_bprm_set_creds(struct linux_binprm *bprm)
 static void kse_bprm_committing_creds(struct linux_binprm *bprm)
 {
 	struct task_security_struct *new_tsec;
-	//struct rlimit *rlim, *initrlim;
-	//int rc, i;
 
 	new_tsec = bprm->cred->security;
 	if (new_tsec)
@@ -1381,8 +1133,6 @@ static void kse_bprm_committing_creds(struct linux_binprm *bprm)
 static void kse_bprm_committed_creds(struct linux_binprm *bprm)
 {
 	const struct task_security_struct *tsec = current_security();
-	//struct itimerval itimer;
-	//int rc, i;
 
 	if (tsec)
 		return;
@@ -1434,14 +1184,6 @@ static int kse_cred_prepare(struct cred *new, const struct cred *old,
 	tsec = kmemdup(old_tsec, sizeof(struct task_security_struct), gfp);
 	if (!tsec)
 		return -ENOMEM;
-
-	/* for test*/
-#if 0
-	if (current_cred()->uid != 0) {
-		tsec->mlevel.level_value = 1;
-		tsec->ilevel.level_value = 1;
-	}
-#endif
 
 	new->security = tsec;
 	return 0;
@@ -1555,7 +1297,8 @@ static int kse_inode_create(struct inode *dir, struct dentry *dentry, int mask)
 	return task_inode_perm(current, dir, dentry, FILE__CREATE);
 }
 
-static int kse_inode_link(struct dentry *old_dentry, struct inode *dir, struct dentry *new_dentry)
+static int kse_inode_link(struct dentry *old_dentry, struct inode *dir,
+				struct dentry *new_dentry)
 {
 	return task_inode_perm(current, dir, new_dentry, FILE__LINK);
 }
@@ -1565,7 +1308,8 @@ static int kse_inode_unlink(struct inode *dir, struct dentry *dentry)
 	return task_inode_perm(current, dir, dentry, FILE__UNLINK);
 }
 
-static int kse_inode_symlink(struct inode *dir, struct dentry *dentry, const char *name)
+static int kse_inode_symlink(struct inode *dir, struct dentry *dentry,
+				const char *name)
 {
 	return task_inode_perm(current, dir, dentry, FILE__LINK);
 }
@@ -1580,13 +1324,14 @@ static int kse_inode_rmdir(struct inode *dir, struct dentry *dentry)
 	return task_inode_perm(current, dir, dentry, FILE__WRITE);
 }
 
-static int kse_inode_mknod(struct inode *dir, struct dentry *dentry, int mode, dev_t dev)
+static int kse_inode_mknod(struct inode *dir, struct dentry *dentry,
+				int mode, dev_t dev)
 {
 	return task_inode_perm(current, dir, dentry, FILE__WRITE);
 }
 
 static int kse_inode_rename(struct inode *old_inode, struct dentry *old_dentry,
-				struct inode *new_inode, struct dentry *new_dentry)
+			struct inode *new_inode, struct dentry *new_dentry)
 {
 	return task_inode_perm(current, old_inode, old_dentry, FILE__WRITE);
 }
@@ -1596,7 +1341,8 @@ static int kse_inode_readlink(struct dentry *dentry)
 	return task_inode_perm(current, dentry->d_inode, dentry, FILE__WRITE);
 }
 
-static int kse_inode_follow_link(struct dentry *dentry, struct nameidata *nameidata)
+static int kse_inode_follow_link(struct dentry *dentry,
+					struct nameidata *nameidata)
 {
 	return task_inode_perm(current, dentry->d_inode, dentry, FILE__WRITE);
 }
@@ -1613,6 +1359,7 @@ static int file_mask_to_av_check(struct inode *inode, int mask)
 			if (rc)
 				return rc;
 		}
+
 		if (mask & MAY_READ) {
 			rc = task_inode_perm(current, inode, NULL, FILE__READ);
 			if (rc)
@@ -1623,7 +1370,9 @@ static int file_mask_to_av_check(struct inode *inode, int mask)
 			rc = task_inode_perm(current, inode, NULL, FILE__APPEND);
 			if (rc)
 				return rc;
-		} else if (mask & MAY_WRITE) {
+		}
+		
+		if (mask & MAY_WRITE) {
 			rc = task_inode_perm(current, inode, NULL, FILE__WRITE);
 			if (rc)
 				return rc;
@@ -1671,6 +1420,30 @@ static int kse_inode_getattr(struct vfsmount *mnt, struct dentry *dentry)
 	return task_inode_perm(current, dentry->d_inode, dentry, FILE__GETATTR);
 }
 
+static int kse_inode_setxattr(struct dentry *dentry, const char *name,
+				  const void *value, size_t size, int flags)
+{
+	struct inode *inode = dentry->d_inode;
+	struct inode_security_struct *isec = inode->i_security;
+	const struct task_security_struct *tsec = current_security();
+
+	pr_debug("kux sx isec %d:%d:%d:%d, pid %d\n", isec->mlevel.level_type,
+		isec->mlevel.level_value, isec->mlevel.level_catsum,
+		isec->ilevel.level_value, current->pid);
+
+	pr_debug("kux sx tsec %d:%d:%d:%d, pid %d\n", tsec->mlevel.level_type,
+		tsec->mlevel.level_value, tsec->mlevel.level_catsum,
+		tsec->ilevel.level_value, current->pid);
+
+	//if (strcmp(name, XATTR_NAME_KSE))
+	//	return -EINVAL;
+
+	if (!is_owner_or_cap(inode))
+		return -EPERM;
+
+	return task_inode_perm(current, dentry->d_inode, dentry, FILE__SETATTR);
+}
+
 static int kse_inode_getxattr(struct dentry *dentry, const char *name)
 {
 	return task_inode_perm(current, dentry->d_inode, dentry, FILE__GETATTR);
@@ -1683,8 +1456,8 @@ static int kse_inode_listxattr(struct dentry *dentry)
 
 static int kse_inode_removexattr(struct dentry *dentry, const char *name)
 {
-	if (strcmp(name, XATTR_NAME_KSE) != 0)
-		return -EACCES;
+	//if (strcmp(name, XATTR_NAME_KSE) != 0)
+	//	return -EACCES;
 
 	return task_inode_perm(current, dentry->d_inode, dentry, FILE__SETATTR);
 }
@@ -1878,8 +1651,8 @@ static __init int kse_init(void)
 	cred_init_security();
 
 	kse_inode_cache = kmem_cache_create("kse_inode_security",
-					    sizeof(struct inode_security_struct),
-					    0, SLAB_PANIC, NULL);
+					   sizeof(struct inode_security_struct),
+					   0, SLAB_PANIC, NULL);
 	
 	/*
 	secondary_ops = security_ops;
