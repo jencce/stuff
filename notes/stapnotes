@@ -1,0 +1,132 @@
+systemtap
+
+1 deploy
+要使用stap，需要安装对应环境kernel包的-devel, -debuginfo, -debuginfo-common包。
+Systemtap本身需要安装systemtap, systemtap-runtime。
+yum install 和 debuginfo-install 方便。
+
+2 使用
+本机试验：stap -v -e 'probe vfs.read {printf("read performed\n");exit();}'
+
+3 cross instrumentation
+可以在一台机器上通过脚本编译生成模块，再到其他机器运行，这些机器运行的kernel版本可以不一样。
+3.1 部署
+其他机器上就不要部署麻烦的debuginfo环境，只需要安装一个systemtap-runtime的包。
+当然，这样其他机器运行kernel的debuginfo包需要安装在编译模块的机器上。
+instrumentation module, the kernel module which is built from a systemtap
+script on the host system, and will be loaded on the target kernel of 
+target system.
+3.2 编译生成
+stap -r kernel-version script -m module_name
+在host system上运行这条命令，kernel-version是target kernel的版本，script是要生成模块
+需要的脚本，module_name是给模块取的名字，命令结果会生成module_name.ko。
+3.3 运行
+在target system中，将module_name.ko拷贝过来，staprun module_name.ko就可以运行了。
+3.4 注意
+host system在编译target system的模块的时候，两者的架构和运行的kernel应该一样。
+那么-r参数有用么。。。待验证。
+验证1，在2.6.32-358.el6.x86_64内核运行时，-r指定2.6.32-358.18.1.el6.x86_64，编译
+出来的模块在后者运行的时候能用，但是这个版本太近。
+
+4 运行systemtap脚本
+由于最终是编译成内核模块来加载，所以运行stap脚本等需要提高用户权限。全部root不科学。
+rhel5的begainner guide：
+“stapdev用户组允许用户使用stap运行stap脚本和使用staprun运行instrumentation module。
+stapusr用户组只允许用户使用staprun，且只允许运行/lib/modules/version/systemtap目录
+下道模块，而这个模块是属于root的。”
+
+rhel6.4实测：
+普通用户zx不能运行stap和staprun，将zx加入stapdev之后可以运行stap，无法运行staprun，所以
+无法运行脚本。将zx再加入stapusr之后，可以执行脚本了。usermod
+
+这样可以在不使用root权限的情况下运行stap。
+man stap man staprun
+
+5 systemtap机制
+stap脚本的背后机制就是定义event，再给他们hander，当stap运行脚本时，监控event，当其发生的
+时候，kernel以快速子程序道方式运行handler，再恢复。
+event包括：进入和退出函数，定时器到时，会话终结等；handler是一些脚本表示event发生时做些什
+么，通常包括抽取信息，保存到外部变量，打印结果等。
+
+6 systemtap步骤
+a.检查脚本，将其中引用的tapset替换掉，tapset就是系统的stap库，一些写好的脚本；
+b.将脚本翻译为c语言，再编译为内核模块；
+c.加载模块，使能所有道探测；
+d. 如果事件发生，那么handler被调用；
+e.当会话结束，探测结束，内核模块被删除。
+
+7 systemtap脚本
+脚本指明了要收集何种信息，以及信息收集好之后做什么。
+一个event和其handler合称为一个探测probe。一个脚本script可以有多个探测probe。
+脚本后缀名为.stp，通常包含如下格式道probe:
+	probe event {statements}
+每个probe可以监控多个event，事件使用逗号分开。当指出多个事件时，任何一个事件发生都会触发handler。
+事件发生时，{statements}被顺序执行，里面的语法和C语言类似，可以嵌套{}；也可以定义函数。
+
+
+9 events
+stap events分为两种，同步和异步的。
+
+同步事件
+表示内核中指令运行的同时产生的事件。如：
+syscall.system_call：syscall.open 
+vfs.file_operation：vfs.open.return
+kernel.function("func"): kernel.function("*@net/socket.c")
+module("module").function("func"): module("ext3").function("*")
+
+比如查看哪些进程在调用write：
+stap -v -e 'probe syscall.write {printf("%s %d write\n", execname(), pid());}'
+
+异步事件
+不和代码中的指令挂钩。一般就是定时器，计数器等。
+begin,end,timers
+每三秒打印一次。
+probe timer.s(3)
+{
+	printf("%s(%d)\n", execname(), pid());
+}
+
+注意：stap一直执行探测，直到exit()被调用，或者用户ctrl+c。
+
+10 stap functions
+pid uid tid cpu time, etc..
+thread_indent 可以描述简单的调用关系，时间，名字等。
+target()当使用stap -x process id 或 stap -c command时，使用这个函数得到对应的pid
+
+
+11 基本的stap handler结构
+变量
+在一个handler内可以随便初始化变量，其类型随其值的类型而定。它的作用域和生命周期都在这个handler之内。
+全局的变量在probe之外，使用global关键字初始化。
+if/else while for == >= <= != 
+也可以使用命令行参数数字$1 字符串@1
+
+12 associative array
+就是一个唯一的key对应一个值value。必须声明为global。
+访问它的语法是：array_name[index_expression]
+index+expression最多可以有五句，由逗号分隔，也就是key可以有多重信息：
+device[pid(),execname(),uid(),ppid(),"w"]=devname
+当key以及存在时，值被更新，当key没有找到时，返回0或空串.
+
+if ("str" in array)可以判断串"str"是否是array中的key。
+
+利用associative array可以做静态累积统计计算。
+array[vars] <<< count
+这个表达式将count存入array[vars]，这个时候array的值的类型是stat，不是简单的数字，不能直接
+读出来使用，要：
+	@extractor(array[vars])
+extractor可以count, sum, min, max, avg。例如@count(array[1])就是array[1]中统计
+数据的个数，sum是和，等。
+
+13 tapsets
+是提前写好的供使用的stap脚本，它们的目的不是直接运行，而是提供其他脚本能拿来使用的库，其中有
+一些定义好的函数，handler，events等。
+它们的后缀也是.stp，在目录/usr/share/systamtap/tapset/。
+
+14 call.return
+probe vfs.read.return
+{
+	$return  这里这个变量表示这个调用返回的值。这里就是读到的bytes
+}
+
+
