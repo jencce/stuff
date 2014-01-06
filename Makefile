@@ -1,7 +1,8 @@
 # Makefile
 all: prog
 
-prog: ls.c
+prog: ls arch
+ls: ls.c
 	@if [ -d /selinux ];\
 	then\
 		echo "cc -o ls ls.c -DSELINUX -lselinux";\
@@ -11,7 +12,12 @@ prog: ls.c
 		cc -o ls ls.c;\
 	fi
 
-debug: ls.c
+arch: arch.c
+	cc arch.c -o arch
+
+debug: ls_debug arch_debug
+
+ls_debug: ls.c
 	@if [ -d /selinux ];\
 	then\
 		echo "cc -g -o ls -DLS_DEBUG -DSELINUX ls.c -lselinux";\
@@ -21,6 +27,8 @@ debug: ls.c
 		cc -g -o ls -DLS_DEBUG ls.c;\
 	fi
 
+arch_debug: arch.c
+	cc -g arch.c -o arch
 
 .PHONY: test
 test:
@@ -38,4 +46,4 @@ lint:
 
 .PHONY: clean
 clean:
-	rm -f ls
+	rm -f ls arch a.out
