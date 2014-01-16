@@ -1,0 +1,17 @@
+1
+	tar xf Downloads/linux.gz -C test/
+2
+	[zx@ZX run0113]$ cat tt
+	nfs nfs nfs
+	[zx@ZX run0113]$ grep -c nfs tt
+	1
+	[zx@ZX run0113]$ grep -o nfs tt
+	nfs
+	nfs
+	nfs
+	[zx@ZX run0113]$ grep nfs tt
+	nfs nfs nfs
+
+
+
+

@@ -1,0 +1,39 @@
+1.apply patch form file
+	git apply 0001-xxx.oatch
+
+2.apply commit form another branch
+	git cherry-pick <asdlajdjasdjal01230183>
+
+3.squash commits
+	git rebase --interactive HEAD~2
+
+4.revert the last commit
+
+	# revert file changes on disk
+	git reset --hard HEAD^
+
+
+	# do not revert file changes on disk, keep it changed not staged
+	git reset  HEAD^
+
+
+5.find lost commit deleted by mistake
+	git reflog
+	...
+	git reset --hard zxzxzx
+
+6.rebase
+	git rebase [<upstream>] [<branch>]
+
+       	step1: All changes made by commits in the current branch but that are not in <upstream> are saved to a temporary area.
+	step3: The current branch is reset to <upstream>. 
+       	step2: The commits that were previously saved into the temporary area are then reapplied to the current branch, one by one, in order. Note that any
+       		commits in HEAD which introduce the same textual changes as a commit in HEAD..<upstream> are omitted.
+
+       If <branch> is specified, git rebase will perform an automatic git checkout <branch> before doing anything else. Otherwise it remains on the
+       current branch.
+
+       If <upstream> is not specified, the upstream configured in branch.<name>.remote and branch.<name>.merge options will be used; see git-config(1) for
+       details. If you are currently not on any branch or if the current branch does not have a configured upstream, the rebase will abort.
+
+
