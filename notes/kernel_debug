@@ -1,0 +1,42 @@
+1. by Bruce Fields
+GDB Tricks
+
+When you encounter an OOPS, you'll get a Call trace like:
+
+Call Trace:
+
+[<ffffffff8110a3ef>] kfree+0x63/0xfc
+[<ffffffffa011e18e>] nfs_free_parsed_mount_data+0x24/0xc1 [nfs]
+[<ffffffffa0121743>] nfs_fs_mount+0x5ac/0x61c [nfs]
+[<ffffffff81116a8d>] mount_fs+0x69/0x158
+[<ffffffff810ea5ad>] ? __alloc_percpu+0x10/0x12
+[<ffffffff8112b8a8>] vfs_kern_mount+0x65/0xc4
+[<ffffffff8112bf07>] do_kern_mount+0x4d/0xdf
+[<ffffffff8112d6b7>] do_mount+0x64b/0x6af
+[<ffffffff8112cfd0>] ? copy_mount_options+0xcb/0x12e
+[<ffffffff8112d81e>] sys_mount+0x88/0xc2
+[<ffffffff81426be9>] system_call_fastpath+0x16/0x1b
+
+There is a simple way to translate a <symbol>/<offset> to a line number:
+
+    run gdb passing the correct kernel module (.ko) as the only argument
+    use the "l * (<symbol>+<offset>)" command 
+
+
+$ gdb obj/fs/nfs/nfs.ko 
+
+...
+
+(gdb) l * (nfs_free_parsed_mount_data+0x24)
+0x918e is in nfs_free_parsed_mount_data (/home/dros/build/src/fs/nfs/super.c:924).
+919	
+920	static void nfs_free_parsed_mount_data(struct nfs_parsed_mount_data *data)
+921	{
+922		if (data) {
+923			kfree(data->client_address);
+924			kfree(data->mount_server.hostname);
+925			kfree(data->nfs_server.export_path);
+926			kfree(data->nfs_server.hostname);
+927			kfree(data->fscache_uniq);
+928			security_free_mnt_opts(&data->lsm_opts);
+

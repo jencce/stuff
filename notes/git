@@ -36,4 +36,15 @@
        If <upstream> is not specified, the upstream configured in branch.<name>.remote and branch.<name>.merge options will be used; see git-config(1) for
        details. If you are currently not on any branch or if the current branch does not have a configured upstream, the rebase will abort.
 
+7.objects
+	blob:	like regular file, SHA-1
+	tree:	like dir, contains blobs or trees
+	commit:	point to top tree object at specific time
+	refs:	point to specific commit and it's history, as branch
+	HEAD:	current ref
+	tag:	point to specific commit and dont change, like no-change ref
+	remote:	refs keep lastest status of remote branches
+		|__refspec, "remote" field in .git/config defines refs to fetch
+
+ 
 
