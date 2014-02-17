@@ -1,5 +1,7 @@
 #! /bin/bash
 
+echo $#
+
 if [ $# -lt 2 ]
 then
 	echo "at least 2 args needed"

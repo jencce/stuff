@@ -35,4 +35,15 @@ trap [-lp] [[arg] sigspec ...]
               trap returns true.
 
 
+4 
+awk '/zzz/{match(s, r, M); print M[1]}'
+	match function, returns the position in s where regular express r occurs, or 0 if not occured.
+	If array M is specified, it is cleared and its 0th element contains the portion of s matched the entire RE r, its
+	1st to nth elements contains portions of s matches corresponding parenthesized sub RE in r.
+
+
+
+5
+(gdb)set follow-fork-mode <parent|child>
+
 
