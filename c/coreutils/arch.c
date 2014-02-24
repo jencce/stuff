@@ -3,10 +3,18 @@
 #include <errno.h>
 #include <stdio.h>
 
-int main()
+int main(int argc, char **argv)
 {
 	struct utsname utsn;
-	int ret;
+	int ret, i;
+
+	if (argc != 1) {
+		printf("arch: extra operand");
+		for (i = 1; i < argc; i++)
+			printf(" '%s'", argv[i]);
+		printf("\n");
+		return -1;
+	}
 
 	ret = uname(&utsn);
 	if (ret != 0) {

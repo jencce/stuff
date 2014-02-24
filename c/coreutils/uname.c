@@ -7,6 +7,7 @@
 
 enum {
 	PRINT_ALL,
+	PRINT_SYSNAME,
 	PRINT_KERNEL_NAME,
 	PRINT_NODENAME,
 	PRINT_KERNEL_RELEASE,
@@ -96,7 +97,10 @@ int main(int argc, char **argv)
 	struct utsname utsn;
 	int ret;
 
-	parse_params(argc, argv, &print_flag);
+	if (argc > 1)
+		parse_params(argc, argv, &print_flag);
+	else
+		print_flag = PRINT_SYSNAME;
 
 	ret = uname(&utsn);
 	if (ret != 0) {
@@ -109,6 +113,30 @@ int main(int argc, char **argv)
 		printf("%s %s %s %s %s %s %s GNU/Linux\n", utsn.sysname,
 			utsn.nodename, utsn.release, utsn.version,
 				utsn.machine, utsn.machine, utsn.machine);
+		break;
+	case PRINT_SYSNAME:
+		printf("%s\n", utsn.sysname);
+		break;
+	case PRINT_HARDWARE_PLATFORM:
+		printf("%s\n", utsn.machine);
+		break;
+	case PRINT_MACHINE:
+		printf("%s\n", utsn.machine);
+		break;
+	case PRINT_NODENAME:
+		printf("%s\n", utsn.nodename);
+		break;
+	case PRINT_OPERATING_SYSTEM:
+		printf("GNU/Linux\n");
+		break;
+	case PRINT_PROCESSOR:
+		printf("%s\n", utsn.machine);
+		break;
+	case PRINT_KERNEL_RELEASE:
+		printf("%s\n", utsn.release);
+		break;
+	case PRINT_KERNEL_VERSION:
+		printf("%s\n", utsn.version);
 		break;
 	default:
 		break;
