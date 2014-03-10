@@ -47,3 +47,10 @@ awk '/zzz/{match(s, r, M); print M[1]}'
 (gdb)set follow-fork-mode <parent|child>
 
 
+6
+screen # creat screen
+C-a c  # creat new window in screen
+C-a d  # dettach from screen
+#log out
+screen -ls # list exist screen
+screen -r "$id"   # restore into screen
