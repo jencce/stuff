@@ -50,7 +50,28 @@ awk '/zzz/{match(s, r, M); print M[1]}'
 6
 screen # creat screen
 C-a c  # creat new window in screen
+C-a C-a# change screen windows
 C-a d  # dettach from screen
 #log out
 screen -ls # list exist screen
 screen -r "$id"   # restore into screen
+
+7
+${parameter#word}
+${parameter##word}
+              Remove matching prefix pattern.
+
+[zx@ZX ~]$ va=las9102
+[zx@ZX ~]$ echo ${va#las}
+9102
+
+${parameter%word}
+${parameter%%word}
+              Remove matching suffix pattern.
+
+[zx@ZX ~]$ va=44%
+[zx@ZX ~]$ echo $va
+44%
+[zx@ZX ~]$ echo ${va%\%}
+44
+
