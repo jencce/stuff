@@ -3,6 +3,14 @@
 
 int main(int argc, char **argv)
 {
-	printf("%s\n", getlogin());
+	char *s = NULL;
+	if (argc != 1) {
+		printf("No args, thanks\n");
+		return -1;
+	}
+
+	s = getlogin();
+	if (s != NULL)
+		printf("%s\n", s);
 	return 0;
 }
