@@ -1,7 +1,7 @@
 # Makefile
 all: prog
 
-prog: ls arch uname logname
+prog: ls arch uname logname hostid
 ls: ls.c
 	@if [ -d /selinux ];\
 	then\
@@ -18,6 +18,8 @@ uname: uname.c
 	cc uname.c -o uname
 logname: logname.c
 	cc logname.c -o logname
+hostid: hostid.c
+	cc hostid.c -o hostid
 
 debug: ls_debug
 
@@ -47,4 +49,4 @@ lint:
 
 .PHONY: clean
 clean:
-	rm -f ls arch a.out uname logname
+	rm -f ls arch a.out uname logname hostid
