@@ -1,7 +1,7 @@
 # Makefile
 all: prog
 
-prog: ls arch uname logname hostid yes
+prog: ls arch uname logname hostid yes link unlink
 ls: ls.c
 	@if [ -d /selinux ];\
 	then\
@@ -22,6 +22,10 @@ hostid: hostid.c
 	cc hostid.c -o hostid
 yes: yes.c
 	cc yes.c -o yes
+link: link.c
+	cc link.c -o link
+unlink: unlink.c
+	cc unlink.c -o unlink
 
 debug: ls_debug
 
@@ -51,4 +55,8 @@ lint:
 
 .PHONY: clean
 clean:
-	rm -f ls arch a.out uname logname hostid yes
+	rm -f ls arch a.out uname logname hostid yes *link
+
+.PHONY: todo
+todo:
+	head -n 20 TODO

@@ -9,12 +9,6 @@
 free dirs
 init_ob optimise
 android BG message app
-2	false.c
-73	sync.c
-78	true.c
-86	logname.c
-88	hostid.c
-88	yes.c
 89	unlink.c
 94	link.c
 94	whoami.c
