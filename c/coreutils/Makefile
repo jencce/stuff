@@ -1,8 +1,12 @@
 # Makefile
-all: prog
+progs =  ls arch uname logname hostid yes link unlink
 
-prog: ls arch uname logname hostid yes link unlink
-ls: ls.c
+all: $(progs)
+
+$(progs) : % : %.c
+	cc $< -o $@
+
+sels: ls.c
 	@if [ -d /selinux ];\
 	then\
 		echo "cc -o ls ls.c -DSELINUX -lselinux";\
@@ -11,21 +15,6 @@ ls: ls.c
 		echo "cc -o ls ls.c";\
 		cc -o ls ls.c;\
 	fi
-
-arch: arch.c
-	cc arch.c -o arch
-uname: uname.c
-	cc uname.c -o uname
-logname: logname.c
-	cc logname.c -o logname
-hostid: hostid.c
-	cc hostid.c -o hostid
-yes: yes.c
-	cc yes.c -o yes
-link: link.c
-	cc link.c -o link
-unlink: unlink.c
-	cc unlink.c -o unlink
 
 debug: ls_debug
 
