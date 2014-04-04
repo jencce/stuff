@@ -1,5 +1,5 @@
 # Makefile
-progs =  ls arch uname logname hostid yes link unlink
+progs =  ls arch uname logname hostid yes link unlink whoami
 
 all: $(progs)
 
@@ -44,7 +44,8 @@ lint:
 
 .PHONY: clean
 clean:
-	rm -f ls arch a.out uname logname hostid yes *link
+#rm -f ls arch a.out uname logname hostid yes *link
+	rm -f $(progs)
 
 .PHONY: todo
 todo:
