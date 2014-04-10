@@ -9,9 +9,6 @@
 free dirs
 init_ob optimise
 android BG message app
-89	unlink.c
-94	link.c
-94	whoami.c
 113	find-mount-point.c
 116	hostname.c
 123	group-list.c

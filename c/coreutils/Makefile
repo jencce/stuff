@@ -1,5 +1,5 @@
 # Makefile
-progs =  ls arch uname logname hostid yes link unlink whoami
+progs =  ls arch uname logname hostid yes link unlink whoami hostname
 
 all: $(progs)
 
