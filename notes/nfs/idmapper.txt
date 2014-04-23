@@ -8,6 +8,10 @@ performing an upcall to userspace to request the information.  There are two
 ways NFS could obtain this information: placing a call to /sbin/request-key
 or by placing a call to the rpc.idmap daemon.
 
+ID Mapper是NFS用来实现uid/gid和名字之间的转换，一部分需要upcall到用户态来请求
+信息，一种是call /sbin/request-key，一种是请求rpc.idmap。除非前一种没有配置而
+出错。
+
 NFS will attempt to call /sbin/request-key first.  If this succeeds, the
 result will be cached using the generic request-key cache.  This call should
 only fail if /etc/request-key.conf is not configured for the id_resolver key

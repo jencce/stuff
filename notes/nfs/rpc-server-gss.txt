@@ -8,6 +8,9 @@ server and the NFS client's NFSv4.0 callback server.  (But note that
 NFSv4.1 and higher don't require the client to act as a server for the
 purposes of authentication.)
 
+NFS server和client's callback server都是RPC server，都需要RPCGSS认证。
+NFSv4.1不需要clinet也作出server的动作来认证。
+
 RPCGSS is specified in a few IETF documents:
  - RFC2203 v1: http://tools.ietf.org/rfc/rfc2203.txt
  - RFC5403 v2: http://tools.ietf.org/rfc/rfc5403.txt
@@ -39,6 +42,12 @@ performance-sensitive.  The latter is simpler and needs to be very fast.
 Therefore, we perform per-packet integrity and privacy protection in the
 kernel, but leave the initial context establishment to userspace.  We
 need upcalls to request userspace to perform context establishment.
+
+Linux现在只支持KRB5机制，且依赖GSSAPI的KRB5特别扩展。GSSAPI分为两部分，
+一部分是上下文建立，在用户态做，一部分是完整性/隐私性保护，在内核态做。
+这样就需要upcall来请求用户态，确切地说是请求rpc.svcgssd守护进程。
+rpc.svcgssd是老的实现，有一些buffer大小类似的限制。新的实现是gssproxy。
+要使用新的机制，需要写1 到/proc/net/rpc/use-gss-proxy 。
 
 NFS Server Legacy Upcall Mechanism
 ----------------------------------

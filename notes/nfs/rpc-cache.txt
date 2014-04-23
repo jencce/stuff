@@ -2,6 +2,8 @@
 mechanisms in the sunrpc layer that is used, in particular,
 for NFS authentication.
 
+这篇文档解释sunrpc层中的cache机制，也就是为了NFS认证。
+
 CACHES
 ======
 The caching replaces the old exports table and allows for
@@ -10,6 +12,20 @@ a wide variety of values to be caches.
 There are a number of caches that are similar in structure though
 quite possibly very different in content and use.  There is a corpus
 of common code for managing these caches.
+
+需要用到cache的例子：
+	IP地址到名字的映射
+	从名字到export选项的映射
+	UID/GID的映射
+	网络身份到KEY的映射
+
+用来handle cache的代码：
+	正确地带锁查询cache
+	支持不正确的cache条目
+	支持cache条目过期并清理
+	支持向用户态申请cache条目
+	支持用户态直接更新条目
+	对不完整条目的请求延迟并重演
 
 Examples of caches that are likely to be needed are:
   - mapping from IP address to client name
@@ -42,6 +58,22 @@ Creating a Cache
    It will also contain a key and some content.
    Each cache element is reference counted and contains
    expiry and update times for use in cache management.
+
+一个cache需要数据结构来存储，通常结构体的第一个元素是
+	struct cache_head
+还会包含key和内容，每个条目的引用数目是被记载的，还有过期
+和更新的时间戳用来做cache管理。
+
+还会需要 struct cache_detail 来描述cache，如hash表，参数，以及
+一些操作：
+	alloc 分配cache条目的内存和数据结构
+	put   
+	match 比较两个head是否match
+	init  初始化条目的内容
+	update 更新条目的内容
+	show
+	
+
 2/ A cache needs a "cache_detail" structure that
    describes the cache.  This stores the hash table, some
    parameters for cache management, and some operations detailing how
@@ -95,6 +127,13 @@ Creating a Cache
 Using a cache
 -------------
 
+初始化合适的cache_head中key的值，传递结构给sunrpc_cache_lookup来查询
+cache。如果key没有被match到，新的entry被创建，加入到cache，标记为没
+有包含合法的值。
+一般返回的条目会被cache_check，检查是否有合法的值，可能会调用up-call
+来获取合法的值，或者返回相应的错误。
+
+
 To find a value in a cache, call sunrpc_cache_lookup passing a pointer
 to the cache_head in a sample item with the 'key' fields filled in.
 This will be passed to ->match to identify the target entry.  If no
@@ -129,6 +168,12 @@ Populating a cache
 
 Each cache has a name, and when the cache is registered, a directory
 with that name is created in /proc/net/rpc
+
+每个cache有一个名字，当它注册之后，在/proc/net/rpc下面就会创建一个
+同名目录。目录下有个文件叫channel，是用户态和内核沟通用来填充cache
+
+沟通的格式是定义好的，内核应该定义相应的方法来响应用户态的请求和向
+用户态请求。用户态也有对应的helper来关注这个channel.
 
 This directory contains a file called 'channel' which is a channel
 for communicating between kernel and user for populating the cache.
