@@ -6,12 +6,12 @@ int main(int argc, char **argv)
 	char name[BUFSIZ];
 	int ret = 0;
 
-	ret = gethostname(name, BUFSIZ);
+	ret = gethostname(name, BUFSIZ - 1);
 	if (ret == -1) {
 		perror("gethostname");
 		return -1;
 	}
-	name[BUFSIZ-1] = '0';
+	name[BUFSIZ - 1] = '0';
 	printf("%s\n", name);
 
 	return 0;

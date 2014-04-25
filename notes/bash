@@ -1,6 +1,6 @@
-1
+1/
 	tar xf Downloads/linux.gz -C test/
-2
+2/
 	[zx@ZX run0113]$ cat tt
 	nfs nfs nfs
 	[zx@ZX run0113]$ grep -c nfs tt
@@ -13,7 +13,7 @@
 	nfs nfs nfs
 
 
-3
+3/
 trap [-lp] [[arg] sigspec ...]
               The  command  arg is to be read and executed when the shell receives signal(s) sigspec.  
 		If arg is absent (and there is a single sigspec) or-, each specified signal is reset to its original disposition (the value it had upon entrance to the shell).  
@@ -35,7 +35,7 @@ trap [-lp] [[arg] sigspec ...]
               trap returns true.
 
 
-4 
+4/
 awk '/zzz/{match(s, r, M); print M[1]}'
 	match function, returns the position in s where regular express r occurs, or 0 if not occured.
 	If array M is specified, it is cleared and its 0th element contains the portion of s matched the entire RE r, its
@@ -43,11 +43,11 @@ awk '/zzz/{match(s, r, M); print M[1]}'
 
 
 
-5
+5/
 (gdb)set follow-fork-mode <parent|child>
 
 
-6
+6/
 screen # creat screen
 C-a c  # creat new window in screen
 C-a C-a# change screen windows
@@ -56,7 +56,7 @@ C-a d  # dettach from screen
 screen -ls # list exist screen
 screen -r "$id"   # restore into screen
 
-7
+7/
 ${parameter#word}
 ${parameter##word}
               Remove matching prefix pattern.
@@ -77,7 +77,7 @@ ${parameter%%word}
 
 
 
-8
+8/
 ${parameter/pattern/string}
               Pattern substitution.  The pattern is expanded to produce a pat-
               tern just as in pathname expansion.  Parameter is  expanded  and
@@ -98,5 +98,7 @@ ${parameter/pattern/string}
 [root@hp-dl160g8-01 ~]# a=`cat /etc/redhat-release `
 [root@hp-dl160g8-01 ~]# echo ${a//[a-z()6.]/}
 4
-------
 
+9/
+if list; then list; [ elif list; then list; ] ... [ else list; ] fi
+              The  if  list is executed.  If its exit status is zero, the then list is executed.
