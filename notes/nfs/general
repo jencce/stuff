@@ -1,0 +1,12 @@
+
+1/ export option "secure/insecure"  and mount.nfs option "resvport/noresvport"
+
+By default, nfs clients are only allowed to request through previliged ports,
+which is less then 1024, so default options are former ones.
+If you want to request via prots large then 1024, both server and client need
+options.
+
+2/ export nfs via other ports OR change nfsd listen port
+change /etc/sysconfig/nfs add this : RPCNFSDARGS="-p 2078"
+Also, this may depend on nfs service start scripts, find the place where add
+options to nfsd
