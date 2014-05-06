@@ -51,6 +51,8 @@ fs/namespace.c
 
 
 fs/nfs/super.c
+	nfs_fs_mount --> nfs4_try_mount --> nfs_do_root_mount
+
 	struct file_system_type nfs4_fs_type = {
         	.owner          = THIS_MODULE,
         	.name           = "nfs4",
@@ -67,6 +69,46 @@ fs/nfs/super.c
 	then CALL:
 		mntroot = nfs_mod->rpc_ops->try_mount(flags, dev_name,
 							&mount_info, nfs_mod);
+
+
+	So we come to one particular nfs_subversion, eg 4, get roc_ops struct:
+
+	IN nfs4_try_mount,
+	replace export_path with "/", do_root_mount with remote_fs_type first,
+	then replace back real export_path, call nfs_follow_remote_path:
+
+	-------------------------------------------------------
+	export_path = data->nfs_server.export_path;
+        data->nfs_server.export_path = "/";
+        root_mnt = nfs_do_root_mount(&nfs4_remote_fs_type, flags, mount_info,
+					//   ^^^ NOTICE HERE
+                        data->nfs_server.hostname);
+        data->nfs_server.export_path = export_path;
+        res = nfs_follow_remote_path(root_mnt, export_path);
+	-------------------------------------------------------
+	
+
+	IN nfs_do_root_mount, just handle hostname, then CALL:
+		vfs_kern_mount(fs_type, flags, root_devname, data);
+	as vfs_kern_mount called before, with nfs4_remote_fs_type:
+
+		static struct file_system_type nfs4_remote_fs_type = {
+	        	.owner          = THIS_MODULE,
+	        	.name           = "nfs4",
+		        .mount          = nfs4_remote_mount,
+        		.kill_sb        = nfs_kill_super,
+		        .fs_flags       = FS_RENAME_DOES_D_MOVE|FS_BINARY_MOUNTDATA,
+		};
+
+	vfs_kern_mount --> mount_fs --> nfs4_remote_mount
+
+	IN nfs4_remote_mount,
+	first call server = nfs4_create_server(mount_info, &nfs_v4);
+	then nfs_fs_mount_common(server, flags, dev_name, mount_info, &nfs_v4);
+
+	nfs4_remote_mount --> nfs4_create_server
+			  |
+			  --> nfs_fs_mount_common
 
 
 
