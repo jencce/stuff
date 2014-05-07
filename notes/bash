@@ -102,3 +102,8 @@ ${parameter/pattern/string}
 9/
 if list; then list; [ elif list; then list; ] ... [ else list; ] fi
               The  if  list is executed.  If its exit status is zero, the then list is executed.
+
+
+10/
+vim search case insensitive
+/\cPattern

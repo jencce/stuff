@@ -71,8 +71,9 @@ fs/nfs/super.c
 							&mount_info, nfs_mod);
 
 
-	So we come to one particular nfs_subversion, eg 4, get roc_ops struct:
+	So we come to one particular nfs_subversion, eg nfs_v4, roc_ops struct:
 
+fs/nfs/nfs4super.c
 	IN nfs4_try_mount,
 	replace export_path with "/", do_root_mount with remote_fs_type first,
 	then replace back real export_path, call nfs_follow_remote_path:
@@ -110,8 +111,76 @@ fs/nfs/super.c
 			  |
 			  --> nfs_fs_mount_common
 
+fs/nfs/nfs4client.c
+	nfs4_create_server --> nfs4_init_server
+			   |
+			   --> nfs4_server_common_setup
+
+	IN nfs4_create_server,
+	alloc struct nfs_server and init some fields,
+	call nfs4_init_server to setup client stuff,
+		nfs4_init_server(server, mount_info->parsed);
+	call nfs4_server_common_setup to setup.
+		nfs4_server_common_setup(server, mnt_info->mtfh, auth_probe)
 
 
+
+	nfs4_init_server --> nfs4_set_client
+			 |
+			  --> nfs_init_server_rpcclient
+
+	IN nfs4_init_server:
+	continue init struct nfs_server with parsed data,
+	call nfs4_set_client with strcut and some mount info,
+	call nfs_init_server_rpcclient.
+
+	IN nfs4_set_client:
+	call nfs_get_client:
+	find a nfs_client matches parsed data if it exists, OR alloc and init
+	a nfs_client with nfsv4 rpc_ops funcs,
+
+	nfs4_set_client --> nfs_get_client --> nfs4_init_client
+						|
+						v
+			rpc_create <-- nfs_create_rpc_client
+
+	IN nfs4_init_client:
+	call nfs_create_rpc_client with RPC_AUTH_GSS_KRB5I, if fail then with
+	RPC_AUTH_UNIX,
+	call nfs_idmap_new and other funcs, TBD
+
+
+net/sunrpc/clnt.c
+	rpc_create -> xprt_create_transport -> xprt_class->setup(xs_setup_tcp)
+		   |
+		   --> rpc_create_xprt
+
+	IN rpc_create,
+	create a RPC transport with xprt_create_transport .. 
+	then call rpc_create_xprt create an client with transport and return.
+	
+	IN xprt_create_transport,
+	find the right xprt_class in xprt_list for this RPC, classes are ident
+	with below categories:
+	
+	static struct xprt_class xs_tcp_transport = {
+	        .list           = LIST_HEAD_INIT(xs_tcp_transport.list),
+        	.name           = "tcp",
+	        .owner          = THIS_MODULE,
+        	.ident          = XPRT_TRANSPORT_TCP,
+	        .setup          = xs_setup_tcp,
+	};
+
+	enum xprt_transports {
+        	XPRT_TRANSPORT_UDP      = IPPROTO_UDP,
+        	XPRT_TRANSPORT_TCP      = IPPROTO_TCP,
+	        XPRT_TRANSPORT_BC_TCP   = IPPROTO_TCP | XPRT_TRANSPORT_BC,
+        	XPRT_TRANSPORT_RDMA     = 256,
+       		XPRT_TRANSPORT_LOCAL    = 257,
+	};
+
+
+	IN xs_setup_tcp:
 
 Then vfs_kern_mount call registered function nfs4_get_sb do most of the work.
 nfs4_get_sb --> nfs4_try_mount --> nfs_do_root_mount
