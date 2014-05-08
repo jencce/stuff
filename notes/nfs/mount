@@ -146,9 +146,24 @@ fs/nfs/nfs4client.c
 
 	IN nfs4_init_client:
 	call nfs_create_rpc_client with RPC_AUTH_GSS_KRB5I, if fail then with
-	RPC_AUTH_UNIX,
+	RPC_AUTH_UNIX in the flavor parameter,
 	call nfs_idmap_new and other funcs, TBD
 
+fs/nfs/client.c
+	IN nfs_create_rpc_client,
+	init struct rpc_create_args, with flavor argument, and init
+	rpc_program to nfs_program:
+
+	const struct rpc_program nfs_program = {
+	        .name                   = "nfs",
+        	.number                 = NFS_PROGRAM,
+	        .nrvers                 = ARRAY_SIZE(nfs_version),
+        	.version                = nfs_version,
+	        .stats                  = &nfs_rpcstat,
+        	.pipe_dir_name          = NFS_PIPE_DIRNAME,
+	};
+
+	then call rpc_create.
 
 net/sunrpc/clnt.c
 	rpc_create -> xprt_create_transport -> xprt_class->setup(xs_setup_tcp)
@@ -179,8 +194,63 @@ net/sunrpc/clnt.c
        		XPRT_TRANSPORT_LOCAL    = 257,
 	};
 
+	then call the clas->setup function.
+
+net/sunrpc/xprtsock.c
+	xs_setup_tcp --> xs_setup_xprt
 
 	IN xs_setup_tcp:
+	call xs_setup_xprt to setup a struct rpc_xprt, including alloc and init
+	list and wait queues, copy addrs and init a struct sock_xprt to hold
+	info about tcp/addrs, sock_xprt is a member of rpc_xprt, init 
+	rpc_xprt->ops to xs_tcp_ops:
+
+	static struct rpc_xprt_ops xs_tcp_ops = {
+        .reserve_xprt           = xprt_reserve_xprt,
+	        .release_xprt           = xs_tcp_release_xprt,
+	        .alloc_slot             = xprt_lock_and_alloc_slot,
+	        .rpcbind                = rpcb_getport_async,
+	        .set_port               = xs_set_port,
+	        .connect                = xs_connect,
+	        .buf_alloc              = rpc_malloc,
+	        .buf_free               = rpc_free,
+	        .send_request           = xs_tcp_send_request,
+	        .set_retrans_timeout    = xprt_set_retrans_timeout_def,
+	        .close                  = xs_tcp_close,
+	        .destroy                = xs_destroy,
+	        .print_stats            = xs_tcp_print_stats,
+	};
+
+	after setup, comes back to xprt_create_transport, done some init
+	work about name and queue and timer,
+	then comes back to rpc_create.
+
+net/sunrpc/clnt.c
+	rpc_create -> xprt_create_transport -> xprt_class->setup(xs_setup_tcp)
+		   |
+		   --> rpc_create_xprt --> rpc_new_clnt -> rpc_client_register
+
+	after xprt_create_transport, there is resvport handle,
+	then comes to rpc_create_xprt.
+
+	IN rpc_create_xprt:
+	call rpc_new_clnt to setup a new struct rpc_clnt, init and set some
+	flags and then return it.
+	
+	IN rpc_new_clnt:
+	call rpciod_up, bring up rpciod for each clnt?, alloc struct rpc_clnt,
+	alloc clnt id for idr rpc_clids, init rpc_clnt fields, program, 
+	lists, rtt, ndname,and rpc_xport to clnt->clnt_xprt with rcu protect?,
+	Finally call rpc_client_register.
+
+	IN rpc_client_register:
+	setup pipefs_sb and dir, according to rpc net namespace,
+	register clnt to ns->sunrpc_net->all_clients list,
+	call rpcauth_create to create rpc_auth, request diff module according
+	to diff flavor, first GSS, then UNIX, increase count etc, then assign
+	to clnt->cl_auth. Related to gss-krb* module etc.
+	
+	
 
 Then vfs_kern_mount call registered function nfs4_get_sb do most of the work.
 nfs4_get_sb --> nfs4_try_mount --> nfs_do_root_mount
