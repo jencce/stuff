@@ -118,9 +118,9 @@ fs/nfs/nfs4client.c
 
 	IN nfs4_create_server,
 	alloc struct nfs_server and init some fields,
-	call nfs4_init_server to setup client stuff,
+	>>>call nfs4_init_server to setup client stuff,
 		nfs4_init_server(server, mount_info->parsed);
-	call nfs4_server_common_setup to setup.
+	>>>call nfs4_server_common_setup to setup.
 		nfs4_server_common_setup(server, mnt_info->mtfh, auth_probe)
 
 
@@ -131,11 +131,11 @@ fs/nfs/nfs4client.c
 
 	IN nfs4_init_server:
 	continue init struct nfs_server with parsed data,
-	call nfs4_set_client with strcut and some mount info,
-	call nfs_init_server_rpcclient.
+	>>>call nfs4_set_client with strcut and some mount info,
+	>>>call nfs_init_server_rpcclient.
 
 	IN nfs4_set_client:
-	call nfs_get_client:
+	>>>call nfs_get_client:
 	find a nfs_client matches parsed data if it exists, OR alloc and init
 	a nfs_client with nfsv4 rpc_ops funcs,
 
@@ -145,9 +145,9 @@ fs/nfs/nfs4client.c
 			rpc_create <-- nfs_create_rpc_client
 
 	IN nfs4_init_client:
-	call nfs_create_rpc_client with RPC_AUTH_GSS_KRB5I, if fail then with
+	>>>call nfs_create_rpc_client with RPC_AUTH_GSS_KRB5I, if fail then with
 	RPC_AUTH_UNIX in the flavor parameter,
-	call nfs_idmap_new and other funcs, TBD
+	>>>call nfs_idmap_new and other funcs, TBD
 
 fs/nfs/client.c
 	IN nfs_create_rpc_client,
@@ -200,7 +200,7 @@ net/sunrpc/xprtsock.c
 	xs_setup_tcp --> xs_setup_xprt
 
 	IN xs_setup_tcp:
-	call xs_setup_xprt to setup a struct rpc_xprt, including alloc and init
+	>>>call xs_setup_xprt to setup a struct rpc_xprt, including alloc and init
 	list and wait queues, copy addrs and init a struct sock_xprt to hold
 	info about tcp/addrs, sock_xprt is a member of rpc_xprt, init 
 	rpc_xprt->ops to xs_tcp_ops:
@@ -234,11 +234,12 @@ net/sunrpc/clnt.c
 	then comes to rpc_create_xprt.
 
 	IN rpc_create_xprt:
-	call rpc_new_clnt to setup a new struct rpc_clnt, init and set some
-	flags and then return it.
+	>>>call rpc_new_clnt to setup a new struct rpc_clnt,
+	if RPC_CLNT_CREATE_NOPING not set, call rpc_ping(clnt),
+	then, init and set some flags and then return clnt.
 	
 	IN rpc_new_clnt:
-	call rpciod_up, bring up rpciod for each clnt?, alloc struct rpc_clnt,
+	>>>call rpciod_up, bring up rpciod for each clnt?, alloc struct rpc_clnt,
 	alloc clnt id for idr rpc_clids, init rpc_clnt fields, program, 
 	lists, rtt, ndname,and rpc_xport to clnt->clnt_xprt with rcu protect?,
 	Finally call rpc_client_register.
@@ -246,11 +247,72 @@ net/sunrpc/clnt.c
 	IN rpc_client_register:
 	setup pipefs_sb and dir, according to rpc net namespace,
 	register clnt to ns->sunrpc_net->all_clients list,
-	call rpcauth_create to create rpc_auth, request diff module according
+	>>>call rpcauth_create to create rpc_auth, request diff module according
 	to diff flavor, first GSS, then UNIX, increase count etc, then assign
 	to clnt->cl_auth. Related to gss-krb* module etc.
 	
+	rpc_create -> xprt_create_transport -> xprt_class->setup(xs_setup_tcp)
+		   |
+		   --> rpc_create_xprt --> rpc_new_clnt -> rpc_client_register
+				      |
+				      ---> rpc_ping(clnt) -> rpc_call_sync
+
+	NOW, back to rpc_create_xprt:
+	calling rpc_ping,
+
+	IN rpc_ping,
+	init rpc_message msg, proc, cred, etc, rpc_proc is null call,
+	>>>call rpc_call_sync to perform a RPC call, according to tshark, mount will
+	do this as first two rpc calls.
 	
+	##So, mount -> init_a_server -> init_a_client -> rpc_ping_call
+
+	rpc_call_sync -> rpc_run_task -> rpc_execute -> __rpc_execute[RPC scheduler]
+
+	IN rpc_call_sync,
+	>>>call rpc_run_task with a struct rpc_task_setup:
+		struct rpc_task_setup task_setup_data = {
+	                .rpc_client = clnt,
+	                .rpc_message = msg,
+	                .callback_ops = &rpc_default_ops,
+	                .flags = flags,
+	        };
+	
+	then rpc_call_start, to init task->tk_action = call_start,
+	so rpc_execute can execute the rpc call flow:
+
+		start -> reserve -> bind/refresh_cred -> encode_xdr -
+								    |
+								    v
+               clean/handle_timeout <- transmit_request <- rpc_bind/connect
+			|
+			v
+                 decode_reply
+ 
+	NOW, back to rpc_create_xprt:
+	after calling rpc_ping, do some check and return the clnt.
+	come back to rpc_create,  
+	come back to nfs_create_rpc_client, clp->cl_rpcclient = clnt,
+	come back to nfs4_init_client,
+	
+	nfs4_set_client --> nfs_get_client --> nfs4_init_client
+						|
+						v
+			rpc_create <-- nfs_create_rpc_client
+
+	IN nfs4_init_client:
+	>>>call nfs_create_rpc_client with RPC_AUTH_GSS_KRB5I, if fail then with
+	RPC_AUTH_UNIX in the flavor parameter, inited a nfs_client,
+	>>>call nfs_idmap_new, inited a struct idmap for clnt:
+		struct idmap { 
+ 	        	struct rpc_pipe_dir_object idmap_pdo;
+	        	struct rpc_pipe         *idmap_pipe;
+	        	struct idmap_legacy_upcalldata *idmap_upcall_data;
+	        	struct mutex            idmap_mutex;
+		};
+
+	>>>call nfs4_init_client_minor_version, clnt->cl_mvops->init_client
+
 
 Then vfs_kern_mount call registered function nfs4_get_sb do most of the work.
 nfs4_get_sb --> nfs4_try_mount --> nfs_do_root_mount

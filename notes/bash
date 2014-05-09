@@ -107,3 +107,9 @@ if list; then list; [ elif list; then list; ] ... [ else list; ] fi
 10/
 vim search case insensitive
 /\cPattern
+
+
+11/
+tshark
+	tshark -w /tmp/out -i em1
+	tshark -r /tmp/out -O NFS
