@@ -27,3 +27,21 @@ fs/nfs/nfs4xdr.c中的nfs4_procedures数组是一些基本的操作到rpc的对�
 检查等等。见net/sunrpc/clnt.c，从call_start开始。
 
 那么是否server和client都即是server也是client？
+
+
+4/
+Delegation and CALLBACK
+
+   Delegations can be recalled by the server.  If another client
+   requests access to the file in such a way that the access conflicts
+   with the granted delegation, the server is able to notify the initial
+   client and recall the delegation.  This requires that a callback path
+   exist between the server and client.  If this callback path does not
+   exist, then delegations can not be granted.  The essence of a
+   delegation is that it allows the client to locally service operations
+   such as OPEN, CLOSE, LOCK, LOCKU, READ, WRITE without immediate
+   interaction with the server.
+
+callback的意思就是server要能够主动与client沟通，而不是等待client的请求。
+在回收delegation的操作中至关重要。
+

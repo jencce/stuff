@@ -311,7 +311,51 @@ net/sunrpc/clnt.c
 	        	struct mutex            idmap_mutex;
 		};
 
-	>>>call nfs4_init_client_minor_version, clnt->cl_mvops->init_client
+	>>>call nfs4_init_client_minor_version, clnt->cl_mvops->init_client,
+	init other minor version related stuff:
+		nfs40_init_client:  init slot table
+		nfs41_init_client:  init session
+	>>>call nfs4_init_callback, init nfs4 callback service, first setup
+	callback channels, init several at least 1 rpc_rqst, add to list
+	clnt->cl_rpcclient->cl_xprt xprt->bc_pa_list, second bring up the
+	callback service thread which is a RPC service daemon receiving and
+	processing incoming RPC messages.
+
+	mark clnt ready by NFS_CS_READY,
+
+	>>>call nfs4_discover_server_trunking ->
+		clp->cl_mvops->reboot_recovery_ops->detect_trunking, >
+	as nfs40_discover_server_trunking, conduct SETCLIENTID rpc call, 
+	negotiate client id with server, then call nfs40_walk_client_list,
+	find the client like out clnt most in nfs_net->nfs_client_list,
+	use the found new one conduct RPC call SETCLIENTID_CONFIRM,
+	swap their callback id and free clnt, return the found new one.
+	WHY?
+
+	SO form nfs4_init_client RETURN to nfs_get_client,
+				 RETURN to nfs_set_client,
+
+	INI nfs_set_client, setup the clnt we got to server member:
+		server->nfs_client = clp, 
+
+	then RETURN back to nfs4_init_server:
+
+	nfs4_init_server --> nfs4_set_client
+			 |
+			  --> nfs_init_server_rpcclient
+
+	IN nfs4_init_server:
+	continue init struct nfs_server with parsed data,
+	>>>call nfs4_set_client with strcut and some mount info, to setup
+		a clnt in server;
+	then init server ac prorperties and port, then
+	>>>call nfs_init_server_rpcclient, clone a rpc_clnt from nfs_clnt,
+		to server->client, from code comment:
+		nfs_server->nfs_clent  :  shared client and NFS4 state
+		nfs_server->client     :  RPC client handle
+
+	then RETURN to nfs4_create_server,
+	
 
 
 Then vfs_kern_mount call registered function nfs4_get_sb do most of the work.
