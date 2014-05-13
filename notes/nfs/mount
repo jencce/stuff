@@ -356,6 +356,17 @@ net/sunrpc/clnt.c
 
 	then RETURN to nfs4_create_server,
 	
+	nfs4_create_server --> nfs4_init_server
+			   |
+			   --> nfs4_server_common_setup
+
+	IN nfs4_create_server,
+	alloc struct nfs_server and init some fields,
+	>>>call nfs4_init_server to setup an nfs_client and a rpc_client for
+		the server, and send SETCLITNID and _CONFIRM rpc calls to
+		nfs server,
+	>>>call nfs4_server_common_setup to setup.
+
 
 
 Then vfs_kern_mount call registered function nfs4_get_sb do most of the work.
