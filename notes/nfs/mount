@@ -367,6 +367,17 @@ net/sunrpc/clnt.c
 		nfs server,
 	>>>call nfs4_server_common_setup to setup.
 
+	IN nfs4_server_common_setup,
+	check data server settting and nfs41 session supporting,
+	set  server->caps to minor version caps. caps means the capabilities
+	of the server:
+		/* Server capabilities */
+		#define NFS_CAP_READDIRPLUS     (1U << 0)
+		#define NFS_CAP_HARDLINKS       (1U << 1)
+	set idmap or not, not map by default
+	>>>call nfs4_get_rootfh get file handle for server's pseudoroot, 
+		authinfo ?
+	
 
 
 Then vfs_kern_mount call registered function nfs4_get_sb do most of the work.
