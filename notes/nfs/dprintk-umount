@@ -1,0 +1,253 @@
+[71898.807226] RPC:       creating workqueue nfsiod
+[71898.807556] NFS: nfs mount opts='vers=4,addr=::1,clientaddr=::1'
+[71898.807559] NFS:   parsing nfs mount option 'vers=4'
+[71898.807562] NFS:   parsing nfs mount option 'addr=::1'
+[71898.807565] NFS:   parsing nfs mount option 'clientaddr=::1'
+[71898.807568] NFS: MNTPATH: '/'
+[71898.809645] Key type dns_resolver registered
+[71898.818881] NFS: Registering the id_resolver key type
+[71898.818890] Key type id_resolver registered
+[71898.818891] Key type id_legacy registered
+[71898.819027] --> nfs4_try_mount()
+[71898.819031] --> nfs4_create_server()
+[71898.819037] --> nfs4_init_server()
+[71898.819038] --> nfs4_set_client()
+[71898.819039] --> nfs_get_client(localhost,v4)
+[71898.819042] NFS: get client cookie (0xffff880060e87000/0xffff88008deae050)
+[71898.834913] nfs_create_rpc_client: cannot create RPC client. Error = -22
+[71898.835060] --> nfs4_realloc_slot_table: max_reqs=1024, tbl->max_slots 0
+[71898.835131] nfs4_realloc_slot_table: tbl=ffff88019619a000 slots=ffff880060d87240 max_slots=1024
+[71898.835132] <-- nfs4_realloc_slot_table: return 0
+[71898.835134] nfs_callback_create_svc: service created
+[71898.835134] NFS: create per-net callback data; net=ffffffff819a09c0
+[71898.835145] NFS: Callback listener port = 51239 (af 2, net ffffffff819a09c0)
+[71898.835154] NFS: Callback listener port = 38063 (af 10, net ffffffff819a09c0)
+[71898.835172] nfs_callback_up: service started
+[71898.835175] NFS: nfs4_discover_server_trunking: testing 'localhost'
+[71898.835178] NFS call  setclientid auth=UNIX, 'Linux NFSv4.0 ::1/::1 tcp'
+[71898.835316] NFS reply setclientid: 0
+[71898.835318] NFS call  setclientid_confirm auth=UNIX, (client ID 266a735301000000)
+[71898.835351] NFS reply setclientid_confirm: 0
+[71898.835353] NFS: <-- nfs40_walk_client_list using nfs_client = ffff880060e87000 ({2})
+[71898.835355] NFS: <-- nfs40_walk_client_list status = 0
+[71898.835356] nfs4_schedule_state_renewal: requeueing work. Lease period = 5
+[71898.835358] NFS: nfs4_discover_server_trunking: status = 0
+[71898.835359] --> nfs_put_client({2})
+[71898.835360] <-- nfs4_set_client() = 0 [new ffff880060e87000]
+[71898.835369] <-- nfs4_init_server() = 0
+[71898.835370] --> nfs4_get_rootfh()
+[71898.835374] --> nfs4_alloc_slot used_slots=0000 highest_used=4294967295 max_slots=1024
+[71898.835375] <-- nfs4_alloc_slot used_slots=0001 highest_used=0 slotid=0
+[71898.835838] decode_attr_type: type=040000
+[71898.835841] decode_attr_change: change attribute=6013266356363722285
+[71898.835842] decode_attr_size: file size=4096
+[71898.835843] decode_attr_fsid: fsid=(0x0/0x0)
+[71898.835844] decode_attr_fileid: fileid=192
+[71898.835845] decode_attr_fs_locations: fs_locations done, error = 0
+[71898.835846] decode_attr_mode: file mode=0755
+[71898.835847] decode_attr_nlink: nlink=22
+[71898.835849] decode_attr_owner: uid=0
+[71898.835850] decode_attr_group: gid=0
+[71898.835851] decode_attr_rdev: rdev=(0x0:0x0)
+[71898.835852] decode_attr_space_used: space used=4096
+[71898.835853] decode_attr_time_access: atime=1400072690
+[71898.835854] decode_attr_time_metadata: ctime=1400072676
+[71898.835855] decode_attr_time_modify: mtime=1400072672
+[71898.835856] decode_attr_mounted_on_fileid: fileid=0
+[71898.835858] decode_getfattr_attrs: xdr returned 0
+[71898.835859] decode_getfattr_generic: xdr returned 0
+[71898.835861] nfs4_free_slot: slotid 0 highest_used_slotid 4294967295
+[71898.835867] --> nfs4_alloc_slot used_slots=0000 highest_used=4294967295 max_slots=1024
+[71898.835869] <-- nfs4_alloc_slot used_slots=0001 highest_used=0 slotid=0
+[71898.835915] decode_attr_supported: bitmask=fdffbfff:00f9be3e:00000000
+[71898.835917] decode_attr_fh_expire_type: expire type=0x0
+[71898.835918] decode_attr_link_support: link support=true
+[71898.835919] decode_attr_symlink_support: symlink support=true
+[71898.835920] decode_attr_aclsupport: ACLs supported=3
+[71898.835921] decode_server_caps: xdr returned 0!
+[71898.835922] nfs4_free_slot: slotid 0 highest_used_slotid 4294967295
+[71898.835925] --> nfs4_alloc_slot used_slots=0000 highest_used=4294967295 max_slots=1024
+[71898.835926] <-- nfs4_alloc_slot used_slots=0001 highest_used=0 slotid=0
+[71898.835952] decode_attr_lease_time: file size=90
+[71898.835953] decode_attr_maxfilesize: maxfilesize=18446744073709551615
+[71898.835954] decode_attr_maxread: maxread=1048576
+[71898.835954] decode_attr_maxwrite: maxwrite=1048576
+[71898.835955] decode_attr_time_delta: time_delta=1 0
+[71898.835956] decode_attr_pnfstype: bitmap is 0
+[71898.835957] decode_attr_layout_blksize: bitmap is 0
+[71898.835958] decode_fsinfo: xdr returned 0!
+[71898.835959] nfs4_free_slot: slotid 0 highest_used_slotid 4294967295
+[71898.835961] <-- nfs4_get_rootfh() = 0
+[71898.835962] Server FSID: 0:0
+[71898.835964] Pseudo-fs root FH at ffff88021024a540 is 8 bytes, crc: 0x62d40c52:
+[71898.835964]  01000100 00000000
+[71898.835965] --> nfs_probe_fsinfo()
+[71898.835967] --> nfs4_alloc_slot used_slots=0000 highest_used=4294967295 max_slots=1024
+[71898.835968] <-- nfs4_alloc_slot used_slots=0001 highest_used=0 slotid=0
+[71898.835992] decode_attr_supported: bitmask=fdffbfff:00f9be3e:00000000
+[71898.835993] decode_attr_fh_expire_type: expire type=0x0
+[71898.835993] decode_attr_link_support: link support=true
+[71898.835994] decode_attr_symlink_support: symlink support=true
+[71898.835995] decode_attr_aclsupport: ACLs supported=3
+[71898.835996] decode_server_caps: xdr returned 0!
+[71898.835997] nfs4_free_slot: slotid 0 highest_used_slotid 4294967295
+[71898.835999] --> nfs4_alloc_slot used_slots=0000 highest_used=4294967295 max_slots=1024
+[71898.836000] <-- nfs4_alloc_slot used_slots=0001 highest_used=0 slotid=0
+[71898.836022] decode_attr_lease_time: file size=90
+[71898.836023] decode_attr_maxfilesize: maxfilesize=18446744073709551615
+[71898.836024] decode_attr_maxread: maxread=1048576
+[71898.836025] decode_attr_maxwrite: maxwrite=1048576
+[71898.836026] decode_attr_time_delta: time_delta=1 0
+[71898.836026] decode_attr_pnfstype: bitmap is 0
+[71898.836027] decode_attr_layout_blksize: bitmap is 0
+[71898.836028] decode_fsinfo: xdr returned 0!
+[71898.836029] nfs4_free_slot: slotid 0 highest_used_slotid 4294967295
+[71898.836030] set_pnfs_layoutdriver: Using NFSv4 I/O
+[71898.836032] --> nfs4_alloc_slot used_slots=0000 highest_used=4294967295 max_slots=1024
+[71898.836033] <-- nfs4_alloc_slot used_slots=0001 highest_used=0 slotid=0
+[71898.836054] decode_attr_maxlink: maxlink=255
+[71898.836055] decode_attr_maxname: maxname=255
+[71898.836056] decode_pathconf: xdr returned 0!
+[71898.836057] nfs4_free_slot: slotid 0 highest_used_slotid 4294967295
+[71898.836058] <-- nfs_probe_fsinfo() = 0
+[71898.836060] <-- nfs4_create_server() = ffff88019d669000
+[71898.836095] --> nfs4_alloc_slot used_slots=0000 highest_used=4294967295 max_slots=1024
+[71898.836096] <-- nfs4_alloc_slot used_slots=0001 highest_used=0 slotid=0
+[71898.836145] decode_attr_supported: bitmask=fdffbfff:00f9be3e:00000000
+[71898.836146] decode_attr_fh_expire_type: expire type=0x0
+[71898.836146] decode_attr_link_support: link support=true
+[71898.836147] decode_attr_symlink_support: symlink support=true
+[71898.836148] decode_attr_aclsupport: ACLs supported=3
+[71898.836149] decode_server_caps: xdr returned 0!
+[71898.836150] nfs4_free_slot: slotid 0 highest_used_slotid 4294967295
+[71898.836153] --> nfs4_alloc_slot used_slots=0000 highest_used=4294967295 max_slots=1024
+[71898.836154] <-- nfs4_alloc_slot used_slots=0001 highest_used=0 slotid=0
+[71898.836188] decode_attr_type: type=040000
+[71898.836191] decode_attr_change: change attribute=6013266356363722285
+[71898.836192] decode_attr_size: file size=4096
+[71898.836194] decode_attr_fsid: fsid=(0x0/0x0)
+[71898.836195] decode_attr_fileid: fileid=192
+[71898.836196] decode_attr_fs_locations: fs_locations done, error = 0
+[71898.836198] decode_attr_mode: file mode=0755
+[71898.836199] decode_attr_nlink: nlink=22
+[71898.836201] decode_attr_owner: uid=0
+[71898.836202] decode_attr_group: gid=0
+[71898.836203] decode_attr_rdev: rdev=(0x0:0x0)
+[71898.836205] decode_attr_space_used: space used=4096
+[71898.836206] decode_attr_time_access: atime=1400072690
+[71898.836207] decode_attr_time_metadata: ctime=1400072676
+[71898.836209] decode_attr_time_modify: mtime=1400072672
+[71898.836211] decode_attr_mounted_on_fileid: fileid=0
+[71898.836212] decode_getfattr_attrs: xdr returned 0
+[71898.836213] decode_getfattr_generic: xdr returned 0
+[71898.836215] nfs4_free_slot: slotid 0 highest_used_slotid 4294967295
+[71898.836227] NFS: nfs_fhget(0:38/192 fh_crc=0x62d40c52 ct=1)
+[71898.836236] --> nfs4_alloc_slot used_slots=0000 highest_used=4294967295 max_slots=1024
+[71898.836237] <-- nfs4_alloc_slot used_slots=0001 highest_used=0 slotid=0
+[71898.836271] decode_attr_type: type=00
+[71898.836273] decode_attr_change: change attribute=6013266356363722285
+[71898.836275] decode_attr_size: file size=4096
+[71898.836276] decode_attr_fsid: fsid=(0x0/0x0)
+[71898.836277] decode_attr_fileid: fileid=0
+[71898.836279] decode_attr_fs_locations: fs_locations done, error = 0
+[71898.836280] decode_attr_mode: file mode=00
+[71898.836281] decode_attr_nlink: nlink=1
+[71898.836282] decode_attr_owner: uid=-2
+[71898.836283] decode_attr_group: gid=-2
+[71898.836285] decode_attr_rdev: rdev=(0x0:0x0)
+[71898.836286] decode_attr_space_used: space used=0
+[71898.836287] decode_attr_time_access: atime=0
+[71898.836289] decode_attr_time_metadata: ctime=1400072676
+[71898.836291] decode_attr_time_modify: mtime=1400072672
+[71898.836292] decode_attr_mounted_on_fileid: fileid=0
+[71898.836293] decode_getfattr_attrs: xdr returned 0
+[71898.836294] decode_getfattr_generic: xdr returned 0
+[71898.836296] nfs4_free_slot: slotid 0 highest_used_slotid 4294967295
+[71898.836300] NFS: nfs_update_inode(0:38/192 fh_crc=0x62d40c52 ct=2 info=0x26040)
+[71898.836304] NFS: permission(0:38/192), mask=0x1, res=0
+[71898.836310] <-- nfs4_try_mount() = 0
+[71898.836562] --> nfs4_alloc_slot used_slots=0000 highest_used=4294967295 max_slots=1024
+[71898.836565] <-- nfs4_alloc_slot used_slots=0001 highest_used=0 slotid=0
+[71898.836798] decode_attr_type: type=00
+[71898.836800] decode_attr_change: change attribute=6013266356363722285
+[71898.836801] decode_attr_size: file size=4096
+[71898.836801] decode_attr_fsid: fsid=(0x0/0x0)
+[71898.836802] decode_attr_fileid: fileid=0
+[71898.836803] decode_attr_fs_locations: fs_locations done, error = 0
+[71898.836804] decode_attr_mode: file mode=00
+[71898.836806] decode_attr_nlink: nlink=1
+[71898.836807] decode_attr_owner: uid=-2
+[71898.836807] decode_attr_group: gid=-2
+[71898.836808] decode_attr_rdev: rdev=(0x0:0x0)
+[71898.836809] decode_attr_space_used: space used=0
+[71898.836810] decode_attr_time_access: atime=0
+[71898.836811] decode_attr_time_metadata: ctime=1400072676
+[71898.836812] decode_attr_time_modify: mtime=1400072672
+[71898.836812] decode_attr_mounted_on_fileid: fileid=0
+[71898.836813] decode_getfattr_attrs: xdr returned 0
+[71898.836814] decode_getfattr_generic: xdr returned 0
+[71898.836815] nfs4_free_slot: slotid 0 highest_used_slotid 4294967295
+[71898.836819] NFS: nfs_update_inode(0:38/192 fh_crc=0x62d40c52 ct=2 info=0x26040)
+[71898.836821] NFS: permission(0:38/192), mask=0x4, res=0
+[71898.836838] NFS: permission(0:38/192), mask=0x1, res=0
+[71898.836841] NFS: lookup(/.Trash)
+[71898.836842] NFS call  lookup .Trash
+[71898.836844] --> nfs4_alloc_slot used_slots=0000 highest_used=4294967295 max_slots=1024
+[71898.836845] <-- nfs4_alloc_slot used_slots=0001 highest_used=0 slotid=0
+[71898.837019] nfs4_free_slot: slotid 0 highest_used_slotid 4294967295
+[71898.837023] NFS reply lookup: -2
+[71898.837026] NFS: dentry_delete(/.Trash, 8c)
+[71898.837071] NFS: permission(0:38/192), mask=0x1, res=0
+[71898.837074] NFS: lookup(/.Trash-1000)
+[71898.837075] NFS call  lookup .Trash-1000
+[71898.837078] --> nfs4_alloc_slot used_slots=0000 highest_used=4294967295 max_slots=1024
+[71898.837079] <-- nfs4_alloc_slot used_slots=0001 highest_used=0 slotid=0
+[71898.837262] nfs4_free_slot: slotid 0 highest_used_slotid 4294967295
+[71898.837266] NFS reply lookup: -2
+[71898.837268] NFS: dentry_delete(/.Trash-1000, 8c)
+[71903.838046] nfs4_renew_state: start
+[71903.838060] nfs4_renew_state: failed to call renewd. Reason: lease not expired 
+[71903.838061] nfs4_schedule_state_renewal: requeueing work. Lease period = 55
+[71903.838073] nfs4_renew_state: done
+
+umount:
+
+[71958.902996] nfs4_renew_state: start
+[71958.903013] nfs4_renew_state: done
+[71958.903157] nfs4_schedule_state_renewal: requeueing work. Lease period = 60
+[71958.903161] --> nfs_put_client({2})
+[71966.481905] NFS: revalidating (0:38/192)
+[71966.481914] --> nfs4_alloc_slot used_slots=0000 highest_used=4294967295 max_slots=1024
+[71966.481915] <-- nfs4_alloc_slot used_slots=0001 highest_used=0 slotid=0
+[71966.482045] decode_attr_type: type=040000
+[71966.482047] decode_attr_change: change attribute=6013266356363722285
+[71966.482048] decode_attr_size: file size=4096
+[71966.482049] decode_attr_fsid: fsid=(0x0/0x0)
+[71966.482051] decode_attr_fileid: fileid=192
+[71966.482052] decode_attr_fs_locations: fs_locations done, error = 0
+[71966.482054] decode_attr_mode: file mode=0755
+[71966.482055] decode_attr_nlink: nlink=22
+[71966.482057] decode_attr_owner: uid=0
+[71966.482058] decode_attr_group: gid=0
+[71966.482059] decode_attr_rdev: rdev=(0x0:0x0)
+[71966.482060] decode_attr_space_used: space used=4096
+[71966.482062] decode_attr_time_access: atime=1400072690
+[71966.482063] decode_attr_time_metadata: ctime=1400072676
+[71966.482064] decode_attr_time_modify: mtime=1400072672
+[71966.482065] decode_attr_mounted_on_fileid: fileid=0
+[71966.482066] decode_getfattr_attrs: xdr returned 0
+[71966.482067] decode_getfattr_generic: xdr returned 0
+[71966.482069] nfs4_free_slot: slotid 0 highest_used_slotid 4294967295
+[71966.482075] NFS: nfs_update_inode(0:38/192 fh_crc=0x62d40c52 ct=3 info=0x27e7f)
+[71966.482077] NFS: (0:38/192) revalidation complete
+[71966.486437] NFS: clear cookie (0xffff880069338000/0x          (null))
+[71966.486594] NFS: releasing superblock cookie (0xffff88019d669000/0x          (null))
+[71966.486596] --> nfs_free_server()
+[71966.502486] --> nfs_put_client({1})
+[71966.502572] NFS: destroy per-net callback data; net=ffffffff819a09c0
+[71966.503468] nfs_callback_down: service stopped
+[71966.503475] nfs_callback_down: service destroyed
+[71966.503489] --> nfs_free_client(4)
+[71966.503492] NFS: releasing client cookie (0xffff880060e87000/0xffff88008deae050)
+[71966.503532] <-- nfs_free_client()
+[71966.503538] <-- nfs_free_server()
