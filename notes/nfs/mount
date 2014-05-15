@@ -360,6 +360,7 @@ net/sunrpc/clnt.c
 			   |
 			   --> nfs4_server_common_setup
 
+fs/nfs/nfs4client.c
 	IN nfs4_create_server,
 	alloc struct nfs_server and init some fields,
 	>>>call nfs4_init_server to setup an nfs_client and a rpc_client for
@@ -374,11 +375,24 @@ net/sunrpc/clnt.c
 		/* Server capabilities */
 		#define NFS_CAP_READDIRPLUS     (1U << 0)
 		#define NFS_CAP_HARDLINKS       (1U << 1)
+		....
 	set idmap or not, not map by default
-	>>>call nfs4_get_rootfh get file handle for server's pseudoroot, 
-		authinfo ?
-	
-
+	>>>call nfs4_get_rootfh --> nfs4_proc_get_rootfh
+		get file handle for server's pseudoroot, auth_probe 1,
+			struct nfs_fh {
+        			unsigned short          size;
+		        	unsigned char           data[128];
+			};
+		>>>call nfs4_do_find_root_sec, find right nfs4 minor version ops
+		to call ->find_root_sec --> nfs4_find_root_sec
+						    |
+						    V
+					   nfs4_lookup_root_sec
+		fire RPC call LOOKUP_ROOT to server with diff sec flavors.
+		>>>call nfs4_server_capabilities fire RPC call CLNT_SERVER_CAPS,
+		get server caps,
+		>>>call nfs4_do_fsinfo, to fire CLNT_FSINFO call get fsinfo ?
+		>>>call nfs4_map_errs, transform NFS4ERR to errno.
 
 Then vfs_kern_mount call registered function nfs4_get_sb do most of the work.
 nfs4_get_sb --> nfs4_try_mount --> nfs_do_root_mount
