@@ -394,6 +394,25 @@ fs/nfs/nfs4client.c
 		>>>call nfs4_do_fsinfo, to fire CLNT_FSINFO call get fsinfo ?
 		>>>call nfs4_map_errs, transform NFS4ERR to errno.
 
+	back to nfs4_server_common_setup,
+	>>>call nfs4_session_set_rwsize and nfs_probe_fsinfo do more args handle
+		work, bufsize etc.. of nfs_server
+	>>>call nfs_server_insert_lists, add list linkage
+		link nfs_server and nfs_server->nfs_client
+		link nfs_server and namespace->net->nfs_volume_list
+	then set server->mount_time to jiffies and destroy func.
+
+
+	Now back to  nfs4_remote_mount, after err check, comes to _mount_common
+
+	nfs4_remote_mount --> nfs4_create_server
+			  |
+			  --> nfs_fs_mount_common
+
+	IN nfs_fs_mount_common,
+	sget ?
+
+
 Then vfs_kern_mount call registered function nfs4_get_sb do most of the work.
 nfs4_get_sb --> nfs4_try_mount --> nfs_do_root_mount
 Then  goes to nfs4_remote_get_sb --> nfs4_create_server --> nfs4_init_server --> nfs4_set_client 
