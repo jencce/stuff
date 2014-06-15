@@ -87,9 +87,10 @@ fs/nfs/nfs4super.c
         data->nfs_server.export_path = export_path;
         res = nfs_follow_remote_path(root_mnt, export_path);
 	-------------------------------------------------------
-	
 
-	IN nfs_do_root_mount, just handle hostname, then CALL:
+	IN nfs_do_root_mount, alloc devname space and fill with hostname,
+                snprintf(root_devname, len, "%s:/", hostname);
+	then CALL:
 		vfs_kern_mount(fs_type, flags, root_devname, data);
 	as vfs_kern_mount called before, with nfs4_remote_fs_type:
 
