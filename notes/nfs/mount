@@ -405,12 +405,14 @@ fs/nfs/nfs4client.c
 
 	back to nfs4_create_server, return the server initialized,
 
+fs/nfs/nfs4super.c
 	nfs4_remote_mount --> nfs4_create_server
 			  |
 			  --> nfs_fs_mount_common
 
 	Now back to  nfs4_remote_mount, after err check, comes to _mount_common
 
+fs/nfs/super.c
 	IN nfs_fs_mount_common,
 		check server->flags for shared or not AND sync or not. If not
 		shared, the next sget could be easier.
@@ -435,7 +437,8 @@ fs/nfs/nfs4client.c
 			>>>call server->nfs_client->rpc_ops->getroot
 					||
 				nfs4_proc_get_root,  
-			the mntfh? from ? to ?
+			the mntfh is from nfs4_create_server call LOOKUP_ROOT.
+			what is it and why
 
 
 
