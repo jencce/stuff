@@ -403,12 +403,13 @@ fs/nfs/nfs4client.c
 		link nfs_server and namespace->net->nfs_volume_list
 	then set server->mount_time to jiffies and destroy func.
 
-
-	Now back to  nfs4_remote_mount, after err check, comes to _mount_common
+	back to nfs4_create_server, return the server initialized,
 
 	nfs4_remote_mount --> nfs4_create_server
 			  |
 			  --> nfs_fs_mount_common
+
+	Now back to  nfs4_remote_mount, after err check, comes to _mount_common
 
 	IN nfs_fs_mount_common,
 		check server->flags for shared or not AND sync or not. If not
