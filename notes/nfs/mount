@@ -389,7 +389,8 @@ fs/nfs/nfs4client.c
 						    |
 						    V
 					   nfs4_lookup_root_sec
-		fire RPC call LOOKUP_ROOT to server with diff sec flavors.
+		fire RPC call LOOKUP_ROOT to server with diff sec flavors, get 
+		info like fsinfo.fattr.{valid,} from server.
 		>>>call nfs4_server_capabilities fire RPC call CLNT_SERVER_CAPS,
 		get server caps,
 		>>>call nfs4_do_fsinfo, to fire CLNT_FSINFO call get fsinfo ?
@@ -420,7 +421,10 @@ fs/nfs/super.c
 	IN sget, iterate over nfs_v4->nfs4_fs_type->fs_supers, to find match
 	super_block according to compare function. At first the fs_supers list
 	is NULL, so ierate failed and sget alloc a new super_block , set its
-	fileds according to set function, then add it to the fs_supers list.
+	fileds according to set function: nfs_set_super, it sets:
+		s->s_fs_info = server;
+	this server is from nfs4_create_server.
+	Then add this super_block to the fs_supers list.
 	At last, sget set sb type to nfs4_fs_type, regiser shrinker, then 
 	return the super_block.
 
@@ -432,13 +436,25 @@ fs/nfs/super.c
 
 		>>>Call nfs_get_cache_cookie to do fscache stuff.
 
+fs/nfs/getroot.c
 		>>>Call nfs_get_root to get an root dentry from root fh:
 			mntroot = nfs_get_root(s, mount_info->mntfh, dev_name);
 			>>>call server->nfs_client->rpc_ops->getroot
 					||
-				nfs4_proc_get_root,  
-			the mntfh is from nfs4_create_server call LOOKUP_ROOT.
-			what is it and why
+				nfs4_proc_get_root (server, mntfh, &fsinfo)
+		the mntfh is from nfs4_create_server call LOOKUP_ROOT, it is a
+		128 maxsize char[], recording root path?
+			In nfs4_proc_get_root, rpc call CLNT_SERVER_CAPS, to
+			get caps; then alloc nfs4_label which is a length known
+			string; then rpc call CLNT_GETATTR with label and
+			fattr in fsinfo. 
+fs/nfs/inode.c
+			>>>call nfs_fhget(sb, mntfh, fsinfo.fattr, NULL);
+			to get inode info? server->fsid when inited?
+			
+
+		>>>Call set_security to set LSM related stuff.
+		>>>Set, s->s_flags |= MS_ACTIVE
 
 
 
