@@ -1,0 +1,9 @@
+fs/nfsd is nfs server kernel implemention.
+
+nfsd start from fs/nfsd/nfsctl.c, module nfsd_init
+
+nfsd create and mount a procfs mount as user interface:
+	sunrpc on /proc/fs/nfsd type nfsd (rw,relatime)
+
+Writing a positive integer to /proc/fs/nfsd/threads will start
+the nfsd service, and zero to stop.
