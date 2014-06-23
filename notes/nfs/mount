@@ -262,7 +262,7 @@ net/sunrpc/clnt.c
 	calling rpc_ping,
 
 	IN rpc_ping,
-	init rpc_message msg, proc, cred, etc, rpc_proc is null call,
+	init rpc_message msg, proc, cred, etc, rpc_proc is NULL call,
 	>>>call rpc_call_sync to perform a RPC call, according to tshark, mount will
 	do this as first two rpc calls.
 	
