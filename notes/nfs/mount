@@ -263,8 +263,8 @@ net/sunrpc/clnt.c
 
 	IN rpc_ping,
 	init rpc_message msg, proc, cred, etc, rpc_proc is NULL call,
-	>>>call rpc_call_sync to perform a RPC call, according to tshark, mount will
-	do this as first two rpc calls.
+	>>>call rpc_call_sync to perform a RPC call, according to tshark, mount
+	will do this as first two rpc calls.
 	
 	##So, mount -> init_a_server -> init_a_client -> rpc_ping_call
 
@@ -447,10 +447,13 @@ fs/nfs/getroot.c
 			In nfs4_proc_get_root, rpc call CLNT_SERVER_CAPS, to
 			get caps; then alloc nfs4_label which is a length known
 			string; then rpc call CLNT_GETATTR with label and
-			fattr in fsinfo. 
+			fattr in fsinfo. If fattr->fsid is valid, which is said
+			by fattr->valid bitmap, AND server->fsid not equal to
+			fattr->fsid, copy server->fsid to fattr->fsid.
+			server->fsid when inited? and what is it for? wireshark
 fs/nfs/inode.c
 			>>>call nfs_fhget(sb, mntfh, fsinfo.fattr, NULL);
-			to get inode info? server->fsid when inited?
+			to get inode info?
 			
 
 		>>>Call set_security to set LSM related stuff.
