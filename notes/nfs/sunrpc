@@ -1,0 +1,4 @@
+call_start -> call_reserve -> call_reserveresult -> call_refresh -> call_refreshresult -> call_allocate -> call_bind
+														|
+														v
+		exit_task <-	call_decode <-	call_status <-	transmit_status <-  call_transmit <-   call_connect

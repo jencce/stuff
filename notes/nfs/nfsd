@@ -7,3 +7,7 @@ nfsd create and mount a procfs mount as user interface:
 
 Writing a positive integer to /proc/fs/nfsd/threads will start
 the nfsd service, and zero to stop.
+
+fs/nfsd/nfsctl.c
+write_threads -> nfsd_svc -> nfsd_create_serv -> svc_create_pooled(nfsd_program
+<goes to nfsd proc compound>

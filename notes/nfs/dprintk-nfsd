@@ -1,0 +1,248 @@
+[24960.649054] NFSD: starting 90-second grace period (net ffffffff81cc8cc0)
+[25017.210929] FS-Cache: Loaded
+[25017.229691] FS-Cache: Netfs 'nfs' registered for caching
+[25017.234093] Key type dns_resolver registered
+[25017.244731] NFS: Registering the id_resolver key type
+[25017.244748] Key type id_resolver registered
+[25017.244750] Key type id_legacy registered
+[25017.248759] nfsd_dispatch: vers 4 proc 0
+[25017.249027] nfsd_dispatch: vers 4 proc 1
+[25017.249034] nfsv4 compound op #1/1: 35 (OP_SETCLIENTID)
+[25017.249039] renewing client (clientid 53be436a/00000001)
+[25017.249040] nfsv4 compound op ffff8801ba214080 opcnt 1 #1: 35: status 0
+[25017.249041] nfsv4 compound returned 0
+[25017.249097] nfsd_dispatch: vers 4 proc 1
+[25017.249099] nfsv4 compound op #1/1: 36 (OP_SETCLIENTID_CONFIRM)
+[25017.249101] renewing client (clientid 53be436a/00000001)
+[25017.249102] NFSD: move_to_confirm nfs4_client ffff880207d42800
+[25017.249103] renewing client (clientid 53be436a/00000001)
+[25017.249106] nfsv4 compound op ffff8801ba214080 opcnt 1 #1: 36: status 0
+[25017.249107] nfsv4 compound returned 0
+[25017.249199] nfsd_dispatch: vers 4 proc 1
+[25017.249204] nfsv4 compound op #1/3: 24 (OP_PUTROOTFH)
+[25017.249620] found domain *
+[25017.249624] found fsidtype 1
+[25017.249625] found fsid length 4
+[25017.249627] Path seems to be </>
+[25017.249630] Found the path /
+[25017.250272] nfsd: fh_compose(exp 08:01/128 /, ino=128)
+[25017.250275] nfsv4 compound op ffff8801ba214080 opcnt 3 #1: 24: status 0
+[25017.250276] nfsv4 compound op #2/3: 10 (OP_GETFH)
+[25017.250278] nfsv4 compound op ffff8801ba214080 opcnt 3 #2: 10: status 0
+[25017.250279] nfsv4 compound op #3/3: 9 (OP_GETATTR)
+[25017.250281] nfsd: fh_verify(8: 00010001 00000000 00000000 00000000 00000000 00000000)
+[25017.250286] nfsv4 compound op ffff8801ba214080 opcnt 3 #3: 9: status 0
+[25017.250287] nfsv4 compound returned 0
+[25017.250345] nfsd_dispatch: vers 4 proc 1
+[25017.250348] nfsv4 compound op #1/2: 22 (OP_PUTFH)
+[25017.250349] nfsd: fh_verify(8: 00010001 00000000 00000000 00000000 00000000 00000000)
+[25017.250353] nfsv4 compound op ffff8801ba214080 opcnt 2 #1: 22: status 0
+[25017.250354] nfsv4 compound op #2/2: 9 (OP_GETATTR)
+[25017.250355] nfsd: fh_verify(8: 00010001 00000000 00000000 00000000 00000000 00000000)
+[25017.250812] nfsv4 compound op ffff8801ba214080 opcnt 2 #2: 9: status 0
+[25017.250815] nfsv4 compound returned 0
+[25017.251272] nfsd_dispatch: vers 4 proc 1
+[25017.251274] nfsv4 compound op #1/2: 22 (OP_PUTFH)
+[25017.251276] nfsd: fh_verify(8: 00010001 00000000 00000000 00000000 00000000 00000000)
+[25017.251280] nfsv4 compound op ffff8801ba214080 opcnt 2 #1: 22: status 0
+[25017.251281] nfsv4 compound op #2/2: 9 (OP_GETATTR)
+[25017.251283] nfsd: fh_verify(8: 00010001 00000000 00000000 00000000 00000000 00000000)
+[25017.251285] nfsv4 compound op ffff8801ba214080 opcnt 2 #2: 9: status 0
+[25017.251286] nfsv4 compound returned 0
+[25017.251325] nfsd_dispatch: vers 4 proc 1
+[25017.251327] nfsv4 compound op #1/2: 22 (OP_PUTFH)
+[25017.251328] nfsd: fh_verify(8: 00010001 00000000 00000000 00000000 00000000 00000000)
+[25017.251331] nfsv4 compound op ffff8801ba214080 opcnt 2 #1: 22: status 0
+[25017.251332] nfsv4 compound op #2/2: 9 (OP_GETATTR)
+[25017.251334] nfsd: fh_verify(8: 00010001 00000000 00000000 00000000 00000000 00000000)
+[25017.251338] nfsv4 compound op ffff8801ba214080 opcnt 2 #2: 9: status 0
+[25017.251339] nfsv4 compound returned 0
+[25017.251374] nfsd_dispatch: vers 4 proc 1
+[25017.251377] nfsv4 compound op #1/2: 22 (OP_PUTFH)
+[25017.251380] nfsd: fh_verify(8: 00010001 00000000 00000000 00000000 00000000 00000000)
+[25017.251385] nfsv4 compound op ffff8801ba214080 opcnt 2 #1: 22: status 0
+[25017.251386] nfsv4 compound op #2/2: 9 (OP_GETATTR)
+[25017.251388] nfsd: fh_verify(8: 00010001 00000000 00000000 00000000 00000000 00000000)
+[25017.251392] nfsv4 compound op ffff8801ba214080 opcnt 2 #2: 9: status 0
+[25017.251393] nfsv4 compound returned 0
+[25017.251433] nfsd_dispatch: vers 4 proc 1
+[25017.251435] nfsv4 compound op #1/2: 22 (OP_PUTFH)
+[25017.251438] nfsd: fh_verify(8: 00010001 00000000 00000000 00000000 00000000 00000000)
+[25017.251442] nfsv4 compound op ffff8801ba214080 opcnt 2 #1: 22: status 0
+[25017.251443] nfsv4 compound op #2/2: 9 (OP_GETATTR)
+[25017.251455] nfsd: fh_verify(8: 00010001 00000000 00000000 00000000 00000000 00000000)
+[25017.251481] nfsv4 compound op ffff8801ba214080 opcnt 2 #2: 9: status 0
+[25017.251482] nfsv4 compound returned 0
+[25017.252349] nfsd_dispatch: vers 4 proc 1
+[25017.252353] nfsv4 compound op #1/2: 22 (OP_PUTFH)
+[25017.252356] nfsd: fh_verify(8: 00010001 00000000 00000000 00000000 00000000 00000000)
+[25017.252360] nfsv4 compound op ffff8801ba214080 opcnt 2 #1: 22: status 0
+[25017.252362] nfsv4 compound op #2/2: 9 (OP_GETATTR)
+[25017.252365] nfsd: fh_verify(8: 00010001 00000000 00000000 00000000 00000000 00000000)
+[25017.252372] nfsv4 compound op ffff8801ba214080 opcnt 2 #2: 9: status 0
+[25017.252374] nfsv4 compound returned 0
+[25017.252430] nfsd_dispatch: vers 4 proc 1
+[25017.252433] nfsv4 compound op #1/2: 22 (OP_PUTFH)
+[25017.252435] nfsd: fh_verify(8: 00010001 00000000 00000000 00000000 00000000 00000000)
+[25017.252440] nfsv4 compound op ffff8801ba214080 opcnt 2 #1: 22: status 0
+[25017.252441] nfsv4 compound op #2/2: 9 (OP_GETATTR)
+[25017.252444] nfsd: fh_verify(8: 00010001 00000000 00000000 00000000 00000000 00000000)
+[25017.252460] nfsv4 compound op ffff8801ba214080 opcnt 2 #2: 9: status 0
+[25017.252462] nfsv4 compound returned 0
+[25017.252644] SELinux: initialized (dev 0:39, type nfs4), uses genfs_contexts
+[25017.252948] nfsd_dispatch: vers 4 proc 1
+[25017.252951] nfsv4 compound op #1/3: 22 (OP_PUTFH)
+[25017.252955] nfsd: fh_verify(8: 00010001 00000000 00000000 00000000 00000000 00000000)
+[25017.252959] nfsv4 compound op ffff8801ba214080 opcnt 3 #1: 22: status 0
+[25017.252961] nfsv4 compound op #2/3: 3 (OP_ACCESS)
+[25017.252964] nfsd: fh_verify(8: 00010001 00000000 00000000 00000000 00000000 00000000)
+[25017.252968] nfsv4 compound op ffff8801ba214080 opcnt 3 #2: 3: status 0
+[25017.252970] nfsv4 compound op #3/3: 9 (OP_GETATTR)
+[25017.252972] nfsd: fh_verify(8: 00010001 00000000 00000000 00000000 00000000 00000000)
+[25017.252976] nfsv4 compound op ffff8801ba214080 opcnt 3 #3: 9: status 0
+[25017.252978] nfsv4 compound returned 0
+[25017.253119] nfsd_dispatch: vers 4 proc 1
+[25017.253122] nfsv4 compound op #1/4: 22 (OP_PUTFH)
+[25017.253125] nfsd: fh_verify(8: 00010001 00000000 00000000 00000000 00000000 00000000)
+[25017.253129] nfsv4 compound op ffff8801ba214080 opcnt 4 #1: 22: status 0
+[25017.253131] nfsv4 compound op #2/4: 15 (OP_LOOKUP)
+[25017.253134] nfsd: fh_verify(8: 00010001 00000000 00000000 00000000 00000000 00000000)
+[25017.253138] nfsd: nfsd_lookup(fh 8: 00010001 00000000 00000000 00000000 00000000 00000000, mnt)
+[25017.253224] nfsd: fh_compose(exp 08:01/268635602 /mnt, ino=268635602)
+[25017.253228] nfsv4 compound op ffff8801ba214080 opcnt 4 #2: 15: status 0
+[25017.253229] nfsv4 compound op #3/4: 10 (OP_GETFH)
+[25017.253232] nfsv4 compound op ffff8801ba214080 opcnt 4 #3: 10: status 0
+[25017.253234] nfsv4 compound op #4/4: 9 (OP_GETATTR)
+[25017.253237] nfsd: fh_verify(28: 00070001 10030dd2 00000000 01080000 00000000 00000000)
+[25017.253292] nfsv4 compound op ffff8801ba214080 opcnt 4 #4: 9: status 0
+[25017.253294] nfsv4 compound returned 0
+[25017.253350] nfsd_dispatch: vers 4 proc 1
+[25017.253353] nfsv4 compound op #1/4: 22 (OP_PUTFH)
+[25017.253356] nfsd: fh_verify(8: 00010001 00000000 00000000 00000000 00000000 00000000)
+[25017.253361] nfsv4 compound op ffff8801ba214080 opcnt 4 #1: 22: status 0
+[25017.253363] nfsv4 compound op #2/4: 15 (OP_LOOKUP)
+[25017.253365] nfsd: fh_verify(8: 00010001 00000000 00000000 00000000 00000000 00000000)
+[25017.253369] nfsd: nfsd_lookup(fh 8: 00010001 00000000 00000000 00000000 00000000 00000000, mnt)
+[25017.253373] nfsd: fh_compose(exp 08:01/268635602 /mnt, ino=268635602)
+[25017.253375] nfsv4 compound op ffff8801ba214080 opcnt 4 #2: 15: status 0
+[25017.253376] nfsv4 compound op #3/4: 10 (OP_GETFH)
+[25017.253378] nfsv4 compound op ffff8801ba214080 opcnt 4 #3: 10: status 0
+[25017.253380] nfsv4 compound op #4/4: 9 (OP_GETATTR)
+[25017.253382] nfsd: fh_verify(28: 00070001 10030dd2 00000000 01080000 00000000 00000000)
+[25017.253386] nfsv4 compound op ffff8801ba214080 opcnt 4 #4: 9: status 0
+[25017.253387] nfsv4 compound returned 0
+[25017.253459] nfsd_dispatch: vers 4 proc 1
+[25017.253467] nfsv4 compound op #1/2: 22 (OP_PUTFH)
+[25017.253474] nfsd: fh_verify(8: 00010001 00000000 00000000 00000000 00000000 00000000)
+[25017.253483] nfsv4 compound op ffff8801ba214080 opcnt 2 #1: 22: status 0
+[25017.253490] nfsv4 compound op #2/2: 33 (OP_SECINFO)
+[25017.253497] nfsd: fh_verify(8: 00010001 00000000 00000000 00000000 00000000 00000000)
+[25017.253503] nfsd: nfsd_lookup(fh 8: 00010001 00000000 00000000 00000000 00000000 00000000, mnt)
+[25017.253510] nfsv4 compound op ffff8801ba214080 opcnt 2 #2: 33: status 0
+[25017.253512] nfsv4 compound returned 0
+[25017.254261] nfsd_dispatch: vers 4 proc 1
+[25017.254265] nfsv4 compound op #1/2: 22 (OP_PUTFH)
+[25017.254269] nfsd: fh_verify(28: 00070001 10030dd2 00000000 01080000 00000000 00000000)
+[25017.254461] found domain *
+[25017.254464] found fsidtype 7
+[25017.254466] found fsid length 24
+[25017.254468] Path seems to be </mnt>
+[25017.254469] Found the path /mnt
+[25017.254719] nfsv4 compound op ffff8801ba214080 opcnt 2 #1: 22: status 0
+[25017.254722] nfsv4 compound op #2/2: 9 (OP_GETATTR)
+[25017.254725] nfsd: fh_verify(28: 00070001 10030dd2 00000000 01080000 00000000 00000000)
+[25017.254736] nfsv4 compound op ffff8801ba214080 opcnt 2 #2: 9: status 0
+[25017.254738] nfsv4 compound returned 0
+[25017.255486] nfsd_dispatch: vers 4 proc 1
+[25017.255489] nfsv4 compound op #1/2: 22 (OP_PUTFH)
+[25017.255493] nfsd: fh_verify(28: 00070001 10030dd2 00000000 01080000 00000000 00000000)
+[25017.255498] nfsv4 compound op ffff8801ba214080 opcnt 2 #1: 22: status 0
+[25017.255500] nfsv4 compound op #2/2: 9 (OP_GETATTR)
+[25017.255502] nfsd: fh_verify(28: 00070001 10030dd2 00000000 01080000 00000000 00000000)
+[25017.255506] nfsv4 compound op ffff8801ba214080 opcnt 2 #2: 9: status 0
+[25017.255508] nfsv4 compound returned 0
+[25017.255564] nfsd_dispatch: vers 4 proc 1
+[25017.255567] nfsv4 compound op #1/2: 22 (OP_PUTFH)
+[25017.255570] nfsd: fh_verify(28: 00070001 10030dd2 00000000 01080000 00000000 00000000)
+[25017.255575] nfsv4 compound op ffff8801ba214080 opcnt 2 #1: 22: status 0
+[25017.255576] nfsv4 compound op #2/2: 9 (OP_GETATTR)
+[25017.255579] nfsd: fh_verify(28: 00070001 10030dd2 00000000 01080000 00000000 00000000)
+[25017.255584] nfsv4 compound op ffff8801ba214080 opcnt 2 #2: 9: status 0
+[25017.255585] nfsv4 compound returned 0
+[25017.255737] nfsd_dispatch: vers 4 proc 1
+[25017.255741] nfsv4 compound op #1/2: 22 (OP_PUTFH)
+[25017.255743] nfsd: fh_verify(28: 00070001 10030dd2 00000000 01080000 00000000 00000000)
+[25017.255749] nfsv4 compound op ffff8801ba214080 opcnt 2 #1: 22: status 0
+[25017.255751] nfsv4 compound op #2/2: 9 (OP_GETATTR)
+[25017.255753] nfsd: fh_verify(28: 00070001 10030dd2 00000000 01080000 00000000 00000000)
+[25017.255760] nfsv4 compound op ffff8801ba214080 opcnt 2 #2: 9: status 0
+[25017.255762] nfsv4 compound returned 0
+[25017.255813] nfsd_dispatch: vers 4 proc 1
+[25017.255816] nfsv4 compound op #1/2: 22 (OP_PUTFH)
+[25017.255819] nfsd: fh_verify(28: 00070001 10030dd2 00000000 01080000 00000000 00000000)
+[25017.255823] nfsv4 compound op ffff8801ba214080 opcnt 2 #1: 22: status 0
+[25017.255824] nfsv4 compound op #2/2: 9 (OP_GETATTR)
+[25017.255827] nfsd: fh_verify(28: 00070001 10030dd2 00000000 01080000 00000000 00000000)
+[25017.255832] nfsv4 compound op ffff8801ba214080 opcnt 2 #2: 9: status 0
+[25017.255833] nfsv4 compound returned 0
+[25017.255863] SELinux: initialized (dev 0:40, type nfs4), uses genfs_contexts
+[25017.255907] nfsd_dispatch: vers 4 proc 1
+[25017.255910] nfsv4 compound op #1/3: 22 (OP_PUTFH)
+[25017.255913] nfsd: fh_verify(28: 00070001 10030dd2 00000000 01080000 00000000 00000000)
+[25017.255918] nfsv4 compound op ffff8801ba214080 opcnt 3 #1: 22: status 0
+[25017.255920] nfsv4 compound op #2/3: 3 (OP_ACCESS)
+[25017.255922] nfsd: fh_verify(28: 00070001 10030dd2 00000000 01080000 00000000 00000000)
+[25017.255925] nfsv4 compound op ffff8801ba214080 opcnt 3 #2: 3: status 0
+[25017.255927] nfsv4 compound op #3/3: 9 (OP_GETATTR)
+[25017.255929] nfsd: fh_verify(28: 00070001 10030dd2 00000000 01080000 00000000 00000000)
+[25017.255932] nfsv4 compound op ffff8801ba214080 opcnt 3 #3: 9: status 0
+[25017.255934] nfsv4 compound returned 0
+[25017.255981] nfsd_dispatch: vers 4 proc 1
+[25017.255984] nfsv4 compound op #1/4: 22 (OP_PUTFH)
+[25017.255987] nfsd: fh_verify(28: 00070001 10030dd2 00000000 01080000 00000000 00000000)
+[25017.255992] nfsv4 compound op ffff8801ba214080 opcnt 4 #1: 22: status 0
+[25017.255993] nfsv4 compound op #2/4: 15 (OP_LOOKUP)
+[25017.255996] nfsd: fh_verify(28: 00070001 10030dd2 00000000 01080000 00000000 00000000)
+[25017.256000] nfsd: nfsd_lookup(fh 28: 00070001 10030dd2 00000000 01080000 00000000 00000000, testarea)
+[25017.256076] nfsd: fh_compose(exp 08:01/136613120 mnt/testarea, ino=136613120)
+[25017.256080] nfsv4 compound op ffff8801ba214080 opcnt 4 #2: 15: status 0
+[25017.256082] nfsv4 compound op #3/4: 10 (OP_GETFH)
+[25017.256084] nfsv4 compound op ffff8801ba214080 opcnt 4 #3: 10: status 0
+[25017.256086] nfsv4 compound op #4/4: 9 (OP_GETATTR)
+[25017.256088] nfsd: fh_verify(28: 00070001 08248d00 00000000 01080000 00000000 00000000)
+[25017.256092] nfsv4 compound op ffff8801ba214080 opcnt 4 #4: 9: status 0
+[25017.256094] nfsv4 compound returned 0
+[25017.256202] nfsd_dispatch: vers 4 proc 1
+[25017.256205] nfsv4 compound op #1/3: 22 (OP_PUTFH)
+[25017.256208] nfsd: fh_verify(28: 00070001 08248d00 00000000 01080000 00000000 00000000)
+[25017.256351] found domain *
+[25017.256353] found fsidtype 7
+[25017.256354] found fsid length 24
+[25017.256356] Path seems to be </mnt/testarea>
+[25017.256357] Found the path /mnt/testarea
+[25017.256365] nfsv4 compound op ffff8801ba214080 opcnt 3 #1: 22: status 0
+[25017.256368] nfsv4 compound op #2/3: 3 (OP_ACCESS)
+[25017.256370] nfsd: fh_verify(28: 00070001 08248d00 00000000 01080000 00000000 00000000)
+[25017.256374] nfsv4 compound op ffff8801ba214080 opcnt 3 #2: 3: status 0
+[25017.256376] nfsv4 compound op #3/3: 9 (OP_GETATTR)
+[25017.256378] nfsd: fh_verify(28: 00070001 08248d00 00000000 01080000 00000000 00000000)
+[25017.256382] nfsv4 compound op ffff8801ba214080 opcnt 3 #3: 9: status 0
+[25017.256384] nfsv4 compound returned 0
+[25017.256455] nfsd_dispatch: vers 4 proc 1
+[25017.256460] nfsv4 compound op #1/4: 22 (OP_PUTFH)
+[25017.256467] nfsd: fh_verify(28: 00070001 08248d00 00000000 01080000 00000000 00000000)
+[25017.256476] nfsv4 compound op ffff8801ba214080 opcnt 4 #1: 22: status 0
+[25017.256483] nfsv4 compound op #2/4: 15 (OP_LOOKUP)
+[25017.256488] nfsd: fh_verify(28: 00070001 08248d00 00000000 01080000 00000000 00000000)
+[25017.256497] nfsd: nfsd_lookup(fh 28: 00070001 08248d00 00000000 01080000 00000000 00000000, server)
+[25017.258621] nfsd: fh_compose(exp 08:01/403498907 testarea/server, ino=403498907)
+[25017.258626] nfsv4 compound op ffff8801ba214080 opcnt 4 #2: 15: status 0
+[25017.258628] nfsv4 compound op #3/4: 10 (OP_GETFH)
+[25017.258630] nfsv4 compound op ffff8801ba214080 opcnt 4 #3: 10: status 0
+[25017.258632] nfsv4 compound op #4/4: 9 (OP_GETATTR)
+[25017.258634] nfsd: fh_verify(28: 00070001 180ce79b 00000000 01080000 00000000 00000000)
+[25017.258700] nfsv4 compound op ffff8801ba214080 opcnt 4 #4: 9: status 0
+[25017.258702] nfsv4 compound returned 0
+[25048.904439] nfsd: creating service
+[25048.907018] nfsd: freeing readahead buffers.
+[25048.907035] nfsd: last server has exited, flushing export cache

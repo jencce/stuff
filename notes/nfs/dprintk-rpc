@@ -1,0 +1,1965 @@
+[25875.470371] NFSD: starting 90-second grace period (net ffffffff81cc8cc0)
+[25890.921885] RPC:       looking up machine cred for service *
+[25890.921895] RPC:       set up xprt to ::1 (port 2049) via tcp
+[25890.921897] RPC:       created transport ffff880207d34000 with 65536 slots
+[25890.921898] RPC:       creating nfs client for localhost (xprt ffff880207d34000)
+[25890.921912] RPC:       creating GSS authenticator for client ffff88003741c400
+[25890.921924] RPC:       Couldn't create auth handle (flavor 390004)
+[25890.921929] RPC:       destroying transport ffff880207d34000
+[25890.921931] RPC:       xs_destroy xprt ffff880207d34000
+[25890.921932] RPC:       xs_close xprt ffff880207d34000
+[25890.921933] RPC:       disconnected transport ffff880207d34000
+[25890.921936] RPC:       set up xprt to ::1 (port 2049) via tcp
+[25890.921937] RPC:       created transport ffff880207d34000 with 65536 slots
+[25890.921938] RPC:       creating nfs client for localhost (xprt ffff880207d34000)
+[25890.921942] RPC:       creating UNIX authenticator for client ffff88003741c400
+[25890.921944] RPC:       new task initialized, procpid 12457
+[25890.921945] RPC:       allocated task ffff8800c91be800
+[25890.921947] RPC:    96 __rpc_execute flags=0x680
+[25890.921948] RPC:    96 call_start nfs4 proc NULL (sync)
+[25890.921950] RPC:    96 call_reserve (status 0)
+[25890.921951] RPC:    96 reserved req ffff88003741d200 xid 3441d29b
+[25890.921953] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.921954] RPC:    96 call_reserveresult (status 0)
+[25890.921955] RPC:    96 call_refresh (status 0)
+[25890.921956] RPC:    96 holding NULL cred ffffffffa0297160
+[25890.921957] RPC:    96 refreshing NULL cred ffffffffa0297160
+[25890.921958] RPC:    96 call_refreshresult (status 0)
+[25890.921960] RPC:    96 call_allocate (status 0)
+[25890.921961] RPC:    96 allocated buffer of size 96 at ffff880207d31000
+[25890.921962] RPC:    96 call_bind (status 0)
+[25890.921963] RPC:    96 call_connect xprt ffff880207d34000 is not connected
+[25890.921964] RPC:    96 xprt_connect xprt ffff880207d34000 is not connected
+[25890.921965] RPC:    96 sleep_on(queue "xprt_pending" time 4320572525)
+[25890.921967] RPC:    96 added to queue ffff880207d34258 "xprt_pending"
+[25890.921968] RPC:    96 setting alarm for 60000 ms
+[25890.921969] RPC:       xs_connect scheduled xprt ffff880207d34000
+[25890.921972] RPC:    96 sync task going to sleep
+[25890.921982] RPC:       xs_bind 0000:0000:0000:0000:0000:0000:0000:0000:741: ok (0)
+[25890.921983] RPC:       worker connecting xprt ffff880207d34000 via tcp to ::1 (port 2049)
+[25890.922047] RPC:       xs_tcp_state_change client ffff880207d34000...
+[25890.922048] RPC:       state 1 conn 0 dead 0 zapped 1 sk_shutdown 0
+[25890.922049] RPC:    96 __rpc_wake_up_task (now 4320572525)
+[25890.922050] RPC:    96 disabling timer
+[25890.922051] RPC:    96 removed from queue ffff880207d34258 "xprt_pending"
+[25890.922054] RPC:       __rpc_wake_up_task done
+[25890.922074] RPC:    96 sync task resuming
+[25890.922076] svc: socket ffff8800c95c9740 TCP (listen) state change 10
+[25890.922078] svc: transport ffff880094ec8000 served by daemon ffff88007fa4a000
+[25890.922079] RPC:    96 xprt_connect_status: retrying
+[25890.922081] RPC:    96 call_connect_status (status -11)
+[25890.922082] RPC:    96 call_timeout (minor)
+[25890.922083] RPC:    96 call_bind (status 0)
+[25890.922084] RPC:    96 call_connect xprt ffff880207d34000 is connected
+[25890.922085] RPC:    96 call_transmit (status 0)
+[25890.922086] RPC:    96 xprt_prepare_transmit
+[25890.922087] RPC:    96 rpc_xdr_encode (status 0)
+[25890.922089] RPC:    96 marshaling NULL cred ffffffffa0297160
+[25890.922090] RPC:    96 using AUTH_NULL cred ffffffffa0297160 to wrap rpc data
+[25890.922091] RPC:    96 xprt_transmit(44)
+[25890.922094] RPC:       ffff880207d34000 connect status 115 connected 1 sock state 1
+[25890.922098] svc: tcp_accept ffff880094ec8000 sock ffff8800ba535400
+[25890.922106] nfsd: connect from 0000:0000:0000:0000:0000:0000:0000:0001, port=741
+[25890.922108] svc: svc_setup_socket ffff88008adef980
+[25890.922110] setting up TCP socket for reading
+[25890.922112] svc: svc_setup_socket created ffff88007f870000 (inet ffff8800c47f3e00)
+[25890.922114] svc: transport ffff88007f870000 served by daemon ffff88007fa48000
+[25890.922128] svc: transport ffff880094ec8000 served by daemon ffff88008bfbe000
+[25890.922129] svc: socket ffff8800c47f3e00 TCP data ready (svsk ffff88007f870000)
+[25890.922133] svc: transport ffff88007f870000 busy, not enqueued
+[25890.922134] svc: server ffff88007fa4a000 waiting for data (to = 3600000)
+[25890.922149] svc: tcp_accept ffff880094ec8000 sock ffff8800ba535400
+[25890.922150] svc: server ffff88007fa48000, pool 0, transport ffff88007f870000, inuse=2
+[25890.922152] svc: tcp_recv ffff88007f870000 data 1 conn 0 close 0
+[25890.922158] svc: server ffff88008bfbe000 waiting for data (to = 3600000)
+[25890.922159] RPC:       xs_tcp_send_request(44) = 44
+[25890.922160] RPC:    96 xmit complete
+[25890.922162] RPC:    96 sleep_on(queue "xprt_pending" time 4320572525)
+[25890.922164] RPC:    96 added to queue ffff880207d34258 "xprt_pending"
+[25890.922165] RPC:    96 setting alarm for 120000 ms
+[25890.922167] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.922168] RPC:    96 sync task going to sleep
+[25890.922289] svc: socket ffff88007f870000 recvfrom(ffff88007f8702bc, 0) = 4
+[25890.922291] svc: TCP record, 40 bytes
+[25890.922293] svc: socket ffff88007f870000 recvfrom(ffff88007fa33028, 4056) = 40
+[25890.922294] svc: TCP final record (40 bytes)
+[25890.922295] svc: got len=40
+[25890.922296] svc: svc_authenticate (0)
+[25890.922298] svc: calling dispatcher
+[25890.922317] RPC:       xs_tcp_data_ready...
+[25890.922318] RPC:       xs_tcp_data_recv started
+[25890.922319] RPC:       reading TCP record fragment of length 24
+[25890.922320] RPC:       reading XID (4 bytes)
+[25890.922321] RPC:       reading request with XID 3441d29b
+[25890.922322] RPC:       reading CALL/REPLY flag (4 bytes)
+[25890.922323] RPC:       read reply XID 3441d29b
+[25890.922324] RPC:       XID 3441d29b read 16 bytes
+[25890.922325] RPC:       xprt = ffff880207d34000, tcp_copied = 24, tcp_offset = 24, tcp_reclen = 24
+[25890.922326] RPC:    96 xid 3441d29b complete (24 bytes received)
+[25890.922327] RPC:    96 __rpc_wake_up_task (now 4320572525)
+[25890.922328] RPC:    96 disabling timer
+[25890.922329] RPC:    96 removed from queue ffff880207d34258 "xprt_pending"
+[25890.922331] RPC:       __rpc_wake_up_task done
+[25890.922332] RPC:       xs_tcp_data_recv done
+[25890.922349] RPC:    96 sync task resuming
+[25890.922350] svc: socket ffff88007f870000 sendto([ffff88007fa34000 28... ], 28) = 28 (addr 0000:0000:0000:0000:0000:0000:0000:0001, port=741)
+[25890.922352] svc: server ffff88007fa48000 waiting for data (to = 3600000)
+[25890.922353] RPC:    96 call_status (status 24)
+[25890.922355] RPC:    96 call_decode (status 24)
+[25890.922356] RPC:    96 validating NULL cred ffffffffa0297160
+[25890.922357] RPC:    96 using AUTH_NULL cred ffffffffa0297160 to unwrap rpc data
+[25890.922358] RPC:    96 call_decode result 0
+[25890.922360] RPC:    96 return 0, status 0
+[25890.922360] RPC:    96 release task
+[25890.922362] RPC:       freeing buffer of size 96 at ffff880207d31000
+[25890.922363] RPC:    96 release request ffff88003741d200
+[25890.922365] RPC:       wake_up_first(ffff880207d34320 "xprt_backlog")
+[25890.922366] RPC:       rpc_release_client(ffff88003741c400)
+[25890.922367] RPC:    96 freeing task
+[25890.922486] svc: initialising pool 0 for NFSv4 callback
+[25890.922488] svc: creating transport tcp[0]
+[25890.922490] svc: svc_create_socket(NFSv4 callback, 6, 0.0.0.0, port=0)
+[25890.922502] svc: svc_setup_socket ffff8801b9d26580
+[25890.922504] setting up TCP socket for listening
+[25890.922505] svc: svc_setup_socket created ffff88007f85a000 (inet ffff8801f8790700)
+[25890.922506] svc: transport ffff88007f85a000 put into queue
+[25890.922507] svc: creating transport tcp[0]
+[25890.922509] svc: svc_create_socket(NFSv4 callback, 6, 0000:0000:0000:0000:0000:0000:0000:0000, port=0)
+[25890.922517] svc: svc_setup_socket ffff8801b9d27200
+[25890.922518] setting up TCP socket for listening
+[25890.922519] svc: svc_setup_socket created ffff88007f858000 (inet ffff8801ace60000)
+[25890.922520] svc: transport ffff88007f858000 put into queue
+[25890.922546] svc: svc_destroy(NFSv4 callback, 2)
+[25890.922549] svc: server ffff880094e9e000 waiting for data (to = 9223372036854775807)
+[25890.922551] svc: transport ffff88007f85a000 dequeued, inuse=1
+[25890.922551] RPC:       new task initialized, procpid 12457
+[25890.922552] RPC:       allocated task ffff8801fe290d00
+[25890.922553] RPC:    97 __rpc_execute flags=0x1280
+[25890.922555] RPC:    97 call_start nfs4 proc SETCLIENTID (sync)
+[25890.922557] RPC:    97 call_reserve (status 0)
+[25890.922558] RPC:    97 reserved req ffff88003741d200 xid 3541d29b
+[25890.922560] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.922561] RPC:    97 call_reserveresult (status 0)
+[25890.922562] RPC:    97 call_refresh (status 0)
+[25890.922564] RPC:       allocating UNIX cred for uid 0 gid 0
+[25890.922566] RPC:    97 refreshing UNIX cred ffff8801f84c4180
+[25890.922567] RPC:    97 call_refreshresult (status 0)
+[25890.922569] RPC:    97 call_allocate (status 0)
+[25890.922570] RPC:    97 allocated buffer of size 4744 at ffff880094e9c000
+[25890.922572] RPC:    97 call_bind (status 0)
+[25890.922573] RPC:    97 call_connect xprt ffff880207d34000 is connected
+[25890.922574] RPC:    97 call_transmit (status 0)
+[25890.922576] RPC:    97 xprt_prepare_transmit
+[25890.922577] RPC:    97 rpc_xdr_encode (status 0)
+[25890.922578] RPC:    97 marshaling UNIX cred ffff8801f84c4180
+[25890.922580] RPC:    97 using AUTH_UNIX cred ffff8801f84c4180 to wrap rpc data
+[25890.922582] RPC:    97 xprt_transmit(180)
+[25890.922584] svc: tcp_accept ffff88007f85a000 sock ffff8801b9d26580
+[25890.922588] svc: server ffff880094e9e000 waiting for data (to = 9223372036854775807)
+[25890.922589] svc: transport ffff88007f858000 dequeued, inuse=1
+[25890.922591] svc: tcp_accept ffff88007f858000 sock ffff8801b9d27200
+[25890.922594] svc: server ffff880094e9e000 waiting for data (to = 9223372036854775807)
+[25890.922601] svc: socket ffff8800c47f3e00 TCP data ready (svsk ffff88007f870000)
+[25890.922603] svc: transport ffff88007f870000 served by daemon ffff88007fa48000
+[25890.922606] RPC:       xs_tcp_send_request(180) = 180
+[25890.922607] svc: server ffff88007fa48000, pool 0, transport ffff88007f870000, inuse=2
+[25890.922608] svc: tcp_recv ffff88007f870000 data 1 conn 0 close 0
+[25890.922610] svc: socket ffff88007f870000 recvfrom(ffff88007f8702bc, 0) = 4
+[25890.922611] RPC:    97 xmit complete
+[25890.922612] RPC:    97 sleep_on(queue "xprt_pending" time 4320572525)
+[25890.922613] RPC:    97 added to queue ffff880207d34258 "xprt_pending"
+[25890.922614] RPC:    97 setting alarm for 60000 ms
+[25890.922616] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.922616] RPC:    97 sync task going to sleep
+[25890.922618] svc: TCP record, 176 bytes
+[25890.922631] svc: socket ffff88007f870000 recvfrom(ffff88007fa330b0, 3920) = 176
+[25890.922633] svc: TCP final record (176 bytes)
+[25890.922639] svc: got len=176
+[25890.922646] svc: svc_authenticate (1)
+[25890.922654] RPC:       Want update, refage=120, age=0
+[25890.922795] RPC:       Want update, refage=120, age=0
+[25890.922798] svc: calling dispatcher
+[25890.922830] RPC:       xs_tcp_data_ready...
+[25890.922833] RPC:       xs_tcp_data_recv started
+[25890.922835] RPC:       reading TCP record fragment of length 60
+[25890.922836] RPC:       reading XID (4 bytes)
+[25890.922838] RPC:       reading reply for XID 3541d29b
+[25890.922840] RPC:       reading CALL/REPLY flag (4 bytes)
+[25890.922842] RPC:       read reply XID 3541d29b
+[25890.922846] RPC:       XID 3541d29b read 52 bytes
+[25890.922848] RPC:       xprt = ffff880207d34000, tcp_copied = 60, tcp_offset = 60, tcp_reclen = 60
+[25890.922850] RPC:    97 xid 3541d29b complete (60 bytes received)
+[25890.922852] RPC:    97 __rpc_wake_up_task (now 4320572526)
+[25890.922854] RPC:    97 disabling timer
+[25890.922856] RPC:    97 removed from queue ffff880207d34258 "xprt_pending"
+[25890.922860] RPC:       __rpc_wake_up_task done
+[25890.922861] RPC:       xs_tcp_data_recv done
+[25890.922868] svc: socket ffff88007f870000 sendto([ffff8801aa19e000 64... ], 64) = 64 (addr 0000:0000:0000:0000:0000:0000:0000:0001, port=741)
+[25890.922871] svc: server ffff88007fa48000 waiting for data (to = 3600000)
+[25890.928532] RPC:    97 sync task resuming
+[25890.928536] RPC:    97 call_status (status 60)
+[25890.928538] RPC:    97 call_decode (status 60)
+[25890.928541] RPC:    97 validating UNIX cred ffff8801f84c4180
+[25890.928544] RPC:    97 using AUTH_UNIX cred ffff8801f84c4180 to unwrap rpc data
+[25890.928546] RPC:    97 call_decode result 0
+[25890.928548] RPC:    97 return 0, status 0
+[25890.928550] RPC:    97 release task
+[25890.928553] RPC:       freeing buffer of size 4744 at ffff880094e9c000
+[25890.928556] RPC:    97 release request ffff88003741d200
+[25890.928558] RPC:       wake_up_first(ffff880207d34320 "xprt_backlog")
+[25890.928560] RPC:       rpc_release_client(ffff88003741c400)
+[25890.928562] RPC:    97 freeing task
+[25890.928565] RPC:       new task initialized, procpid 12457
+[25890.928567] RPC:       allocated task ffff8801fe290d00
+[25890.928569] RPC:    98 __rpc_execute flags=0x1280
+[25890.928572] RPC:    98 call_start nfs4 proc SETCLIENTID_CONFIRM (sync)
+[25890.928573] RPC:    98 call_reserve (status 0)
+[25890.928576] RPC:    98 reserved req ffff88003741d200 xid 3641d29b
+[25890.928578] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.928580] RPC:    98 call_reserveresult (status 0)
+[25890.928582] RPC:    98 call_refresh (status 0)
+[25890.928584] RPC:    98 refreshing UNIX cred ffff8801f84c4180
+[25890.928586] RPC:    98 call_refreshresult (status 0)
+[25890.928588] RPC:    98 call_allocate (status 0)
+[25890.928590] RPC:    98 allocated buffer of size 452 at ffff880207d43000
+[25890.928592] RPC:    98 call_bind (status 0)
+[25890.928594] RPC:    98 call_connect xprt ffff880207d34000 is connected
+[25890.928596] RPC:    98 call_transmit (status 0)
+[25890.928598] RPC:    98 xprt_prepare_transmit
+[25890.928600] RPC:    98 rpc_xdr_encode (status 0)
+[25890.928602] RPC:    98 marshaling UNIX cred ffff8801f84c4180
+[25890.928604] RPC:    98 using AUTH_UNIX cred ffff8801f84c4180 to wrap rpc data
+[25890.928606] RPC:    98 xprt_transmit(124)
+[25890.928655] svc: socket ffff8800c47f3e00 TCP data ready (svsk ffff88007f870000)
+[25890.928661] svc: transport ffff88007f870000 served by daemon ffff88007fa48000
+[25890.928667] RPC:       xs_tcp_send_request(124) = 124
+[25890.928669] RPC:    98 xmit complete
+[25890.928671] RPC:    98 sleep_on(queue "xprt_pending" time 4320572532)
+[25890.928673] RPC:    98 added to queue ffff880207d34258 "xprt_pending"
+[25890.928675] RPC:    98 setting alarm for 60000 ms
+[25890.928677] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.928679] RPC:    98 sync task going to sleep
+[25890.928865] svc: server ffff88007fa48000, pool 0, transport ffff88007f870000, inuse=2
+[25890.928869] svc: tcp_recv ffff88007f870000 data 1 conn 0 close 0
+[25890.928873] svc: socket ffff88007f870000 recvfrom(ffff88007f8702bc, 0) = 4
+[25890.928874] svc: TCP record, 120 bytes
+[25890.928877] svc: socket ffff88007f870000 recvfrom(ffff88007fa33078, 3976) = 120
+[25890.928880] svc: TCP final record (120 bytes)
+[25890.928881] svc: got len=120
+[25890.928883] svc: svc_authenticate (1)
+[25890.928888] svc: calling dispatcher
+[25890.928927] RPC:       xs_tcp_data_ready...
+[25890.928929] RPC:       xs_tcp_data_recv started
+[25890.928930] RPC:       reading TCP record fragment of length 44
+[25890.928932] RPC:       reading XID (4 bytes)
+[25890.928934] RPC:       reading reply for XID 3641d29b
+[25890.928935] RPC:       reading CALL/REPLY flag (4 bytes)
+[25890.928937] RPC:       read reply XID 3641d29b
+[25890.928939] RPC:       XID 3641d29b read 36 bytes
+[25890.928940] RPC:       xprt = ffff880207d34000, tcp_copied = 44, tcp_offset = 44, tcp_reclen = 44
+[25890.928942] RPC:    98 xid 3641d29b complete (44 bytes received)
+[25890.928944] RPC:    98 __rpc_wake_up_task (now 4320572532)
+[25890.928946] RPC:    98 disabling timer
+[25890.928947] RPC:    98 removed from queue ffff880207d34258 "xprt_pending"
+[25890.928952] RPC:       __rpc_wake_up_task done
+[25890.928953] RPC:       xs_tcp_data_recv done
+[25890.928961] svc: socket ffff88007f870000 sendto([ffff8801acde8000 48... ], 48) = 48 (addr 0000:0000:0000:0000:0000:0000:0000:0001, port=741)
+[25890.928964] svc: server ffff88007fa48000 waiting for data (to = 3600000)
+[25890.929325] RPC:       set up xprt to ::1 (port 48204) via tcp
+[25890.929329] RPC:       created transport ffff880207d30000 with 65536 slots
+[25890.929332] RPC:       creating nfs4_cb client for (null) (xprt ffff880207d30000)
+[25890.929344] RPC:       creating UNIX authenticator for client ffff8801b6e22c00
+[25890.929346] RPC:       new task initialized, procpid 12099
+[25890.929348] RPC:       allocated task ffff8800c176f100
+[25890.929355] RPC:    99 __rpc_execute flags=0x681
+[25890.929358] RPC:    99 call_start nfs4_cb1 proc CB_NULL (async)
+[25890.929359] RPC:    99 call_reserve (status 0)
+[25890.929361] RPC:    99 reserved req ffff8801b6e22800 xid e6c027ce
+[25890.929363] RPC:       wake_up_first(ffff880207d30190 "xprt_sending")
+[25890.929365] RPC:    99 call_reserveresult (status 0)
+[25890.929366] RPC:    99 call_refresh (status 0)
+[25890.929369] RPC:    99 refreshing UNIX cred ffff8801f84c4180
+[25890.929370] RPC:    99 call_refreshresult (status 0)
+[25890.929372] RPC:    99 call_allocate (status 0)
+[25890.929374] RPC:    99 allocated buffer of size 396 at ffff880207d37800
+[25890.929375] RPC:    99 call_bind (status 0)
+[25890.929377] RPC:    99 call_connect xprt ffff880207d30000 is not connected
+[25890.929379] RPC:    99 xprt_connect xprt ffff880207d30000 is not connected
+[25890.929382] RPC:    99 sleep_on(queue "xprt_pending" time 4320572532)
+[25890.929384] RPC:    99 added to queue ffff880207d30258 "xprt_pending"
+[25890.929385] RPC:    99 setting alarm for 9000 ms
+[25890.929387] RPC:       xs_connect scheduled xprt ffff880207d30000
+[25890.929399] RPC:       xs_bind 0000:0000:0000:0000:0000:0000:0000:0001:815: ok (0)
+[25890.929401] RPC:       worker connecting xprt ffff880207d30000 via tcp to ::1 (port 48204)
+[25890.929455] RPC:       xs_tcp_state_change client ffff880207d30000...
+[25890.929457] RPC:       state 1 conn 0 dead 0 zapped 1 sk_shutdown 0
+[25890.929459] RPC:    99 __rpc_wake_up_task (now 4320572532)
+[25890.929460] RPC:    99 disabling timer
+[25890.929462] RPC:    99 removed from queue ffff880207d30258 "xprt_pending"
+[25890.929463] RPC:       __rpc_wake_up_task done
+[25890.929481] svc: socket ffff8801ace60000 TCP (listen) state change 10
+[25890.929484] svc: transport ffff88007f858000 served by daemon ffff880094e9e000
+[25890.929489] RPC:       ffff880207d30000 connect status 115 connected 1 sock state 1
+[25890.929491] RPC:    99 __rpc_execute flags=0x681
+[25890.929494] RPC:    99 xprt_connect_status: retrying
+[25890.929496] RPC:    99 call_connect_status (status -11)
+[25890.929497] RPC:    99 call_timeout (minor)
+[25890.929499] RPC:    99 call_bind (status 0)
+[25890.929500] RPC:    99 call_connect xprt ffff880207d30000 is connected
+[25890.929502] RPC:    99 call_transmit (status 0)
+[25890.929503] RPC:    99 xprt_prepare_transmit
+[25890.929505] RPC:    99 rpc_xdr_encode (status 0)
+[25890.929506] RPC:    99 marshaling UNIX cred ffff8801f84c4180
+[25890.929508] RPC:    99 using AUTH_UNIX cred ffff8801f84c4180 to wrap rpc data
+[25890.929510] RPC:    99 xprt_transmit(92)
+[25890.929526] svc: socket ffff8800c47f4d80 TCP (listen) state change 1
+[25890.929537] RPC:       xs_tcp_send_request(92) = 92
+[25890.929538] RPC:    99 xmit complete
+[25890.929540] RPC:    99 sleep_on(queue "xprt_pending" time 4320572532)
+[25890.929542] RPC:    99 added to queue ffff880207d30258 "xprt_pending"
+[25890.929543] RPC:    99 setting alarm for 9000 ms
+[25890.929545] RPC:       wake_up_first(ffff880207d30190 "xprt_sending")
+[25890.929707] svc: tcp_accept ffff88007f858000 sock ffff8801b9d27200
+[25890.929715] NFSv4 callback: connect from 0000:0000:0000:0000:0000:0000:0000:0001, port=815
+[25890.929716] svc: svc_setup_socket ffff88008adeca00
+[25890.929719] setting up TCP socket for reading
+[25890.929722] svc: svc_setup_socket created ffff88007f877000 (inet ffff8800c47f4d80)
+[25890.929725] svc: transport ffff88007f877000 put into queue
+[25890.929726] svc: transport ffff88007f858000 put into queue
+[25890.929729] svc: server ffff880094e9e000 waiting for data (to = 9223372036854775807)
+[25890.929730] svc: transport ffff88007f877000 dequeued, inuse=1
+[25890.929732] svc: server ffff880094e9e000, pool 0, transport ffff88007f877000, inuse=2
+[25890.929734] svc: tcp_recv ffff88007f877000 data 1 conn 0 close 0
+[25890.929738] svc: socket ffff88007f877000 recvfrom(ffff88007f8772bc, 0) = 4
+[25890.929739] svc: TCP record, 88 bytes
+[25890.929743] svc: socket ffff88007f877000 recvfrom(ffff8801ace6f058, 4008) = 88
+[25890.929745] svc: TCP final record (88 bytes)
+[25890.929746] svc: got len=88
+[25890.929748] svc: svc_authenticate (1)
+[25890.929772] RPC:       xs_tcp_data_ready...
+[25890.929774] RPC:       xs_tcp_data_recv started
+[25890.929775] RPC:       reading TCP record fragment of length 24
+[25890.929777] RPC:       reading XID (4 bytes)
+[25890.929779] RPC:       reading request with XID e6c027ce
+[25890.929780] RPC:       reading CALL/REPLY flag (4 bytes)
+[25890.929783] RPC:       read reply XID e6c027ce
+[25890.929785] RPC:       XID e6c027ce read 16 bytes
+[25890.929787] RPC:       xprt = ffff880207d30000, tcp_copied = 24, tcp_offset = 24, tcp_reclen = 24
+[25890.929789] RPC:    99 xid e6c027ce complete (24 bytes received)
+[25890.929791] RPC:    99 __rpc_wake_up_task (now 4320572533)
+[25890.929792] RPC:    99 disabling timer
+[25890.929794] RPC:    99 removed from queue ffff880207d30258 "xprt_pending"
+[25890.929798] RPC:       __rpc_wake_up_task done
+[25890.929800] RPC:       xs_tcp_data_recv done
+[25890.929820] svc: socket ffff88007f877000 sendto([ffff8801ace6e000 28... ], 28) = 28 (addr 0000:0000:0000:0000:0000:0000:0000:0001, port=815)
+[25890.929823] svc: server ffff880094e9e000 waiting for data (to = 9223372036854775807)
+[25890.929828] RPC:    99 __rpc_execute flags=0xe81
+[25890.929830] RPC:    99 call_status (status 24)
+[25890.929831] RPC:    99 call_decode (status 24)
+[25890.929834] RPC:    99 validating UNIX cred ffff8801f84c4180
+[25890.929836] RPC:    99 using AUTH_UNIX cred ffff8801f84c4180 to unwrap rpc data
+[25890.929837] RPC:    99 call_decode result 0
+[25890.929840] RPC:    99 return 0, status 0
+[25890.929841] RPC:    99 release task
+[25890.929849] RPC:       freeing buffer of size 396 at ffff880207d37800
+[25890.929856] RPC:    99 release request ffff8801b6e22800
+[25890.929862] RPC:       wake_up_first(ffff880207d30320 "xprt_backlog")
+[25890.929869] RPC:       rpc_release_client(ffff8801b6e22c00)
+[25890.929876] RPC:    99 freeing task
+[25890.929887] svc: transport ffff88007f858000 dequeued, inuse=1
+[25890.929893] svc: tcp_accept ffff88007f858000 sock ffff8801b9d27200
+[25890.929904] svc: server ffff880094e9e000 waiting for data (to = 9223372036854775807)
+[25890.932120] RPC:    98 sync task resuming
+[25890.932123] RPC:    98 call_status (status 44)
+[25890.932124] RPC:    98 call_decode (status 44)
+[25890.932125] RPC:    98 validating UNIX cred ffff8801f84c4180
+[25890.932127] RPC:    98 using AUTH_UNIX cred ffff8801f84c4180 to unwrap rpc data
+[25890.932128] RPC:    98 call_decode result 0
+[25890.932129] RPC:    98 return 0, status 0
+[25890.932130] RPC:    98 release task
+[25890.932132] RPC:       freeing buffer of size 452 at ffff880207d43000
+[25890.932134] RPC:    98 release request ffff88003741d200
+[25890.932135] RPC:       wake_up_first(ffff880207d34320 "xprt_backlog")
+[25890.932136] RPC:       rpc_release_client(ffff88003741c400)
+[25890.932138] RPC:    98 freeing task
+[25890.932142] RPC:       creating nfs client for localhost (xprt ffff880207d34000)
+[25890.932158] RPC:       creating UNIX authenticator for client ffff8800bb7f4400
+[25890.932161] RPC:       creating GSS authenticator for client ffff88003741c400
+[25890.932163] RPC:       creating GSS authenticator for client ffff88003741c400
+[25890.932165] RPC:       creating GSS authenticator for client ffff88003741c400
+[25890.932166] RPC:       creating UNIX authenticator for client ffff8800bb7f4400
+[25890.932169] RPC:       new task initialized, procpid 12457
+[25890.932170] RPC:       allocated task ffff8801fe290b00
+[25890.932172] RPC:   100 __rpc_execute flags=0x80
+[25890.932174] RPC:   100 call_start nfs4 proc LOOKUP_ROOT (sync)
+[25890.932176] RPC:   100 call_reserve (status 0)
+[25890.932178] RPC:   100 reserved req ffff88003741d200 xid 3741d29b
+[25890.932180] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.932181] RPC:   100 call_reserveresult (status 0)
+[25890.932183] RPC:   100 call_refresh (status 0)
+[25890.932184] RPC:   100 looking up UNIX cred
+[25890.932185] RPC:       looking up UNIX cred
+[25890.932187] RPC:       allocating UNIX cred for uid 0 gid 0
+[25890.932189] RPC:   100 refreshing UNIX cred ffff8801f84c49c0
+[25890.932191] RPC:   100 call_refreshresult (status 0)
+[25890.932192] RPC:   100 call_allocate (status 0)
+[25890.932194] RPC:   100 allocated buffer of size 3216 at ffff88007f85d000
+[25890.932196] RPC:   100 call_bind (status 0)
+[25890.932198] RPC:   100 call_connect xprt ffff880207d34000 is connected
+[25890.932199] RPC:   100 call_transmit (status 0)
+[25890.932201] RPC:   100 xprt_prepare_transmit
+[25890.932202] RPC:   100 rpc_xdr_encode (status 0)
+[25890.932204] RPC:   100 marshaling UNIX cred ffff8801f84c49c0
+[25890.932206] RPC:   100 using AUTH_UNIX cred ffff8801f84c49c0 to wrap rpc data
+[25890.932208] RPC:   100 xprt_transmit(132)
+[25890.932236] svc: socket ffff8800c47f3e00 TCP data ready (svsk ffff88007f870000)
+[25890.932238] svc: transport ffff88007f870000 served by daemon ffff88007fa48000
+[25890.932243] RPC:       xs_tcp_send_request(132) = 132
+[25890.932246] svc: server ffff88007fa48000, pool 0, transport ffff88007f870000, inuse=2
+[25890.932248] svc: tcp_recv ffff88007f870000 data 1 conn 0 close 0
+[25890.932249] RPC:   100 xmit complete
+[25890.932251] svc: socket ffff88007f870000 recvfrom(ffff88007f8702bc, 0) = 4
+[25890.932252] RPC:   100 sleep_on(queue "xprt_pending" time 4320572535)
+[25890.932253] RPC:   100 added to queue ffff880207d34258 "xprt_pending"
+[25890.932255] RPC:   100 setting alarm for 60000 ms
+[25890.932256] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.932258] RPC:   100 sync task going to sleep
+[25890.932261] svc: TCP record, 128 bytes
+[25890.932265] svc: socket ffff88007f870000 recvfrom(ffff88007fa33080, 3968) = 128
+[25890.932267] svc: TCP final record (128 bytes)
+[25890.932269] svc: got len=128
+[25890.932271] svc: svc_authenticate (1)
+[25890.932276] svc: calling dispatcher
+[25890.932282] RPC:       Want update, refage=120, age=0
+[25890.932823] RPC:       xs_tcp_data_ready...
+[25890.932827] RPC:       xs_tcp_data_recv started
+[25890.932829] RPC:       reading TCP record fragment of length 208
+[25890.932831] RPC:       reading XID (4 bytes)
+[25890.932833] RPC:       reading reply for XID 3741d29b
+[25890.932834] RPC:       reading CALL/REPLY flag (4 bytes)
+[25890.932836] RPC:       read reply XID 3741d29b
+[25890.932838] RPC:       XID 3741d29b read 200 bytes
+[25890.932840] RPC:       xprt = ffff880207d34000, tcp_copied = 208, tcp_offset = 208, tcp_reclen = 208
+[25890.932842] RPC:   100 xid 3741d29b complete (208 bytes received)
+[25890.932845] RPC:   100 __rpc_wake_up_task (now 4320572536)
+[25890.932846] RPC:   100 disabling timer
+[25890.932848] RPC:   100 removed from queue ffff880207d34258 "xprt_pending"
+[25890.932853] RPC:       __rpc_wake_up_task done
+[25890.932854] RPC:       xs_tcp_data_recv done
+[25890.932862] svc: socket ffff88007f870000 sendto([ffff8800810ea000 212... ], 212) = 212 (addr 0000:0000:0000:0000:0000:0000:0000:0001, port=741)
+[25890.932870] svc: server ffff88007fa48000 waiting for data (to = 3600000)
+[25890.934089] RPC:   100 sync task resuming
+[25890.934092] RPC:   100 call_status (status 208)
+[25890.934093] RPC:   100 call_decode (status 208)
+[25890.934095] RPC:   100 validating UNIX cred ffff8801f84c49c0
+[25890.934096] RPC:   100 using AUTH_UNIX cred ffff8801f84c49c0 to unwrap rpc data
+[25890.934100] RPC:   100 call_decode result 0
+[25890.934102] RPC:       wake_up_first(ffff8800bb7f7498 "NFSv4.0 transport Slot table")
+[25890.934103] RPC:   100 return 0, status 0
+[25890.934104] RPC:   100 release task
+[25890.934106] RPC:       freeing buffer of size 3216 at ffff88007f85d000
+[25890.934108] RPC:   100 release request ffff88003741d200
+[25890.934109] RPC:       wake_up_first(ffff880207d34320 "xprt_backlog")
+[25890.934110] RPC:       rpc_release_client(ffff8800bb7f4400)
+[25890.934111] RPC:   100 freeing task
+[25890.934113] RPC:       new task initialized, procpid 12457
+[25890.934114] RPC:       allocated task ffff8801fe290b00
+[25890.934115] RPC:   101 __rpc_execute flags=0x80
+[25890.934117] RPC:   101 call_start nfs4 proc SERVER_CAPS (sync)
+[25890.934119] RPC:   101 call_reserve (status 0)
+[25890.934120] RPC:   101 reserved req ffff88003741d200 xid 3841d29b
+[25890.934121] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.934122] RPC:   101 call_reserveresult (status 0)
+[25890.934123] RPC:   101 call_refresh (status 0)
+[25890.934124] RPC:   101 looking up UNIX cred
+[25890.934125] RPC:       looking up UNIX cred
+[25890.934127] RPC:   101 refreshing UNIX cred ffff8801f84c49c0
+[25890.934128] RPC:   101 call_refreshresult (status 0)
+[25890.934129] RPC:   101 call_allocate (status 0)
+[25890.934130] RPC:   101 allocated buffer of size 3204 at ffff88007f85d000
+[25890.934131] RPC:   101 call_bind (status 0)
+[25890.934132] RPC:   101 call_connect xprt ffff880207d34000 is connected
+[25890.934133] RPC:   101 call_transmit (status 0)
+[25890.934134] RPC:   101 xprt_prepare_transmit
+[25890.934135] RPC:   101 rpc_xdr_encode (status 0)
+[25890.934136] RPC:   101 marshaling UNIX cred ffff8801f84c49c0
+[25890.934137] RPC:   101 using AUTH_UNIX cred ffff8801f84c49c0 to wrap rpc data
+[25890.934139] RPC:   101 xprt_transmit(136)
+[25890.934162] svc: socket ffff8800c47f3e00 TCP data ready (svsk ffff88007f870000)
+[25890.934164] svc: transport ffff88007f870000 served by daemon ffff88007fa48000
+[25890.934169] RPC:       xs_tcp_send_request(136) = 136
+[25890.934172] svc: server ffff88007fa48000, pool 0, transport ffff88007f870000, inuse=2
+[25890.934173] svc: tcp_recv ffff88007f870000 data 1 conn 0 close 0
+[25890.934174] RPC:   101 xmit complete
+[25890.934176] svc: socket ffff88007f870000 recvfrom(ffff88007f8702bc, 0) = 4
+[25890.934177] RPC:   101 sleep_on(queue "xprt_pending" time 4320572537)
+[25890.934178] RPC:   101 added to queue ffff880207d34258 "xprt_pending"
+[25890.934180] RPC:   101 setting alarm for 60000 ms
+[25890.934182] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.934183] RPC:   101 sync task going to sleep
+[25890.934186] svc: TCP record, 132 bytes
+[25890.934190] svc: socket ffff88007f870000 recvfrom(ffff88007fa33084, 3964) = 132
+[25890.934192] svc: TCP final record (132 bytes)
+[25890.934194] svc: got len=132
+[25890.934196] svc: svc_authenticate (1)
+[25890.934200] svc: calling dispatcher
+[25890.934713] RPC:       xs_tcp_data_ready...
+[25890.934716] RPC:       xs_tcp_data_recv started
+[25890.934718] RPC:       reading TCP record fragment of length 92
+[25890.934720] RPC:       reading XID (4 bytes)
+[25890.934722] RPC:       reading reply for XID 3841d29b
+[25890.934723] RPC:       reading CALL/REPLY flag (4 bytes)
+[25890.934725] RPC:       read reply XID 3841d29b
+[25890.934727] RPC:       XID 3841d29b read 84 bytes
+[25890.934729] RPC:       xprt = ffff880207d34000, tcp_copied = 92, tcp_offset = 92, tcp_reclen = 92
+[25890.934731] RPC:   101 xid 3841d29b complete (92 bytes received)
+[25890.934733] RPC:   101 __rpc_wake_up_task (now 4320572538)
+[25890.934735] RPC:   101 disabling timer
+[25890.934737] RPC:   101 removed from queue ffff880207d34258 "xprt_pending"
+[25890.934742] RPC:       __rpc_wake_up_task done
+[25890.934743] RPC:       xs_tcp_data_recv done
+[25890.934750] svc: socket ffff88007f870000 sendto([ffff88009b584000 96... ], 96) = 96 (addr 0000:0000:0000:0000:0000:0000:0000:0001, port=741)
+[25890.934752] svc: server ffff88007fa48000 waiting for data (to = 3600000)
+[25890.936623] RPC:   101 sync task resuming
+[25890.936626] RPC:   101 call_status (status 92)
+[25890.936628] RPC:   101 call_decode (status 92)
+[25890.936630] RPC:   101 validating UNIX cred ffff8801f84c49c0
+[25890.936632] RPC:   101 using AUTH_UNIX cred ffff8801f84c49c0 to unwrap rpc data
+[25890.936634] RPC:   101 call_decode result 0
+[25890.936636] RPC:       wake_up_first(ffff8800bb7f7498 "NFSv4.0 transport Slot table")
+[25890.936638] RPC:   101 return 0, status 0
+[25890.936638] RPC:   101 release task
+[25890.936641] RPC:       freeing buffer of size 3204 at ffff88007f85d000
+[25890.936642] RPC:   101 release request ffff88003741d200
+[25890.936644] RPC:       wake_up_first(ffff880207d34320 "xprt_backlog")
+[25890.936645] RPC:       rpc_release_client(ffff8800bb7f4400)
+[25890.936646] RPC:   101 freeing task
+[25890.936649] RPC:       new task initialized, procpid 12457
+[25890.936650] RPC:       allocated task ffff8801fe290b00
+[25890.936651] RPC:   102 __rpc_execute flags=0x80
+[25890.936653] RPC:   102 call_start nfs4 proc FSINFO (sync)
+[25890.936654] RPC:   102 call_reserve (status 0)
+[25890.936656] RPC:   102 reserved req ffff88003741d200 xid 3941d29b
+[25890.936657] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.936658] RPC:   102 call_reserveresult (status 0)
+[25890.936659] RPC:   102 call_refresh (status 0)
+[25890.936660] RPC:   102 looking up UNIX cred
+[25890.936661] RPC:       looking up UNIX cred
+[25890.936663] RPC:   102 refreshing UNIX cred ffff8801f84c49c0
+[25890.936664] RPC:   102 call_refreshresult (status 0)
+[25890.936665] RPC:   102 call_allocate (status 0)
+[25890.936667] RPC:   102 allocated buffer of size 756 at ffff880207d45800
+[25890.936668] RPC:   102 call_bind (status 0)
+[25890.936669] RPC:   102 call_connect xprt ffff880207d34000 is connected
+[25890.936670] RPC:   102 call_transmit (status 0)
+[25890.936671] RPC:   102 xprt_prepare_transmit
+[25890.936672] RPC:   102 rpc_xdr_encode (status 0)
+[25890.936673] RPC:   102 marshaling UNIX cred ffff8801f84c49c0
+[25890.936674] RPC:   102 using AUTH_UNIX cred ffff8801f84c49c0 to wrap rpc data
+[25890.936676] RPC:   102 xprt_transmit(140)
+[25890.936706] svc: socket ffff8800c47f3e00 TCP data ready (svsk ffff88007f870000)
+[25890.936708] svc: transport ffff88007f870000 served by daemon ffff88007fa48000
+[25890.936713] RPC:       xs_tcp_send_request(140) = 140
+[25890.936716] svc: server ffff88007fa48000, pool 0, transport ffff88007f870000, inuse=2
+[25890.936718] svc: tcp_recv ffff88007f870000 data 1 conn 0 close 0
+[25890.936719] RPC:   102 xmit complete
+[25890.936720] RPC:   102 sleep_on(queue "xprt_pending" time 4320572540)
+[25890.936721] svc: socket ffff88007f870000 recvfrom(ffff88007f8702bc, 0) = 4
+[25890.936723] svc: TCP record, 136 bytes
+[25890.936724] RPC:   102 added to queue ffff880207d34258 "xprt_pending"
+[25890.936726] svc: socket ffff88007f870000 recvfrom(ffff88007fa33088, 3960) = 136
+[25890.936728] svc: TCP final record (136 bytes)
+[25890.936729] svc: got len=136
+[25890.936730] RPC:   102 setting alarm for 60000 ms
+[25890.936731] svc: svc_authenticate (1)
+[25890.936733] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.936734] RPC:   102 sync task going to sleep
+[25890.936735] svc: calling dispatcher
+[25890.936774] RPC:       xs_tcp_data_ready...
+[25890.936777] RPC:       xs_tcp_data_recv started
+[25890.936779] RPC:       reading TCP record fragment of length 108
+[25890.936780] RPC:       reading XID (4 bytes)
+[25890.936782] RPC:       reading reply for XID 3941d29b
+[25890.936783] RPC:       reading CALL/REPLY flag (4 bytes)
+[25890.936785] RPC:       read reply XID 3941d29b
+[25890.936787] RPC:       XID 3941d29b read 100 bytes
+[25890.936789] RPC:       xprt = ffff880207d34000, tcp_copied = 108, tcp_offset = 108, tcp_reclen = 108
+[25890.936793] RPC:   102 xid 3941d29b complete (108 bytes received)
+[25890.936795] RPC:   102 __rpc_wake_up_task (now 4320572540)
+[25890.936796] RPC:   102 disabling timer
+[25890.936798] RPC:   102 removed from queue ffff880207d34258 "xprt_pending"
+[25890.936804] RPC:       __rpc_wake_up_task done
+[25890.936805] RPC:       xs_tcp_data_recv done
+[25890.936807] RPC:   102 sync task resuming
+[25890.936810] RPC:   102 call_status (status 108)
+[25890.936812] svc: socket ffff88007f870000 sendto([ffff88008bd44000 112... ], 112) = 112 (addr 0000:0000:0000:0000:0000:0000:0000:0001, port=741)
+[25890.936814] svc: server ffff88007fa48000 waiting for data (to = 3600000)
+[25890.936817] RPC:   102 call_decode (status 108)
+[25890.936820] RPC:   102 validating UNIX cred ffff8801f84c49c0
+[25890.936822] RPC:   102 using AUTH_UNIX cred ffff8801f84c49c0 to unwrap rpc data
+[25890.936825] RPC:   102 call_decode result 0
+[25890.936827] RPC:       wake_up_first(ffff8800bb7f7498 "NFSv4.0 transport Slot table")
+[25890.936829] RPC:   102 return 0, status 0
+[25890.936830] RPC:   102 release task
+[25890.936833] RPC:       freeing buffer of size 756 at ffff880207d45800
+[25890.936835] RPC:   102 release request ffff88003741d200
+[25890.936837] RPC:       wake_up_first(ffff880207d34320 "xprt_backlog")
+[25890.936839] RPC:       rpc_release_client(ffff8800bb7f4400)
+[25890.936841] RPC:   102 freeing task
+[25890.936844] RPC:       new task initialized, procpid 12457
+[25890.936846] RPC:       allocated task ffff8801acc16d00
+[25890.936848] RPC:   103 __rpc_execute flags=0x80
+[25890.936850] RPC:   103 call_start nfs4 proc SERVER_CAPS (sync)
+[25890.936852] RPC:   103 call_reserve (status 0)
+[25890.936855] RPC:   103 reserved req ffff88003741d200 xid 3a41d29b
+[25890.936856] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.936858] RPC:   103 call_reserveresult (status 0)
+[25890.936860] RPC:   103 call_refresh (status 0)
+[25890.936861] RPC:   103 looking up UNIX cred
+[25890.936863] RPC:       looking up UNIX cred
+[25890.936865] RPC:   103 refreshing UNIX cred ffff8801f84c49c0
+[25890.936867] RPC:   103 call_refreshresult (status 0)
+[25890.936869] RPC:   103 call_allocate (status 0)
+[25890.936871] RPC:   103 allocated buffer of size 3204 at ffff88007f876000
+[25890.936872] RPC:   103 call_bind (status 0)
+[25890.936874] RPC:   103 call_connect xprt ffff880207d34000 is connected
+[25890.936876] RPC:   103 call_transmit (status 0)
+[25890.936878] RPC:   103 xprt_prepare_transmit
+[25890.936880] RPC:   103 rpc_xdr_encode (status 0)
+[25890.936882] RPC:   103 marshaling UNIX cred ffff8801f84c49c0
+[25890.936884] RPC:   103 using AUTH_UNIX cred ffff8801f84c49c0 to wrap rpc data
+[25890.936886] RPC:   103 xprt_transmit(136)
+[25890.936909] svc: socket ffff8800c47f3e00 TCP data ready (svsk ffff88007f870000)
+[25890.936912] svc: transport ffff88007f870000 served by daemon ffff88007fa48000
+[25890.936918] RPC:       xs_tcp_send_request(136) = 136
+[25890.936920] svc: server ffff88007fa48000, pool 0, transport ffff88007f870000, inuse=2
+[25890.936922] svc: tcp_recv ffff88007f870000 data 1 conn 0 close 0
+[25890.936925] svc: socket ffff88007f870000 recvfrom(ffff88007f8702bc, 0) = 4
+[25890.936927] svc: TCP record, 132 bytes
+[25890.936929] svc: socket ffff88007f870000 recvfrom(ffff88007fa33084, 3964) = 132
+[25890.936931] RPC:   103 xmit complete
+[25890.936933] RPC:   103 sleep_on(queue "xprt_pending" time 4320572540)
+[25890.936935] RPC:   103 added to queue ffff880207d34258 "xprt_pending"
+[25890.936937] RPC:   103 setting alarm for 60000 ms
+[25890.936939] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.936940] RPC:   103 sync task going to sleep
+[25890.936943] svc: TCP final record (132 bytes)
+[25890.936944] svc: got len=132
+[25890.936946] svc: svc_authenticate (1)
+[25890.936949] svc: calling dispatcher
+[25890.936978] RPC:       xs_tcp_data_ready...
+[25890.936980] RPC:       xs_tcp_data_recv started
+[25890.936982] RPC:       reading TCP record fragment of length 92
+[25890.936983] RPC:       reading XID (4 bytes)
+[25890.936985] RPC:       reading reply for XID 3a41d29b
+[25890.936986] RPC:       reading CALL/REPLY flag (4 bytes)
+[25890.936988] RPC:       read reply XID 3a41d29b
+[25890.936990] RPC:       XID 3a41d29b read 84 bytes
+[25890.936992] RPC:       xprt = ffff880207d34000, tcp_copied = 92, tcp_offset = 92, tcp_reclen = 92
+[25890.936995] RPC:   103 xid 3a41d29b complete (92 bytes received)
+[25890.936997] RPC:   103 __rpc_wake_up_task (now 4320572540)
+[25890.936998] RPC:   103 disabling timer
+[25890.937000] RPC:   103 removed from queue ffff880207d34258 "xprt_pending"
+[25890.937004] RPC:       __rpc_wake_up_task done
+[25890.937006] RPC:       xs_tcp_data_recv done
+[25890.937008] RPC:   103 sync task resuming
+[25890.937010] RPC:   103 call_status (status 92)
+[25890.937012] svc: socket ffff88007f870000 sendto([ffff88008bedc000 96... ], 96) = 96 (addr 0000:0000:0000:0000:0000:0000:0000:0001, port=741)
+[25890.937014] svc: server ffff88007fa48000 waiting for data (to = 3600000)
+[25890.937017] RPC:   103 call_decode (status 92)
+[25890.937019] RPC:   103 validating UNIX cred ffff8801f84c49c0
+[25890.937021] RPC:   103 using AUTH_UNIX cred ffff8801f84c49c0 to unwrap rpc data
+[25890.937023] RPC:   103 call_decode result 0
+[25890.937025] RPC:       wake_up_first(ffff8800bb7f7498 "NFSv4.0 transport Slot table")
+[25890.937027] RPC:   103 return 0, status 0
+[25890.937029] RPC:   103 release task
+[25890.937031] RPC:       freeing buffer of size 3204 at ffff88007f876000
+[25890.937033] RPC:   103 release request ffff88003741d200
+[25890.937035] RPC:       wake_up_first(ffff880207d34320 "xprt_backlog")
+[25890.937037] RPC:       rpc_release_client(ffff8800bb7f4400)
+[25890.937039] RPC:   103 freeing task
+[25890.937042] RPC:       new task initialized, procpid 12457
+[25890.937043] RPC:       allocated task ffff8801acc16d00
+[25890.937045] RPC:   104 __rpc_execute flags=0x80
+[25890.937047] RPC:   104 call_start nfs4 proc FSINFO (sync)
+[25890.937049] RPC:   104 call_reserve (status 0)
+[25890.937051] RPC:   104 reserved req ffff88003741d200 xid 3b41d29b
+[25890.937053] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.937055] RPC:   104 call_reserveresult (status 0)
+[25890.937056] RPC:   104 call_refresh (status 0)
+[25890.937058] RPC:   104 looking up UNIX cred
+[25890.937059] RPC:       looking up UNIX cred
+[25890.937061] RPC:   104 refreshing UNIX cred ffff8801f84c49c0
+[25890.937064] RPC:   104 call_refreshresult (status 0)
+[25890.937065] RPC:   104 call_allocate (status 0)
+[25890.937067] RPC:   104 allocated buffer of size 756 at ffff880207ceb800
+[25890.937069] RPC:   104 call_bind (status 0)
+[25890.937071] RPC:   104 call_connect xprt ffff880207d34000 is connected
+[25890.937072] RPC:   104 call_transmit (status 0)
+[25890.937074] RPC:   104 xprt_prepare_transmit
+[25890.937076] RPC:   104 rpc_xdr_encode (status 0)
+[25890.937077] RPC:   104 marshaling UNIX cred ffff8801f84c49c0
+[25890.937080] RPC:   104 using AUTH_UNIX cred ffff8801f84c49c0 to wrap rpc data
+[25890.937082] RPC:   104 xprt_transmit(140)
+[25890.937099] svc: socket ffff8800c47f3e00 TCP data ready (svsk ffff88007f870000)
+[25890.937101] svc: transport ffff88007f870000 served by daemon ffff88007fa48000
+[25890.937106] RPC:       xs_tcp_send_request(140) = 140
+[25890.937108] svc: server ffff88007fa48000, pool 0, transport ffff88007f870000, inuse=2
+[25890.937110] svc: tcp_recv ffff88007f870000 data 1 conn 0 close 0
+[25890.937113] svc: socket ffff88007f870000 recvfrom(ffff88007f8702bc, 0) = 4
+[25890.937114] svc: TCP record, 136 bytes
+[25890.937116] svc: socket ffff88007f870000 recvfrom(ffff88007fa33088, 3960) = 136
+[25890.937118] svc: TCP final record (136 bytes)
+[25890.937120] svc: got len=136
+[25890.937122] svc: svc_authenticate (1)
+[25890.937123] RPC:   104 xmit complete
+[25890.937124] svc: calling dispatcher
+[25890.937127] RPC:   104 sleep_on(queue "xprt_pending" time 4320572540)
+[25890.937129] RPC:   104 added to queue ffff880207d34258 "xprt_pending"
+[25890.937130] RPC:   104 setting alarm for 60000 ms
+[25890.937133] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.937134] RPC:   104 sync task going to sleep
+[25890.937145] RPC:       xs_tcp_data_ready...
+[25890.937148] RPC:       xs_tcp_data_recv started
+[25890.937150] RPC:       reading TCP record fragment of length 108
+[25890.937151] RPC:       reading XID (4 bytes)
+[25890.937153] RPC:       reading reply for XID 3b41d29b
+[25890.937154] RPC:       reading CALL/REPLY flag (4 bytes)
+[25890.937156] RPC:       read reply XID 3b41d29b
+[25890.937158] RPC:       XID 3b41d29b read 100 bytes
+[25890.937160] RPC:       xprt = ffff880207d34000, tcp_copied = 108, tcp_offset = 108, tcp_reclen = 108
+[25890.937163] RPC:   104 xid 3b41d29b complete (108 bytes received)
+[25890.937165] RPC:   104 __rpc_wake_up_task (now 4320572540)
+[25890.937166] RPC:   104 disabling timer
+[25890.937168] RPC:   104 removed from queue ffff880207d34258 "xprt_pending"
+[25890.937172] RPC:       __rpc_wake_up_task done
+[25890.937173] RPC:       xs_tcp_data_recv done
+[25890.937175] RPC:   104 sync task resuming
+[25890.937177] RPC:   104 call_status (status 108)
+[25890.937180] svc: socket ffff88007f870000 sendto([ffff8800811fa000 112... ], 112) = 112 (addr 0000:0000:0000:0000:0000:0000:0000:0001, port=741)
+[25890.937181] RPC:   104 call_decode (status 108)
+[25890.937183] RPC:   104 validating UNIX cred ffff8801f84c49c0
+[25890.937185] RPC:   104 using AUTH_UNIX cred ffff8801f84c49c0 to unwrap rpc data
+[25890.937188] RPC:   104 call_decode result 0
+[25890.937190] RPC:       wake_up_first(ffff8800bb7f7498 "NFSv4.0 transport Slot table")
+[25890.937192] RPC:   104 return 0, status 0
+[25890.937193] RPC:   104 release task
+[25890.937195] RPC:       freeing buffer of size 756 at ffff880207ceb800
+[25890.937197] RPC:   104 release request ffff88003741d200
+[25890.937198] RPC:       wake_up_first(ffff880207d34320 "xprt_backlog")
+[25890.937200] RPC:       rpc_release_client(ffff8800bb7f4400)
+[25890.937201] RPC:   104 freeing task
+[25890.937204] svc: server ffff88007fa48000 waiting for data (to = 3600000)
+[25890.937205] RPC:       new task initialized, procpid 12457
+[25890.937206] RPC:       allocated task ffff8801acc16d00
+[25890.937207] RPC:   105 __rpc_execute flags=0x80
+[25890.937209] RPC:   105 call_start nfs4 proc PATHCONF (sync)
+[25890.937212] RPC:   105 call_reserve (status 0)
+[25890.937214] RPC:   105 reserved req ffff88003741d200 xid 3c41d29b
+[25890.937215] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.937217] RPC:   105 call_reserveresult (status 0)
+[25890.937219] RPC:   105 call_refresh (status 0)
+[25890.937220] RPC:   105 looking up UNIX cred
+[25890.937222] RPC:       looking up UNIX cred
+[25890.937224] RPC:   105 refreshing UNIX cred ffff8801f84c49c0
+[25890.937225] RPC:   105 call_refreshresult (status 0)
+[25890.937227] RPC:   105 call_allocate (status 0)
+[25890.937229] RPC:   105 allocated buffer of size 3204 at ffff88007f876000
+[25890.937231] RPC:   105 call_bind (status 0)
+[25890.937232] RPC:   105 call_connect xprt ffff880207d34000 is connected
+[25890.937234] RPC:   105 call_transmit (status 0)
+[25890.937236] RPC:   105 xprt_prepare_transmit
+[25890.937237] RPC:   105 rpc_xdr_encode (status 0)
+[25890.937239] RPC:   105 marshaling UNIX cred ffff8801f84c49c0
+[25890.937242] RPC:   105 using AUTH_UNIX cred ffff8801f84c49c0 to wrap rpc data
+[25890.937243] RPC:   105 xprt_transmit(136)
+[25890.937258] svc: socket ffff8800c47f3e00 TCP data ready (svsk ffff88007f870000)
+[25890.937260] svc: transport ffff88007f870000 served by daemon ffff88007fa48000
+[25890.937266] RPC:       xs_tcp_send_request(136) = 136
+[25890.937267] svc: server ffff88007fa48000, pool 0, transport ffff88007f870000, inuse=2
+[25890.937269] svc: tcp_recv ffff88007f870000 data 1 conn 0 close 0
+[25890.937272] svc: socket ffff88007f870000 recvfrom(ffff88007f8702bc, 0) = 4
+[25890.937274] svc: TCP record, 132 bytes
+[25890.937276] svc: socket ffff88007f870000 recvfrom(ffff88007fa33084, 3964) = 132
+[25890.937278] svc: TCP final record (132 bytes)
+[25890.937280] svc: got len=132
+[25890.937281] svc: svc_authenticate (1)
+[25890.937283] RPC:   105 xmit complete
+[25890.937283] svc: calling dispatcher
+[25890.937286] RPC:   105 sleep_on(queue "xprt_pending" time 4320572540)
+[25890.937288] RPC:   105 added to queue ffff880207d34258 "xprt_pending"
+[25890.937290] RPC:   105 setting alarm for 60000 ms
+[25890.937292] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.937293] RPC:   105 sync task going to sleep
+[25890.937331] RPC:       xs_tcp_data_ready...
+[25890.937333] RPC:       xs_tcp_data_recv started
+[25890.937335] RPC:       reading TCP record fragment of length 72
+[25890.937336] RPC:       reading XID (4 bytes)
+[25890.937338] RPC:       reading reply for XID 3c41d29b
+[25890.937339] RPC:       reading CALL/REPLY flag (4 bytes)
+[25890.937341] RPC:       read reply XID 3c41d29b
+[25890.937343] RPC:       XID 3c41d29b read 64 bytes
+[25890.937345] RPC:       xprt = ffff880207d34000, tcp_copied = 72, tcp_offset = 72, tcp_reclen = 72
+[25890.937348] RPC:   105 xid 3c41d29b complete (72 bytes received)
+[25890.937349] RPC:   105 __rpc_wake_up_task (now 4320572540)
+[25890.937351] RPC:   105 disabling timer
+[25890.937353] RPC:   105 removed from queue ffff880207d34258 "xprt_pending"
+[25890.937356] RPC:       __rpc_wake_up_task done
+[25890.937358] RPC:       xs_tcp_data_recv done
+[25890.937359] RPC:   105 sync task resuming
+[25890.937361] RPC:   105 call_status (status 72)
+[25890.937363] RPC:   105 call_decode (status 72)
+[25890.937364] RPC:   105 validating UNIX cred ffff8801f84c49c0
+[25890.937367] RPC:   105 using AUTH_UNIX cred ffff8801f84c49c0 to unwrap rpc data
+[25890.937369] RPC:   105 call_decode result 0
+[25890.937371] RPC:       wake_up_first(ffff8800bb7f7498 "NFSv4.0 transport Slot table")
+[25890.937372] RPC:   105 return 0, status 0
+[25890.937374] RPC:   105 release task
+[25890.937376] RPC:       freeing buffer of size 3204 at ffff88007f876000
+[25890.937377] RPC:   105 release request ffff88003741d200
+[25890.937379] RPC:       wake_up_first(ffff880207d34320 "xprt_backlog")
+[25890.937381] RPC:       rpc_release_client(ffff8800bb7f4400)
+[25890.937382] RPC:   105 freeing task
+[25890.937388] svc: socket ffff88007f870000 sendto([ffff8800952d6000 76... ], 76) = 76 (addr 0000:0000:0000:0000:0000:0000:0000:0001, port=741)
+[25890.937390] svc: server ffff88007fa48000 waiting for data (to = 3600000)
+[25890.937531] RPC:       new task initialized, procpid 12457
+[25890.937533] RPC:       allocated task ffff8801acc17600
+[25890.937535] RPC:   106 __rpc_execute flags=0x80
+[25890.937537] RPC:   106 call_start nfs4 proc SERVER_CAPS (sync)
+[25890.937539] RPC:   106 call_reserve (status 0)
+[25890.937541] RPC:   106 reserved req ffff88003741d200 xid 3d41d29b
+[25890.937542] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.937544] RPC:   106 call_reserveresult (status 0)
+[25890.937546] RPC:   106 call_refresh (status 0)
+[25890.937547] RPC:   106 looking up UNIX cred
+[25890.937548] RPC:       looking up UNIX cred
+[25890.937550] RPC:   106 refreshing UNIX cred ffff8801f84c49c0
+[25890.937552] RPC:   106 call_refreshresult (status 0)
+[25890.937554] RPC:   106 call_allocate (status 0)
+[25890.937556] RPC:   106 allocated buffer of size 3204 at ffff88007f876000
+[25890.937558] RPC:   106 call_bind (status 0)
+[25890.937560] RPC:   106 call_connect xprt ffff880207d34000 is connected
+[25890.937561] RPC:   106 call_transmit (status 0)
+[25890.937563] RPC:   106 xprt_prepare_transmit
+[25890.937565] RPC:   106 rpc_xdr_encode (status 0)
+[25890.937566] RPC:   106 marshaling UNIX cred ffff8801f84c49c0
+[25890.937568] RPC:   106 using AUTH_UNIX cred ffff8801f84c49c0 to wrap rpc data
+[25890.937570] RPC:   106 xprt_transmit(136)
+[25890.937589] svc: socket ffff8800c47f3e00 TCP data ready (svsk ffff88007f870000)
+[25890.937591] svc: transport ffff88007f870000 served by daemon ffff88007fa48000
+[25890.937597] RPC:       xs_tcp_send_request(136) = 136
+[25890.937598] svc: server ffff88007fa48000, pool 0, transport ffff88007f870000, inuse=2
+[25890.937600] svc: tcp_recv ffff88007f870000 data 1 conn 0 close 0
+[25890.937603] svc: socket ffff88007f870000 recvfrom(ffff88007f8702bc, 0) = 4
+[25890.937604] svc: TCP record, 132 bytes
+[25890.937606] svc: socket ffff88007f870000 recvfrom(ffff88007fa33084, 3964) = 132
+[25890.937608] svc: TCP final record (132 bytes)
+[25890.937610] svc: got len=132
+[25890.937611] svc: svc_authenticate (1)
+[25890.937619] svc: calling dispatcher
+[25890.937621] RPC:   106 xmit complete
+[25890.937623] RPC:   106 sleep_on(queue "xprt_pending" time 4320572541)
+[25890.937625] RPC:   106 added to queue ffff880207d34258 "xprt_pending"
+[25890.937627] RPC:   106 setting alarm for 60000 ms
+[25890.937628] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.937630] RPC:   106 sync task going to sleep
+[25890.937655] RPC:       xs_tcp_data_ready...
+[25890.937657] RPC:       xs_tcp_data_recv started
+[25890.937659] RPC:       reading TCP record fragment of length 92
+[25890.937660] RPC:       reading XID (4 bytes)
+[25890.937662] RPC:       reading reply for XID 3d41d29b
+[25890.937664] RPC:       reading CALL/REPLY flag (4 bytes)
+[25890.937665] RPC:       read reply XID 3d41d29b
+[25890.937667] RPC:       XID 3d41d29b read 84 bytes
+[25890.937669] RPC:       xprt = ffff880207d34000, tcp_copied = 92, tcp_offset = 92, tcp_reclen = 92
+[25890.937671] RPC:   106 xid 3d41d29b complete (92 bytes received)
+[25890.937673] RPC:   106 __rpc_wake_up_task (now 4320572541)
+[25890.937674] RPC:   106 disabling timer
+[25890.937676] RPC:   106 removed from queue ffff880207d34258 "xprt_pending"
+[25890.937680] RPC:       __rpc_wake_up_task done
+[25890.937682] RPC:       xs_tcp_data_recv done
+[25890.937687] svc: socket ffff88007f870000 sendto([ffff880094e7a000 96... ], 96) = 96 (addr 0000:0000:0000:0000:0000:0000:0000:0001, port=741)
+[25890.937690] svc: server ffff88007fa48000 waiting for data (to = 3600000)
+[25890.938512] RPC:   106 sync task resuming
+[25890.938515] RPC:   106 call_status (status 92)
+[25890.938517] RPC:   106 call_decode (status 92)
+[25890.938519] RPC:   106 validating UNIX cred ffff8801f84c49c0
+[25890.938521] RPC:   106 using AUTH_UNIX cred ffff8801f84c49c0 to unwrap rpc data
+[25890.938523] RPC:   106 call_decode result 0
+[25890.938525] RPC:       wake_up_first(ffff8800bb7f7498 "NFSv4.0 transport Slot table")
+[25890.938527] RPC:   106 return 0, status 0
+[25890.938528] RPC:   106 release task
+[25890.938531] RPC:       freeing buffer of size 3204 at ffff88007f876000
+[25890.938533] RPC:   106 release request ffff88003741d200
+[25890.938534] RPC:       wake_up_first(ffff880207d34320 "xprt_backlog")
+[25890.938536] RPC:       rpc_release_client(ffff8800bb7f4400)
+[25890.938537] RPC:   106 freeing task
+[25890.938540] RPC:       new task initialized, procpid 12457
+[25890.938542] RPC:       allocated task ffff8801acc17600
+[25890.938543] RPC:   107 __rpc_execute flags=0x80
+[25890.938546] RPC:   107 call_start nfs4 proc GETATTR (sync)
+[25890.938547] RPC:   107 call_reserve (status 0)
+[25890.938549] RPC:   107 reserved req ffff88003741d200 xid 3e41d29b
+[25890.938551] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.938553] RPC:   107 call_reserveresult (status 0)
+[25890.938554] RPC:   107 call_refresh (status 0)
+[25890.938556] RPC:   107 looking up UNIX cred
+[25890.938557] RPC:       looking up UNIX cred
+[25890.938559] RPC:   107 refreshing UNIX cred ffff8801f84c49c0
+[25890.938560] RPC:   107 call_refreshresult (status 0)
+[25890.938562] RPC:   107 call_allocate (status 0)
+[25890.938564] RPC:   107 allocated buffer of size 3228 at ffff88007f876000
+[25890.938565] RPC:   107 call_bind (status 0)
+[25890.938567] RPC:   107 call_connect xprt ffff880207d34000 is connected
+[25890.938568] RPC:   107 call_transmit (status 0)
+[25890.938570] RPC:   107 xprt_prepare_transmit
+[25890.938571] RPC:   107 rpc_xdr_encode (status 0)
+[25890.938573] RPC:   107 marshaling UNIX cred ffff8801f84c49c0
+[25890.938575] RPC:   107 using AUTH_UNIX cred ffff8801f84c49c0 to wrap rpc data
+[25890.938577] RPC:   107 xprt_transmit(140)
+[25890.938597] svc: socket ffff8800c47f3e00 TCP data ready (svsk ffff88007f870000)
+[25890.938599] svc: transport ffff88007f870000 served by daemon ffff88007fa48000
+[25890.938604] RPC:       xs_tcp_send_request(140) = 140
+[25890.938607] svc: server ffff88007fa48000, pool 0, transport ffff88007f870000, inuse=2
+[25890.938609] svc: tcp_recv ffff88007f870000 data 1 conn 0 close 0
+[25890.938610] RPC:   107 xmit complete
+[25890.938611] svc: socket ffff88007f870000 recvfrom(ffff88007f8702bc, 0) = 4
+[25890.938620] RPC:   107 sleep_on(queue "xprt_pending" time 4320572542)
+[25890.938622] RPC:   107 added to queue ffff880207d34258 "xprt_pending"
+[25890.938624] RPC:   107 setting alarm for 60000 ms
+[25890.938626] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.938627] RPC:   107 sync task going to sleep
+[25890.938633] svc: TCP record, 136 bytes
+[25890.938641] svc: socket ffff88007f870000 recvfrom(ffff88007fa33088, 3960) = 136
+[25890.938648] svc: TCP final record (136 bytes)
+[25890.938654] svc: got len=136
+[25890.938661] svc: svc_authenticate (1)
+[25890.938668] svc: calling dispatcher
+[25890.938699] RPC:       xs_tcp_data_ready...
+[25890.938706] RPC:       xs_tcp_data_recv started
+[25890.938712] RPC:       reading TCP record fragment of length 188
+[25890.938719] RPC:       reading XID (4 bytes)
+[25890.938725] RPC:       reading reply for XID 3e41d29b
+[25890.938731] RPC:       reading CALL/REPLY flag (4 bytes)
+[25890.938738] RPC:       read reply XID 3e41d29b
+[25890.938744] RPC:       XID 3e41d29b read 180 bytes
+[25890.938751] RPC:       xprt = ffff880207d34000, tcp_copied = 188, tcp_offset = 188, tcp_reclen = 188
+[25890.938758] RPC:   107 xid 3e41d29b complete (188 bytes received)
+[25890.938764] RPC:   107 __rpc_wake_up_task (now 4320572542)
+[25890.938771] RPC:   107 disabling timer
+[25890.938778] RPC:   107 removed from queue ffff880207d34258 "xprt_pending"
+[25890.938787] RPC:       __rpc_wake_up_task done
+[25890.938788] RPC:       xs_tcp_data_recv done
+[25890.938794] svc: socket ffff88007f870000 sendto([ffff88008bdde000 192... ], 192) = 192 (addr 0000:0000:0000:0000:0000:0000:0000:0001, port=741)
+[25890.938797] svc: server ffff88007fa48000 waiting for data (to = 3600000)
+[25890.938842] RPC:   107 sync task resuming
+[25890.938844] RPC:   107 call_status (status 188)
+[25890.938846] RPC:   107 call_decode (status 188)
+[25890.938848] RPC:   107 validating UNIX cred ffff8801f84c49c0
+[25890.938850] RPC:   107 using AUTH_UNIX cred ffff8801f84c49c0 to unwrap rpc data
+[25890.938855] RPC:   107 call_decode result 0
+[25890.938857] RPC:       wake_up_first(ffff8800bb7f7498 "NFSv4.0 transport Slot table")
+[25890.938859] RPC:   107 return 0, status 0
+[25890.938861] RPC:   107 release task
+[25890.938863] RPC:       freeing buffer of size 3228 at ffff88007f876000
+[25890.938865] RPC:   107 release request ffff88003741d200
+[25890.938866] RPC:       wake_up_first(ffff880207d34320 "xprt_backlog")
+[25890.938868] RPC:       rpc_release_client(ffff8800bb7f4400)
+[25890.938870] RPC:   107 freeing task
+[25890.938881] SELinux: initialized (dev 0:39, type nfs4), uses genfs_contexts
+[25890.938988] RPC:       looking up Generic cred
+[25890.938991] RPC:       new task initialized, procpid 12457
+[25890.938993] RPC:       allocated task ffff8801acc17600
+[25890.938995] RPC:   108 __rpc_execute flags=0x80
+[25890.938997] RPC:   108 call_start nfs4 proc ACCESS (sync)
+[25890.938999] RPC:   108 call_reserve (status 0)
+[25890.939001] RPC:   108 reserved req ffff88003741d200 xid 3f41d29b
+[25890.939003] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.939004] RPC:   108 call_reserveresult (status 0)
+[25890.939006] RPC:   108 call_refresh (status 0)
+[25890.939008] RPC:   108 refreshing UNIX cred ffff8801f84c49c0
+[25890.939009] RPC:   108 call_refreshresult (status 0)
+[25890.939011] RPC:   108 call_allocate (status 0)
+[25890.939013] RPC:   108 allocated buffer of size 3228 at ffff88007f876000
+[25890.939014] RPC:   108 call_bind (status 0)
+[25890.939016] RPC:   108 call_connect xprt ffff880207d34000 is connected
+[25890.939018] RPC:   108 call_transmit (status 0)
+[25890.939019] RPC:   108 xprt_prepare_transmit
+[25890.939021] RPC:   108 rpc_xdr_encode (status 0)
+[25890.939022] RPC:   108 marshaling UNIX cred ffff8801f84c49c0
+[25890.939024] RPC:   108 using AUTH_UNIX cred ffff8801f84c49c0 to wrap rpc data
+[25890.939027] RPC:   108 xprt_transmit(148)
+[25890.939047] svc: socket ffff8800c47f3e00 TCP data ready (svsk ffff88007f870000)
+[25890.939050] svc: transport ffff88007f870000 served by daemon ffff88007fa48000
+[25890.939055] svc: server ffff88007fa48000, pool 0, transport ffff88007f870000, inuse=2
+[25890.939056] RPC:       xs_tcp_send_request(148) = 148
+[25890.939057] RPC:   108 xmit complete
+[25890.939059] RPC:   108 sleep_on(queue "xprt_pending" time 4320572542)
+[25890.939060] RPC:   108 added to queue ffff880207d34258 "xprt_pending"
+[25890.939062] RPC:   108 setting alarm for 60000 ms
+[25890.939063] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.939064] RPC:   108 sync task going to sleep
+[25890.939066] svc: tcp_recv ffff88007f870000 data 1 conn 0 close 0
+[25890.939068] svc: socket ffff88007f870000 recvfrom(ffff88007f8702bc, 0) = 4
+[25890.939069] svc: TCP record, 144 bytes
+[25890.939070] svc: socket ffff88007f870000 recvfrom(ffff88007fa33090, 3952) = 144
+[25890.939072] svc: TCP final record (144 bytes)
+[25890.939073] svc: got len=144
+[25890.939075] svc: svc_authenticate (1)
+[25890.939078] svc: calling dispatcher
+[25890.939106] RPC:       xs_tcp_data_ready...
+[25890.939108] RPC:       xs_tcp_data_recv started
+[25890.939110] RPC:       reading TCP record fragment of length 124
+[25890.939111] RPC:       reading XID (4 bytes)
+[25890.939113] RPC:       reading reply for XID 3f41d29b
+[25890.939114] RPC:       reading CALL/REPLY flag (4 bytes)
+[25890.939116] RPC:       read reply XID 3f41d29b
+[25890.939118] RPC:       XID 3f41d29b read 116 bytes
+[25890.939120] RPC:       xprt = ffff880207d34000, tcp_copied = 124, tcp_offset = 124, tcp_reclen = 124
+[25890.939122] RPC:   108 xid 3f41d29b complete (124 bytes received)
+[25890.939124] RPC:   108 __rpc_wake_up_task (now 4320572542)
+[25890.939125] RPC:   108 disabling timer
+[25890.939127] RPC:   108 removed from queue ffff880207d34258 "xprt_pending"
+[25890.939130] RPC:       __rpc_wake_up_task done
+[25890.939132] RPC:       xs_tcp_data_recv done
+[25890.939137] svc: socket ffff88007f870000 sendto([ffff880081017000 128... ], 128) = 128 (addr 0000:0000:0000:0000:0000:0000:0000:0001, port=741)
+[25890.939139] RPC:   108 sync task resuming
+[25890.939141] RPC:   108 call_status (status 124)
+[25890.939142] RPC:   108 call_decode (status 124)
+[25890.939144] RPC:   108 validating UNIX cred ffff8801f84c49c0
+[25890.939146] RPC:   108 using AUTH_UNIX cred ffff8801f84c49c0 to unwrap rpc data
+[25890.939148] RPC:   108 call_decode result 0
+[25890.939149] svc: server ffff88007fa48000 waiting for data (to = 3600000)
+[25890.939152] RPC:       wake_up_first(ffff8800bb7f7498 "NFSv4.0 transport Slot table")
+[25890.939154] RPC:   108 return 0, status 0
+[25890.939155] RPC:   108 release task
+[25890.939157] RPC:       freeing buffer of size 3228 at ffff88007f876000
+[25890.939159] RPC:   108 release request ffff88003741d200
+[25890.939161] RPC:       wake_up_first(ffff880207d34320 "xprt_backlog")
+[25890.939162] RPC:       rpc_release_client(ffff8800bb7f4400)
+[25890.939164] RPC:   108 freeing task
+[25890.939169] RPC:       looking up Generic cred
+[25890.939173] RPC:       new task initialized, procpid 12457
+[25890.939174] RPC:       allocated task ffff8801acc17600
+[25890.939176] RPC:   109 __rpc_execute flags=0x80
+[25890.939178] RPC:   109 call_start nfs4 proc LOOKUP (sync)
+[25890.939179] RPC:   109 call_reserve (status 0)
+[25890.939181] RPC:   109 reserved req ffff88003741d200 xid 4041d29b
+[25890.939183] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.939184] RPC:   109 call_reserveresult (status 0)
+[25890.939186] RPC:   109 call_refresh (status 0)
+[25890.939187] RPC:   109 looking up UNIX cred
+[25890.939188] RPC:       looking up UNIX cred
+[25890.939190] RPC:   109 refreshing UNIX cred ffff8801f84c49c0
+[25890.939192] RPC:   109 call_refreshresult (status 0)
+[25890.939193] RPC:   109 call_allocate (status 0)
+[25890.939195] RPC:   109 allocated buffer of size 3620 at ffff88007f876000
+[25890.939196] RPC:   109 call_bind (status 0)
+[25890.939198] RPC:   109 call_connect xprt ffff880207d34000 is connected
+[25890.939200] RPC:   109 call_transmit (status 0)
+[25890.939201] RPC:   109 xprt_prepare_transmit
+[25890.939202] RPC:   109 rpc_xdr_encode (status 0)
+[25890.939204] RPC:   109 marshaling UNIX cred ffff8801f84c49c0
+[25890.939206] RPC:   109 using AUTH_UNIX cred ffff8801f84c49c0 to wrap rpc data
+[25890.939208] RPC:   109 xprt_transmit(156)
+[25890.939225] svc: socket ffff8800c47f3e00 TCP data ready (svsk ffff88007f870000)
+[25890.939227] svc: transport ffff88007f870000 served by daemon ffff88007fa48000
+[25890.939233] RPC:       xs_tcp_send_request(156) = 156
+[25890.939235] svc: server ffff88007fa48000, pool 0, transport ffff88007f870000, inuse=2
+[25890.939237] svc: tcp_recv ffff88007f870000 data 1 conn 0 close 0
+[25890.939239] RPC:   109 xmit complete
+[25890.939240] svc: socket ffff88007f870000 recvfrom(ffff88007f8702bc, 0) = 4
+[25890.939241] svc: TCP record, 152 bytes
+[25890.939243] svc: socket ffff88007f870000 recvfrom(ffff88007fa33098, 3944) = 152
+[25890.939245] svc: TCP final record (152 bytes)
+[25890.939246] svc: got len=152
+[25890.939248] svc: svc_authenticate (1)
+[25890.939250] svc: calling dispatcher
+[25890.939252] RPC:   109 sleep_on(queue "xprt_pending" time 4320572542)
+[25890.939254] RPC:   109 added to queue ffff880207d34258 "xprt_pending"
+[25890.939255] RPC:   109 setting alarm for 60000 ms
+[25890.939257] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.939259] RPC:   109 sync task going to sleep
+[25890.939260] RPC:       Want update, refage=120, age=0
+[25890.939475] RPC:       xs_tcp_data_ready...
+[25890.939479] RPC:       xs_tcp_data_recv started
+[25890.939480] RPC:       reading TCP record fragment of length 236
+[25890.939482] RPC:       reading XID (4 bytes)
+[25890.939484] RPC:       reading reply for XID 4041d29b
+[25890.939485] RPC:       reading CALL/REPLY flag (4 bytes)
+[25890.939487] RPC:       read reply XID 4041d29b
+[25890.939489] RPC:       XID 4041d29b read 228 bytes
+[25890.939491] RPC:       xprt = ffff880207d34000, tcp_copied = 236, tcp_offset = 236, tcp_reclen = 236
+[25890.939494] RPC:   109 xid 4041d29b complete (236 bytes received)
+[25890.939496] RPC:   109 __rpc_wake_up_task (now 4320572542)
+[25890.939497] RPC:   109 disabling timer
+[25890.939499] RPC:   109 removed from queue ffff880207d34258 "xprt_pending"
+[25890.939503] RPC:       __rpc_wake_up_task done
+[25890.939504] RPC:       xs_tcp_data_recv done
+[25890.939512] svc: socket ffff88007f870000 sendto([ffff88007e851000 240... ], 240) = 240 (addr 0000:0000:0000:0000:0000:0000:0000:0001, port=741)
+[25890.939519] svc: server ffff88007fa48000 waiting for data (to = 3600000)
+[25890.939721] RPC:   109 sync task resuming
+[25890.939723] RPC:   109 call_status (status 236)
+[25890.939725] RPC:   109 call_decode (status 236)
+[25890.939727] RPC:   109 validating UNIX cred ffff8801f84c49c0
+[25890.939729] RPC:   109 using AUTH_UNIX cred ffff8801f84c49c0 to unwrap rpc data
+[25890.939733] RPC:   109 call_decode result 0
+[25890.939735] RPC:       wake_up_first(ffff8800bb7f7498 "NFSv4.0 transport Slot table")
+[25890.939737] RPC:   109 return 0, status 0
+[25890.939738] RPC:   109 release task
+[25890.939740] RPC:       freeing buffer of size 3620 at ffff88007f876000
+[25890.939742] RPC:   109 release request ffff88003741d200
+[25890.939744] RPC:       wake_up_first(ffff880207d34320 "xprt_backlog")
+[25890.939745] RPC:       rpc_release_client(ffff8800bb7f4400)
+[25890.939747] RPC:   109 freeing task
+[25890.939755] RPC:       new task initialized, procpid 12457
+[25890.939756] RPC:       allocated task ffff8801acc17600
+[25890.939758] RPC:   110 __rpc_execute flags=0x80
+[25890.939760] RPC:   110 call_start nfs4 proc LOOKUP (sync)
+[25890.939762] RPC:   110 call_reserve (status 0)
+[25890.939764] RPC:   110 reserved req ffff88003741d200 xid 4141d29b
+[25890.939766] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.939767] RPC:   110 call_reserveresult (status 0)
+[25890.939769] RPC:   110 call_refresh (status 0)
+[25890.939770] RPC:   110 looking up UNIX cred
+[25890.939772] RPC:       looking up UNIX cred
+[25890.939774] RPC:   110 refreshing UNIX cred ffff8801f84c49c0
+[25890.939775] RPC:   110 call_refreshresult (status 0)
+[25890.939777] RPC:   110 call_allocate (status 0)
+[25890.939779] RPC:   110 allocated buffer of size 3620 at ffff88007f876000
+[25890.939780] RPC:   110 call_bind (status 0)
+[25890.939782] RPC:   110 call_connect xprt ffff880207d34000 is connected
+[25890.939784] RPC:   110 call_transmit (status 0)
+[25890.939785] RPC:   110 xprt_prepare_transmit
+[25890.939787] RPC:   110 rpc_xdr_encode (status 0)
+[25890.939788] RPC:   110 marshaling UNIX cred ffff8801f84c49c0
+[25890.939790] RPC:   110 using AUTH_UNIX cred ffff8801f84c49c0 to wrap rpc data
+[25890.939792] RPC:   110 xprt_transmit(156)
+[25890.939812] svc: socket ffff8800c47f3e00 TCP data ready (svsk ffff88007f870000)
+[25890.939815] svc: transport ffff88007f870000 served by daemon ffff88007fa48000
+[25890.939820] RPC:       xs_tcp_send_request(156) = 156
+[25890.939823] svc: server ffff88007fa48000, pool 0, transport ffff88007f870000, inuse=2
+[25890.939824] RPC:   110 xmit complete
+[25890.939827] RPC:   110 sleep_on(queue "xprt_pending" time 4320572543)
+[25890.939829] RPC:   110 added to queue ffff880207d34258 "xprt_pending"
+[25890.939830] RPC:   110 setting alarm for 60000 ms
+[25890.939832] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.939834] RPC:   110 sync task going to sleep
+[25890.939837] svc: tcp_recv ffff88007f870000 data 1 conn 0 close 0
+[25890.939841] svc: socket ffff88007f870000 recvfrom(ffff88007f8702bc, 0) = 4
+[25890.939842] svc: TCP record, 152 bytes
+[25890.939845] svc: socket ffff88007f870000 recvfrom(ffff88007fa33098, 3944) = 152
+[25890.939848] svc: TCP final record (152 bytes)
+[25890.939850] svc: got len=152
+[25890.939852] svc: svc_authenticate (1)
+[25890.939856] svc: calling dispatcher
+[25890.939891] RPC:       xs_tcp_data_ready...
+[25890.939893] RPC:       xs_tcp_data_recv started
+[25890.939895] RPC:       reading TCP record fragment of length 236
+[25890.939896] RPC:       reading XID (4 bytes)
+[25890.939898] RPC:       reading reply for XID 4141d29b
+[25890.939899] RPC:       reading CALL/REPLY flag (4 bytes)
+[25890.939901] RPC:       read reply XID 4141d29b
+[25890.939903] RPC:       XID 4141d29b read 228 bytes
+[25890.939905] RPC:       xprt = ffff880207d34000, tcp_copied = 236, tcp_offset = 236, tcp_reclen = 236
+[25890.939908] RPC:   110 xid 4141d29b complete (236 bytes received)
+[25890.939910] RPC:   110 __rpc_wake_up_task (now 4320572543)
+[25890.939911] RPC:   110 disabling timer
+[25890.939913] RPC:   110 removed from queue ffff880207d34258 "xprt_pending"
+[25890.939918] RPC:       __rpc_wake_up_task done
+[25890.939919] RPC:       xs_tcp_data_recv done
+[25890.939926] svc: socket ffff88007f870000 sendto([ffff88007e85e000 240... ], 240) = 240 (addr 0000:0000:0000:0000:0000:0000:0000:0001, port=741)
+[25890.939928] svc: server ffff88007fa48000 waiting for data (to = 3600000)
+[25890.939965] RPC:   110 sync task resuming
+[25890.939967] RPC:   110 call_status (status 236)
+[25890.939969] RPC:   110 call_decode (status 236)
+[25890.939970] RPC:   110 validating UNIX cred ffff8801f84c49c0
+[25890.939972] RPC:   110 using AUTH_UNIX cred ffff8801f84c49c0 to unwrap rpc data
+[25890.939975] RPC:   110 call_decode result 0
+[25890.939977] RPC:       wake_up_first(ffff8800bb7f7498 "NFSv4.0 transport Slot table")
+[25890.939979] RPC:   110 return 0, status 0
+[25890.939980] RPC:   110 release task
+[25890.939982] RPC:       freeing buffer of size 3620 at ffff88007f876000
+[25890.939984] RPC:   110 release request ffff88003741d200
+[25890.939985] RPC:       wake_up_first(ffff880207d34320 "xprt_backlog")
+[25890.939987] RPC:       rpc_release_client(ffff8800bb7f4400)
+[25890.939988] RPC:   110 freeing task
+[25890.939991] RPC:       creating nfs client for localhost (xprt ffff880207d34000)
+[25890.940064] RPC:       creating UNIX authenticator for client ffff8800c933e400
+[25890.940099] RPC:       new task initialized, procpid 12457
+[25890.940101] RPC:       allocated task ffff8801acc16d00
+[25890.940103] RPC:   111 __rpc_execute flags=0x80
+[25890.940106] RPC:   111 call_start nfs4 proc SECINFO (sync)
+[25890.940108] RPC:   111 call_reserve (status 0)
+[25890.940110] RPC:   111 reserved req ffff88003741d200 xid 4241d29b
+[25890.940112] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.940114] RPC:   111 call_reserveresult (status 0)
+[25890.940116] RPC:   111 call_refresh (status 0)
+[25890.940117] RPC:   111 looking up UNIX cred
+[25890.940119] RPC:       looking up UNIX cred
+[25890.940121] RPC:   111 refreshing UNIX cred ffff8801f84c49c0
+[25890.940122] RPC:   111 call_refreshresult (status 0)
+[25890.940124] RPC:   111 call_allocate (status 0)
+[25890.940127] RPC:   111 allocated buffer of size 1496 at ffff880207cec800
+[25890.940129] RPC:   111 call_bind (status 0)
+[25890.940131] RPC:   111 call_connect xprt ffff880207d34000 is connected
+[25890.940132] RPC:   111 call_transmit (status 0)
+[25890.940134] RPC:   111 xprt_prepare_transmit
+[25890.940136] RPC:   111 rpc_xdr_encode (status 0)
+[25890.940138] RPC:   111 marshaling UNIX cred ffff8801f84c49c0
+[25890.940140] RPC:   111 using AUTH_UNIX cred ffff8801f84c49c0 to wrap rpc data
+[25890.940142] RPC:   111 xprt_transmit(136)
+[25890.940165] svc: socket ffff8800c47f3e00 TCP data ready (svsk ffff88007f870000)
+[25890.940167] svc: transport ffff88007f870000 served by daemon ffff88007fa48000
+[25890.940173] RPC:       xs_tcp_send_request(136) = 136
+[25890.940175] RPC:   111 xmit complete
+[25890.940177] RPC:   111 sleep_on(queue "xprt_pending" time 4320572543)
+[25890.940179] RPC:   111 added to queue ffff880207d34258 "xprt_pending"
+[25890.940181] RPC:   111 setting alarm for 60000 ms
+[25890.940183] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.940185] RPC:   111 sync task going to sleep
+[25890.943368] svc: server ffff88007fa48000, pool 0, transport ffff88007f870000, inuse=2
+[25890.943372] svc: tcp_recv ffff88007f870000 data 1 conn 0 close 0
+[25890.943377] svc: socket ffff88007f870000 recvfrom(ffff88007f8702bc, 0) = 4
+[25890.943379] svc: TCP record, 132 bytes
+[25890.943382] svc: socket ffff88007f870000 recvfrom(ffff88007fa33084, 3964) = 132
+[25890.943385] svc: TCP final record (132 bytes)
+[25890.943387] svc: got len=132
+[25890.943389] svc: svc_authenticate (1)
+[25890.943394] svc: calling dispatcher
+[25890.943449] RPC:       xs_tcp_data_ready...
+[25890.943451] RPC:       xs_tcp_data_recv started
+[25890.943453] RPC:       reading TCP record fragment of length 60
+[25890.943454] RPC:       reading XID (4 bytes)
+[25890.943456] RPC:       reading reply for XID 4241d29b
+[25890.943459] RPC:       reading CALL/REPLY flag (4 bytes)
+[25890.943460] RPC:       read reply XID 4241d29b
+[25890.943463] RPC:       XID 4241d29b read 52 bytes
+[25890.943465] RPC:       xprt = ffff880207d34000, tcp_copied = 60, tcp_offset = 60, tcp_reclen = 60
+[25890.943467] RPC:   111 xid 4241d29b complete (60 bytes received)
+[25890.943470] RPC:   111 __rpc_wake_up_task (now 4320572546)
+[25890.943471] RPC:   111 disabling timer
+[25890.943474] RPC:   111 removed from queue ffff880207d34258 "xprt_pending"
+[25890.943480] RPC:       __rpc_wake_up_task done
+[25890.943482] RPC:       xs_tcp_data_recv done
+[25890.943484] RPC:   111 sync task resuming
+[25890.943487] RPC:   111 call_status (status 60)
+[25890.943490] svc: socket ffff88007f870000 sendto([ffff88007e85f000 64... ], 64) = 64 (addr 0000:0000:0000:0000:0000:0000:0000:0001, port=741)
+[25890.943492] svc: server ffff88007fa48000 waiting for data (to = 3600000)
+[25890.943495] RPC:   111 call_decode (status 60)
+[25890.943498] RPC:   111 validating UNIX cred ffff8801f84c49c0
+[25890.943500] RPC:   111 using AUTH_UNIX cred ffff8801f84c49c0 to unwrap rpc data
+[25890.943503] RPC:   111 call_decode result 0
+[25890.943505] RPC:       wake_up_first(ffff8800bb7f7498 "NFSv4.0 transport Slot table")
+[25890.943508] RPC:   111 return 0, status 0
+[25890.943509] RPC:   111 release task
+[25890.943513] RPC:       freeing buffer of size 1496 at ffff880207cec800
+[25890.943515] RPC:   111 release request ffff88003741d200
+[25890.943518] RPC:       wake_up_first(ffff880207d34320 "xprt_backlog")
+[25890.943520] RPC:       rpc_release_client(ffff8800bb7f4400)
+[25890.943522] RPC:   111 freeing task
+[25890.943549] RPC:       creating nfs client for localhost (xprt ffff880207d34000)
+[25890.943566] RPC:       creating UNIX authenticator for client ffff8800c933fe00
+[25890.943569] RPC:       new task initialized, procpid 12457
+[25890.943570] RPC:       allocated task ffff8801acc16900
+[25890.943572] RPC:   112 __rpc_execute flags=0x80
+[25890.943575] RPC:   112 call_start nfs4 proc SERVER_CAPS (sync)
+[25890.943577] RPC:   112 call_reserve (status 0)
+[25890.943580] RPC:   112 reserved req ffff88003741d200 xid 4341d29b
+[25890.943582] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.943584] RPC:   112 call_reserveresult (status 0)
+[25890.943585] RPC:   112 call_refresh (status 0)
+[25890.943587] RPC:   112 looking up UNIX cred
+[25890.943589] RPC:       looking up UNIX cred
+[25890.943591] RPC:   112 refreshing UNIX cred ffff8801f84c49c0
+[25890.943593] RPC:   112 call_refreshresult (status 0)
+[25890.943595] RPC:   112 call_allocate (status 0)
+[25890.943597] RPC:   112 allocated buffer of size 3204 at ffff88007f875000
+[25890.943599] RPC:   112 call_bind (status 0)
+[25890.943601] RPC:   112 call_connect xprt ffff880207d34000 is connected
+[25890.943603] RPC:   112 call_transmit (status 0)
+[25890.943604] RPC:   112 xprt_prepare_transmit
+[25890.943607] RPC:   112 rpc_xdr_encode (status 0)
+[25890.943616] RPC:   112 marshaling UNIX cred ffff8801f84c49c0
+[25890.943618] RPC:   112 using AUTH_UNIX cred ffff8801f84c49c0 to wrap rpc data
+[25890.943621] RPC:   112 xprt_transmit(156)
+[25890.943648] svc: socket ffff8800c47f3e00 TCP data ready (svsk ffff88007f870000)
+[25890.943650] svc: transport ffff88007f870000 served by daemon ffff88007fa48000
+[25890.943656] RPC:       xs_tcp_send_request(156) = 156
+[25890.943657] RPC:   112 xmit complete
+[25890.943659] RPC:   112 sleep_on(queue "xprt_pending" time 4320572547)
+[25890.943661] RPC:   112 added to queue ffff880207d34258 "xprt_pending"
+[25890.943663] RPC:   112 setting alarm for 60000 ms
+[25890.943665] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.943667] RPC:   112 sync task going to sleep
+[25890.944113] svc: server ffff88007fa48000, pool 0, transport ffff88007f870000, inuse=2
+[25890.944116] svc: tcp_recv ffff88007f870000 data 1 conn 0 close 0
+[25890.944120] svc: socket ffff88007f870000 recvfrom(ffff88007f8702bc, 0) = 4
+[25890.944122] svc: TCP record, 152 bytes
+[25890.944125] svc: socket ffff88007f870000 recvfrom(ffff88007fa33098, 3944) = 152
+[25890.944127] svc: TCP final record (152 bytes)
+[25890.944129] svc: got len=152
+[25890.944131] svc: svc_authenticate (1)
+[25890.944134] svc: calling dispatcher
+[25890.944140] RPC:       Want update, refage=120, age=0
+[25890.944427] RPC:       xs_tcp_data_ready...
+[25890.944430] RPC:       xs_tcp_data_recv started
+[25890.944433] RPC:       reading TCP record fragment of length 92
+[25890.944434] RPC:       reading XID (4 bytes)
+[25890.944436] RPC:       reading reply for XID 4341d29b
+[25890.944438] RPC:       reading CALL/REPLY flag (4 bytes)
+[25890.944440] RPC:       read reply XID 4341d29b
+[25890.944442] RPC:       XID 4341d29b read 84 bytes
+[25890.944444] RPC:       xprt = ffff880207d34000, tcp_copied = 92, tcp_offset = 92, tcp_reclen = 92
+[25890.944446] RPC:   112 xid 4341d29b complete (92 bytes received)
+[25890.944448] RPC:   112 __rpc_wake_up_task (now 4320572547)
+[25890.944450] RPC:   112 disabling timer
+[25890.944452] RPC:   112 removed from queue ffff880207d34258 "xprt_pending"
+[25890.944457] RPC:       __rpc_wake_up_task done
+[25890.944459] RPC:       xs_tcp_data_recv done
+[25890.944467] svc: socket ffff88007f870000 sendto([ffff88008bed1000 96... ], 96) = 96 (addr 0000:0000:0000:0000:0000:0000:0000:0001, port=741)
+[25890.944470] svc: server ffff88007fa48000 waiting for data (to = 3600000)
+[25890.945637] RPC:   112 sync task resuming
+[25890.945642] RPC:   112 call_status (status 92)
+[25890.945645] RPC:   112 call_decode (status 92)
+[25890.945648] RPC:   112 validating UNIX cred ffff8801f84c49c0
+[25890.945650] RPC:   112 using AUTH_UNIX cred ffff8801f84c49c0 to unwrap rpc data
+[25890.945654] RPC:   112 call_decode result 0
+[25890.945657] RPC:       wake_up_first(ffff8800bb7f7498 "NFSv4.0 transport Slot table")
+[25890.945660] RPC:   112 return 0, status 0
+[25890.945662] RPC:   112 release task
+[25890.945666] RPC:       freeing buffer of size 3204 at ffff88007f875000
+[25890.945668] RPC:   112 release request ffff88003741d200
+[25890.945671] RPC:       wake_up_first(ffff880207d34320 "xprt_backlog")
+[25890.945673] RPC:       rpc_release_client(ffff8800c933fe00)
+[25890.945676] RPC:   112 freeing task
+[25890.945682] RPC:       new task initialized, procpid 12457
+[25890.945683] RPC:       allocated task ffff8801e288e100
+[25890.945686] RPC:   113 __rpc_execute flags=0x80
+[25890.945690] RPC:   113 call_start nfs4 proc FSINFO (sync)
+[25890.945692] RPC:   113 call_reserve (status 0)
+[25890.945695] RPC:   113 reserved req ffff88003741d200 xid 4441d29b
+[25890.945697] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.945699] RPC:   113 call_reserveresult (status 0)
+[25890.945701] RPC:   113 call_refresh (status 0)
+[25890.945703] RPC:   113 looking up UNIX cred
+[25890.945705] RPC:       looking up UNIX cred
+[25890.945707] RPC:   113 refreshing UNIX cred ffff8801f84c49c0
+[25890.945709] RPC:   113 call_refreshresult (status 0)
+[25890.945712] RPC:   113 call_allocate (status 0)
+[25890.945714] RPC:   113 allocated buffer of size 756 at ffff880207cea000
+[25890.945716] RPC:   113 call_bind (status 0)
+[25890.945718] RPC:   113 call_connect xprt ffff880207d34000 is connected
+[25890.945720] RPC:   113 call_transmit (status 0)
+[25890.945722] RPC:   113 xprt_prepare_transmit
+[25890.945723] RPC:   113 rpc_xdr_encode (status 0)
+[25890.945725] RPC:   113 marshaling UNIX cred ffff8801f84c49c0
+[25890.945728] RPC:   113 using AUTH_UNIX cred ffff8801f84c49c0 to wrap rpc data
+[25890.945731] RPC:   113 xprt_transmit(160)
+[25890.945792] svc: socket ffff8800c47f3e00 TCP data ready (svsk ffff88007f870000)
+[25890.945795] svc: transport ffff88007f870000 served by daemon ffff88007fa48000
+[25890.945803] RPC:       xs_tcp_send_request(160) = 160
+[25890.945805] svc: server ffff88007fa48000, pool 0, transport ffff88007f870000, inuse=2
+[25890.945808] svc: tcp_recv ffff88007f870000 data 1 conn 0 close 0
+[25890.945809] RPC:   113 xmit complete
+[25890.945812] svc: socket ffff88007f870000 recvfrom(ffff88007f8702bc, 0) = 4
+[25890.945813] RPC:   113 sleep_on(queue "xprt_pending" time 4320572549)
+[25890.945815] RPC:   113 added to queue ffff880207d34258 "xprt_pending"
+[25890.945818] RPC:   113 setting alarm for 60000 ms
+[25890.945819] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.945821] RPC:   113 sync task going to sleep
+[25890.945824] svc: TCP record, 156 bytes
+[25890.945827] svc: socket ffff88007f870000 recvfrom(ffff88007fa3309c, 3940) = 156
+[25890.945833] svc: TCP final record (156 bytes)
+[25890.945838] svc: got len=156
+[25890.945846] svc: svc_authenticate (1)
+[25890.945857] svc: calling dispatcher
+[25890.945920] RPC:       xs_tcp_data_ready...
+[25890.945924] RPC:       xs_tcp_data_recv started
+[25890.945926] RPC:       reading TCP record fragment of length 108
+[25890.945928] RPC:       reading XID (4 bytes)
+[25890.945930] RPC:       reading reply for XID 4441d29b
+[25890.945931] RPC:       reading CALL/REPLY flag (4 bytes)
+[25890.945934] RPC:       read reply XID 4441d29b
+[25890.945936] RPC:       XID 4441d29b read 100 bytes
+[25890.945939] RPC:       xprt = ffff880207d34000, tcp_copied = 108, tcp_offset = 108, tcp_reclen = 108
+[25890.945941] RPC:   113 xid 4441d29b complete (108 bytes received)
+[25890.945943] RPC:   113 __rpc_wake_up_task (now 4320572549)
+[25890.945945] RPC:   113 disabling timer
+[25890.945947] RPC:   113 removed from queue ffff880207d34258 "xprt_pending"
+[25890.945953] RPC:       __rpc_wake_up_task done
+[25890.945954] RPC:       xs_tcp_data_recv done
+[25890.945962] svc: socket ffff88007f870000 sendto([ffff880081149000 112... ], 112) = 112 (addr 0000:0000:0000:0000:0000:0000:0000:0001, port=741)
+[25890.945965] svc: server ffff88007fa48000 waiting for data (to = 3600000)
+[25890.945989] RPC:   113 sync task resuming
+[25890.945991] RPC:   113 call_status (status 108)
+[25890.945993] RPC:   113 call_decode (status 108)
+[25890.945995] RPC:   113 validating UNIX cred ffff8801f84c49c0
+[25890.945997] RPC:   113 using AUTH_UNIX cred ffff8801f84c49c0 to unwrap rpc data
+[25890.946000] RPC:   113 call_decode result 0
+[25890.946002] RPC:       wake_up_first(ffff8800bb7f7498 "NFSv4.0 transport Slot table")
+[25890.946004] RPC:   113 return 0, status 0
+[25890.946006] RPC:   113 release task
+[25890.946008] RPC:       freeing buffer of size 756 at ffff880207cea000
+[25890.946010] RPC:   113 release request ffff88003741d200
+[25890.946012] RPC:       wake_up_first(ffff880207d34320 "xprt_backlog")
+[25890.946014] RPC:       rpc_release_client(ffff8800c933fe00)
+[25890.946016] RPC:   113 freeing task
+[25890.946021] RPC:       new task initialized, procpid 12457
+[25890.946022] RPC:       allocated task ffff8801e288e100
+[25890.946024] RPC:   114 __rpc_execute flags=0x80
+[25890.946027] RPC:   114 call_start nfs4 proc PATHCONF (sync)
+[25890.946028] RPC:   114 call_reserve (status 0)
+[25890.946030] RPC:   114 reserved req ffff88003741d200 xid 4541d29b
+[25890.946032] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.946034] RPC:   114 call_reserveresult (status 0)
+[25890.946036] RPC:   114 call_refresh (status 0)
+[25890.946037] RPC:   114 looking up UNIX cred
+[25890.946039] RPC:       looking up UNIX cred
+[25890.946041] RPC:   114 refreshing UNIX cred ffff8801f84c49c0
+[25890.946043] RPC:   114 call_refreshresult (status 0)
+[25890.946045] RPC:   114 call_allocate (status 0)
+[25890.946048] RPC:   114 allocated buffer of size 3204 at ffff88007f875000
+[25890.946049] RPC:   114 call_bind (status 0)
+[25890.946051] RPC:   114 call_connect xprt ffff880207d34000 is connected
+[25890.946053] RPC:   114 call_transmit (status 0)
+[25890.946054] RPC:   114 xprt_prepare_transmit
+[25890.946056] RPC:   114 rpc_xdr_encode (status 0)
+[25890.946058] RPC:   114 marshaling UNIX cred ffff8801f84c49c0
+[25890.946060] RPC:   114 using AUTH_UNIX cred ffff8801f84c49c0 to wrap rpc data
+[25890.946063] RPC:   114 xprt_transmit(156)
+[25890.946091] svc: socket ffff8800c47f3e00 TCP data ready (svsk ffff88007f870000)
+[25890.946094] svc: transport ffff88007f870000 served by daemon ffff88007fa48000
+[25890.946102] RPC:       xs_tcp_send_request(156) = 156
+[25890.946103] RPC:   114 xmit complete
+[25890.946106] svc: server ffff88007fa48000, pool 0, transport ffff88007f870000, inuse=2
+[25890.946108] svc: tcp_recv ffff88007f870000 data 1 conn 0 close 0
+[25890.946110] RPC:   114 sleep_on(queue "xprt_pending" time 4320572549)
+[25890.946112] svc: socket ffff88007f870000 recvfrom(ffff88007f8702bc, 0) = 4
+[25890.946113] svc: TCP record, 152 bytes
+[25890.946115] svc: socket ffff88007f870000 recvfrom(ffff88007fa33098, 3944) = 152
+[25890.946116] svc: TCP final record (152 bytes)
+[25890.946118] svc: got len=152
+[25890.946120] svc: svc_authenticate (1)
+[25890.946123] RPC:   114 added to queue ffff880207d34258 "xprt_pending"
+[25890.946124] svc: calling dispatcher
+[25890.946127] RPC:   114 setting alarm for 60000 ms
+[25890.946129] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.946131] RPC:   114 sync task going to sleep
+[25890.946159] RPC:       xs_tcp_data_ready...
+[25890.946162] RPC:       xs_tcp_data_recv started
+[25890.946164] RPC:       reading TCP record fragment of length 72
+[25890.946165] RPC:       reading XID (4 bytes)
+[25890.946167] RPC:       reading reply for XID 4541d29b
+[25890.946168] RPC:       reading CALL/REPLY flag (4 bytes)
+[25890.946170] RPC:       read reply XID 4541d29b
+[25890.946172] RPC:       XID 4541d29b read 64 bytes
+[25890.946174] RPC:       xprt = ffff880207d34000, tcp_copied = 72, tcp_offset = 72, tcp_reclen = 72
+[25890.946175] RPC:   114 xid 4541d29b complete (72 bytes received)
+[25890.946177] RPC:   114 __rpc_wake_up_task (now 4320572549)
+[25890.946178] RPC:   114 disabling timer
+[25890.946180] RPC:   114 removed from queue ffff880207d34258 "xprt_pending"
+[25890.946186] RPC:       __rpc_wake_up_task done
+[25890.946187] RPC:       xs_tcp_data_recv done
+[25890.946193] svc: socket ffff88007f870000 sendto([ffff880081364000 76... ], 76) = 76 (addr 0000:0000:0000:0000:0000:0000:0000:0001, port=741)
+[25890.946196] svc: server ffff88007fa48000 waiting for data (to = 3600000)
+[25890.946220] RPC:   114 sync task resuming
+[25890.946222] RPC:   114 call_status (status 72)
+[25890.946224] RPC:   114 call_decode (status 72)
+[25890.946226] RPC:   114 validating UNIX cred ffff8801f84c49c0
+[25890.946228] RPC:   114 using AUTH_UNIX cred ffff8801f84c49c0 to unwrap rpc data
+[25890.946230] RPC:   114 call_decode result 0
+[25890.946232] RPC:       wake_up_first(ffff8800bb7f7498 "NFSv4.0 transport Slot table")
+[25890.946234] RPC:   114 return 0, status 0
+[25890.946235] RPC:   114 release task
+[25890.946237] RPC:       freeing buffer of size 3204 at ffff88007f875000
+[25890.946240] RPC:   114 release request ffff88003741d200
+[25890.946242] RPC:       wake_up_first(ffff880207d34320 "xprt_backlog")
+[25890.946244] RPC:       rpc_release_client(ffff8800c933fe00)
+[25890.946245] RPC:   114 freeing task
+[25890.946372] RPC:       new task initialized, procpid 12457
+[25890.946374] RPC:       allocated task ffff8801e288fc00
+[25890.946376] RPC:   115 __rpc_execute flags=0x80
+[25890.946378] RPC:   115 call_start nfs4 proc SERVER_CAPS (sync)
+[25890.946380] RPC:   115 call_reserve (status 0)
+[25890.946383] RPC:   115 reserved req ffff88003741d200 xid 4641d29b
+[25890.946384] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.946386] RPC:   115 call_reserveresult (status 0)
+[25890.946388] RPC:   115 call_refresh (status 0)
+[25890.946390] RPC:   115 looking up UNIX cred
+[25890.946391] RPC:       looking up UNIX cred
+[25890.946393] RPC:   115 refreshing UNIX cred ffff8801f84c49c0
+[25890.946395] RPC:   115 call_refreshresult (status 0)
+[25890.946397] RPC:   115 call_allocate (status 0)
+[25890.946399] RPC:   115 allocated buffer of size 3204 at ffff88007f875000
+[25890.946401] RPC:   115 call_bind (status 0)
+[25890.946402] RPC:   115 call_connect xprt ffff880207d34000 is connected
+[25890.946404] RPC:   115 call_transmit (status 0)
+[25890.946406] RPC:   115 xprt_prepare_transmit
+[25890.946407] RPC:   115 rpc_xdr_encode (status 0)
+[25890.946409] RPC:   115 marshaling UNIX cred ffff8801f84c49c0
+[25890.946420] RPC:   115 using AUTH_UNIX cred ffff8801f84c49c0 to wrap rpc data
+[25890.946422] RPC:   115 xprt_transmit(156)
+[25890.946447] svc: socket ffff8800c47f3e00 TCP data ready (svsk ffff88007f870000)
+[25890.946449] svc: transport ffff88007f870000 served by daemon ffff88007fa48000
+[25890.946454] RPC:       xs_tcp_send_request(156) = 156
+[25890.946456] RPC:   115 xmit complete
+[25890.946458] RPC:   115 sleep_on(queue "xprt_pending" time 4320572549)
+[25890.946459] RPC:   115 added to queue ffff880207d34258 "xprt_pending"
+[25890.946461] RPC:   115 setting alarm for 60000 ms
+[25890.946463] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.946465] RPC:   115 sync task going to sleep
+[25890.947146] svc: server ffff88007fa48000, pool 0, transport ffff88007f870000, inuse=2
+[25890.947150] svc: tcp_recv ffff88007f870000 data 1 conn 0 close 0
+[25890.947155] svc: socket ffff88007f870000 recvfrom(ffff88007f8702bc, 0) = 4
+[25890.947156] svc: TCP record, 152 bytes
+[25890.947160] svc: socket ffff88007f870000 recvfrom(ffff88007fa33098, 3944) = 152
+[25890.947163] svc: TCP final record (152 bytes)
+[25890.947165] svc: got len=152
+[25890.947168] svc: svc_authenticate (1)
+[25890.947174] svc: calling dispatcher
+[25890.947242] RPC:       xs_tcp_data_ready...
+[25890.947245] RPC:       xs_tcp_data_recv started
+[25890.947248] RPC:       reading TCP record fragment of length 92
+[25890.947249] RPC:       reading XID (4 bytes)
+[25890.947252] RPC:       reading reply for XID 4641d29b
+[25890.947254] RPC:       reading CALL/REPLY flag (4 bytes)
+[25890.947256] RPC:       read reply XID 4641d29b
+[25890.947258] RPC:       XID 4641d29b read 84 bytes
+[25890.947260] RPC:       xprt = ffff880207d34000, tcp_copied = 92, tcp_offset = 92, tcp_reclen = 92
+[25890.947262] RPC:   115 xid 4641d29b complete (92 bytes received)
+[25890.947265] RPC:   115 __rpc_wake_up_task (now 4320572550)
+[25890.947266] RPC:   115 disabling timer
+[25890.947268] RPC:   115 removed from queue ffff880207d34258 "xprt_pending"
+[25890.947274] RPC:       __rpc_wake_up_task done
+[25890.947275] RPC:       xs_tcp_data_recv done
+[25890.947283] svc: socket ffff88007f870000 sendto([ffff880081365000 96... ], 96) = 96 (addr 0000:0000:0000:0000:0000:0000:0000:0001, port=741)
+[25890.947286] svc: server ffff88007fa48000 waiting for data (to = 3600000)
+[25890.947916] RPC:   115 sync task resuming
+[25890.947920] RPC:   115 call_status (status 92)
+[25890.947923] RPC:   115 call_decode (status 92)
+[25890.947926] RPC:   115 validating UNIX cred ffff8801f84c49c0
+[25890.947929] RPC:   115 using AUTH_UNIX cred ffff8801f84c49c0 to unwrap rpc data
+[25890.947933] RPC:   115 call_decode result 0
+[25890.947936] RPC:       wake_up_first(ffff8800bb7f7498 "NFSv4.0 transport Slot table")
+[25890.947939] RPC:   115 return 0, status 0
+[25890.947940] RPC:   115 release task
+[25890.947944] RPC:       freeing buffer of size 3204 at ffff88007f875000
+[25890.947946] RPC:   115 release request ffff88003741d200
+[25890.947948] RPC:       wake_up_first(ffff880207d34320 "xprt_backlog")
+[25890.947951] RPC:       rpc_release_client(ffff8800c933fe00)
+[25890.947953] RPC:   115 freeing task
+[25890.947959] RPC:       new task initialized, procpid 12457
+[25890.947960] RPC:       allocated task ffff8801acc16d00
+[25890.947963] RPC:   116 __rpc_execute flags=0x80
+[25890.947967] RPC:   116 call_start nfs4 proc GETATTR (sync)
+[25890.947969] RPC:   116 call_reserve (status 0)
+[25890.947971] RPC:   116 reserved req ffff88003741d200 xid 4741d29b
+[25890.947974] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.947976] RPC:   116 call_reserveresult (status 0)
+[25890.947977] RPC:   116 call_refresh (status 0)
+[25890.947979] RPC:   116 looking up UNIX cred
+[25890.947981] RPC:       looking up UNIX cred
+[25890.947983] RPC:   116 refreshing UNIX cred ffff8801f84c49c0
+[25890.947985] RPC:   116 call_refreshresult (status 0)
+[25890.947988] RPC:   116 call_allocate (status 0)
+[25890.947990] RPC:   116 allocated buffer of size 3228 at ffff88007f875000
+[25890.947992] RPC:   116 call_bind (status 0)
+[25890.947994] RPC:   116 call_connect xprt ffff880207d34000 is connected
+[25890.947996] RPC:   116 call_transmit (status 0)
+[25890.947997] RPC:   116 xprt_prepare_transmit
+[25890.947999] RPC:   116 rpc_xdr_encode (status 0)
+[25890.948001] RPC:   116 marshaling UNIX cred ffff8801f84c49c0
+[25890.948003] RPC:   116 using AUTH_UNIX cred ffff8801f84c49c0 to wrap rpc data
+[25890.948007] RPC:   116 xprt_transmit(160)
+[25890.948057] svc: socket ffff8800c47f3e00 TCP data ready (svsk ffff88007f870000)
+[25890.948060] svc: transport ffff88007f870000 served by daemon ffff88007fa48000
+[25890.948066] RPC:       xs_tcp_send_request(160) = 160
+[25890.948068] svc: server ffff88007fa48000, pool 0, transport ffff88007f870000, inuse=2
+[25890.948071] svc: tcp_recv ffff88007f870000 data 1 conn 0 close 0
+[25890.948074] svc: socket ffff88007f870000 recvfrom(ffff88007f8702bc, 0) = 4
+[25890.948076] svc: TCP record, 156 bytes
+[25890.948078] RPC:   116 xmit complete
+[25890.948079] svc: socket ffff88007f870000 recvfrom(ffff88007fa3309c, 3940) = 156
+[25890.948082] svc: TCP final record (156 bytes)
+[25890.948083] svc: got len=156
+[25890.948085] svc: svc_authenticate (1)
+[25890.948086] RPC:   116 sleep_on(queue "xprt_pending" time 4320572551)
+[25890.948089] RPC:   116 added to queue ffff880207d34258 "xprt_pending"
+[25890.948091] RPC:   116 setting alarm for 60000 ms
+[25890.948092] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.948094] RPC:   116 sync task going to sleep
+[25890.948102] svc: calling dispatcher
+[25890.948146] RPC:       xs_tcp_data_ready...
+[25890.948149] RPC:       xs_tcp_data_recv started
+[25890.948151] RPC:       reading TCP record fragment of length 188
+[25890.948152] RPC:       reading XID (4 bytes)
+[25890.948154] RPC:       reading reply for XID 4741d29b
+[25890.948155] RPC:       reading CALL/REPLY flag (4 bytes)
+[25890.948157] RPC:       read reply XID 4741d29b
+[25890.948159] RPC:       XID 4741d29b read 180 bytes
+[25890.948161] RPC:       xprt = ffff880207d34000, tcp_copied = 188, tcp_offset = 188, tcp_reclen = 188
+[25890.948163] RPC:   116 xid 4741d29b complete (188 bytes received)
+[25890.948165] RPC:   116 __rpc_wake_up_task (now 4320572551)
+[25890.948166] RPC:   116 disabling timer
+[25890.948168] RPC:   116 removed from queue ffff880207d34258 "xprt_pending"
+[25890.948172] RPC:       __rpc_wake_up_task done
+[25890.948174] RPC:       xs_tcp_data_recv done
+[25890.948175] RPC:   116 sync task resuming
+[25890.948177] RPC:   116 call_status (status 188)
+[25890.948179] RPC:   116 call_decode (status 188)
+[25890.948181] RPC:   116 validating UNIX cred ffff8801f84c49c0
+[25890.948183] RPC:   116 using AUTH_UNIX cred ffff8801f84c49c0 to unwrap rpc data
+[25890.948188] RPC:   116 call_decode result 0
+[25890.948191] svc: socket ffff88007f870000 sendto([ffff88007e87e000 192... ], 192) = 192 (addr 0000:0000:0000:0000:0000:0000:0000:0001, port=741)
+[25890.948192] RPC:       wake_up_first(ffff8800bb7f7498 "NFSv4.0 transport Slot table")
+[25890.948194] RPC:   116 return 0, status 0
+[25890.948195] RPC:   116 release task
+[25890.948197] RPC:       freeing buffer of size 3228 at ffff88007f875000
+[25890.948199] RPC:   116 release request ffff88003741d200
+[25890.948201] RPC:       wake_up_first(ffff880207d34320 "xprt_backlog")
+[25890.948202] RPC:       rpc_release_client(ffff8800c933fe00)
+[25890.948204] RPC:   116 freeing task
+[25890.948208] svc: server ffff88007fa48000 waiting for data (to = 3600000)
+[25890.948214] SELinux: initialized (dev 0:40, type nfs4), uses genfs_contexts
+[25890.948220] RPC:       shutting down nfs client for localhost
+[25890.948221] RPC:       rpc_release_client(ffff8800c933e400)
+[25890.948223] RPC:       destroying nfs client for localhost
+[25890.948249] RPC:       looking up Generic cred
+[25890.948253] RPC:       new task initialized, procpid 12457
+[25890.948255] RPC:       allocated task ffff8801acc16d00
+[25890.948257] RPC:   117 __rpc_execute flags=0x80
+[25890.948259] RPC:   117 call_start nfs4 proc ACCESS (sync)
+[25890.948261] RPC:   117 call_reserve (status 0)
+[25890.948263] RPC:   117 reserved req ffff88003741d200 xid 4841d29b
+[25890.948265] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.948267] RPC:   117 call_reserveresult (status 0)
+[25890.948268] RPC:   117 call_refresh (status 0)
+[25890.948271] RPC:   117 refreshing UNIX cred ffff8801f84c49c0
+[25890.948272] RPC:   117 call_refreshresult (status 0)
+[25890.948275] RPC:   117 call_allocate (status 0)
+[25890.948277] RPC:   117 allocated buffer of size 3228 at ffff88007f876000
+[25890.948278] RPC:   117 call_bind (status 0)
+[25890.948280] RPC:   117 call_connect xprt ffff880207d34000 is connected
+[25890.948282] RPC:   117 call_transmit (status 0)
+[25890.948283] RPC:   117 xprt_prepare_transmit
+[25890.948285] RPC:   117 rpc_xdr_encode (status 0)
+[25890.948287] RPC:   117 marshaling UNIX cred ffff8801f84c49c0
+[25890.948289] RPC:   117 using AUTH_UNIX cred ffff8801f84c49c0 to wrap rpc data
+[25890.948291] RPC:   117 xprt_transmit(168)
+[25890.948313] svc: socket ffff8800c47f3e00 TCP data ready (svsk ffff88007f870000)
+[25890.948315] svc: transport ffff88007f870000 served by daemon ffff88007fa48000
+[25890.948321] RPC:       xs_tcp_send_request(168) = 168
+[25890.948324] svc: server ffff88007fa48000, pool 0, transport ffff88007f870000, inuse=2
+[25890.948326] svc: tcp_recv ffff88007f870000 data 1 conn 0 close 0
+[25890.948328] RPC:   117 xmit complete
+[25890.948329] svc: socket ffff88007f870000 recvfrom(ffff88007f8702bc, 0) = 4
+[25890.948330] svc: TCP record, 164 bytes
+[25890.948332] svc: socket ffff88007f870000 recvfrom(ffff88007fa330a4, 3932) = 164
+[25890.948334] svc: TCP final record (164 bytes)
+[25890.948336] svc: got len=164
+[25890.948337] svc: svc_authenticate (1)
+[25890.948340] svc: calling dispatcher
+[25890.948342] RPC:   117 sleep_on(queue "xprt_pending" time 4320572551)
+[25890.948344] RPC:   117 added to queue ffff880207d34258 "xprt_pending"
+[25890.948346] RPC:   117 setting alarm for 60000 ms
+[25890.948348] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.948349] RPC:   117 sync task going to sleep
+[25890.948378] RPC:       xs_tcp_data_ready...
+[25890.948381] RPC:       xs_tcp_data_recv started
+[25890.948382] RPC:       reading TCP record fragment of length 124
+[25890.948384] RPC:       reading XID (4 bytes)
+[25890.948386] RPC:       reading reply for XID 4841d29b
+[25890.948387] RPC:       reading CALL/REPLY flag (4 bytes)
+[25890.948389] RPC:       read reply XID 4841d29b
+[25890.948391] RPC:       XID 4841d29b read 116 bytes
+[25890.948393] RPC:       xprt = ffff880207d34000, tcp_copied = 124, tcp_offset = 124, tcp_reclen = 124
+[25890.948395] RPC:   117 xid 4841d29b complete (124 bytes received)
+[25890.948397] RPC:   117 __rpc_wake_up_task (now 4320572551)
+[25890.948398] RPC:   117 disabling timer
+[25890.948400] RPC:   117 removed from queue ffff880207d34258 "xprt_pending"
+[25890.948404] RPC:       __rpc_wake_up_task done
+[25890.948406] RPC:       xs_tcp_data_recv done
+[25890.948412] svc: socket ffff88007f870000 sendto([ffff88007e87f000 128... ], 128) = 128 (addr 0000:0000:0000:0000:0000:0000:0000:0001, port=741)
+[25890.948415] svc: server ffff88007fa48000 waiting for data (to = 3600000)
+[25890.948472] RPC:   117 sync task resuming
+[25890.948474] RPC:   117 call_status (status 124)
+[25890.948476] RPC:   117 call_decode (status 124)
+[25890.948478] RPC:   117 validating UNIX cred ffff8801f84c49c0
+[25890.948480] RPC:   117 using AUTH_UNIX cred ffff8801f84c49c0 to unwrap rpc data
+[25890.948484] RPC:   117 call_decode result 0
+[25890.948486] RPC:       wake_up_first(ffff8800bb7f7498 "NFSv4.0 transport Slot table")
+[25890.948488] RPC:   117 return 0, status 0
+[25890.948498] RPC:   117 release task
+[25890.948501] RPC:       freeing buffer of size 3228 at ffff88007f876000
+[25890.948503] RPC:   117 release request ffff88003741d200
+[25890.948504] RPC:       wake_up_first(ffff880207d34320 "xprt_backlog")
+[25890.948507] RPC:       rpc_release_client(ffff8800c933fe00)
+[25890.948509] RPC:   117 freeing task
+[25890.948516] RPC:       new task initialized, procpid 12457
+[25890.948517] RPC:       allocated task ffff8801acc16d00
+[25890.948519] RPC:   118 __rpc_execute flags=0x80
+[25890.948522] RPC:   118 call_start nfs4 proc LOOKUP (sync)
+[25890.948524] RPC:   118 call_reserve (status 0)
+[25890.948526] RPC:   118 reserved req ffff88003741d200 xid 4941d29b
+[25890.948528] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.948529] RPC:   118 call_reserveresult (status 0)
+[25890.948531] RPC:   118 call_refresh (status 0)
+[25890.948533] RPC:   118 looking up UNIX cred
+[25890.948534] RPC:       looking up UNIX cred
+[25890.948537] RPC:   118 refreshing UNIX cred ffff8801f84c49c0
+[25890.948539] RPC:   118 call_refreshresult (status 0)
+[25890.948540] RPC:   118 call_allocate (status 0)
+[25890.948542] RPC:   118 allocated buffer of size 3620 at ffff88007f876000
+[25890.948544] RPC:   118 call_bind (status 0)
+[25890.948546] RPC:   118 call_connect xprt ffff880207d34000 is connected
+[25890.948548] RPC:   118 call_transmit (status 0)
+[25890.948549] RPC:   118 xprt_prepare_transmit
+[25890.948551] RPC:   118 rpc_xdr_encode (status 0)
+[25890.948553] RPC:   118 marshaling UNIX cred ffff8801f84c49c0
+[25890.948555] RPC:   118 using AUTH_UNIX cred ffff8801f84c49c0 to wrap rpc data
+[25890.948558] RPC:   118 xprt_transmit(180)
+[25890.948577] svc: socket ffff8800c47f3e00 TCP data ready (svsk ffff88007f870000)
+[25890.948579] svc: transport ffff88007f870000 served by daemon ffff88007fa48000
+[25890.948585] RPC:       xs_tcp_send_request(180) = 180
+[25890.948586] svc: server ffff88007fa48000, pool 0, transport ffff88007f870000, inuse=2
+[25890.948588] svc: tcp_recv ffff88007f870000 data 1 conn 0 close 0
+[25890.948591] svc: socket ffff88007f870000 recvfrom(ffff88007f8702bc, 0) = 4
+[25890.948593] svc: TCP record, 176 bytes
+[25890.948595] svc: socket ffff88007f870000 recvfrom(ffff88007fa330b0, 3920) = 176
+[25890.948596] svc: TCP final record (176 bytes)
+[25890.948598] svc: got len=176
+[25890.948600] svc: svc_authenticate (1)
+[25890.948602] svc: calling dispatcher
+[25890.948603] RPC:   118 xmit complete
+[25890.948605] RPC:   118 sleep_on(queue "xprt_pending" time 4320572551)
+[25890.948611] RPC:   118 added to queue ffff880207d34258 "xprt_pending"
+[25890.948613] RPC:   118 setting alarm for 60000 ms
+[25890.948616] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.948618] RPC:   118 sync task going to sleep
+[25890.948621] RPC:       Want update, refage=120, age=0
+[25890.948773] RPC:       xs_tcp_data_ready...
+[25890.948781] RPC:       xs_tcp_data_recv started
+[25890.948784] RPC:       reading TCP record fragment of length 236
+[25890.948786] RPC:       reading XID (4 bytes)
+[25890.948789] RPC:       reading reply for XID 4941d29b
+[25890.948790] RPC:       reading CALL/REPLY flag (4 bytes)
+[25890.948792] RPC:       read reply XID 4941d29b
+[25890.948794] RPC:       XID 4941d29b read 228 bytes
+[25890.948796] RPC:       xprt = ffff880207d34000, tcp_copied = 236, tcp_offset = 236, tcp_reclen = 236
+[25890.948798] RPC:   118 xid 4941d29b complete (236 bytes received)
+[25890.948800] RPC:   118 __rpc_wake_up_task (now 4320572552)
+[25890.948801] RPC:   118 disabling timer
+[25890.948803] RPC:   118 removed from queue ffff880207d34258 "xprt_pending"
+[25890.948807] RPC:       __rpc_wake_up_task done
+[25890.948808] RPC:       xs_tcp_data_recv done
+[25890.948815] svc: socket ffff88007f870000 sendto([ffff88008be58000 240... ], 240) = 240 (addr 0000:0000:0000:0000:0000:0000:0000:0001, port=741)
+[25890.948817] svc: server ffff88007fa48000 waiting for data (to = 3600000)
+[25890.948848] RPC:   118 sync task resuming
+[25890.948850] RPC:   118 call_status (status 236)
+[25890.948852] RPC:   118 call_decode (status 236)
+[25890.948854] RPC:   118 validating UNIX cred ffff8801f84c49c0
+[25890.948856] RPC:   118 using AUTH_UNIX cred ffff8801f84c49c0 to unwrap rpc data
+[25890.948861] RPC:   118 call_decode result 0
+[25890.948863] RPC:       wake_up_first(ffff8800bb7f7498 "NFSv4.0 transport Slot table")
+[25890.948865] RPC:   118 return 0, status 0
+[25890.948866] RPC:   118 release task
+[25890.948869] RPC:       freeing buffer of size 3620 at ffff88007f876000
+[25890.948871] RPC:   118 release request ffff88003741d200
+[25890.948873] RPC:       wake_up_first(ffff880207d34320 "xprt_backlog")
+[25890.948875] RPC:       rpc_release_client(ffff8800c933fe00)
+[25890.948876] RPC:   118 freeing task
+[25890.948882] RPC:       looking up Generic cred
+[25890.948885] RPC:       new task initialized, procpid 12457
+[25890.948886] RPC:       allocated task ffff8801acc16d00
+[25890.948888] RPC:   119 __rpc_execute flags=0x80
+[25890.948890] RPC:   119 call_start nfs4 proc ACCESS (sync)
+[25890.948892] RPC:   119 call_reserve (status 0)
+[25890.948895] RPC:   119 reserved req ffff88003741d200 xid 4a41d29b
+[25890.948897] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.948898] RPC:   119 call_reserveresult (status 0)
+[25890.948900] RPC:   119 call_refresh (status 0)
+[25890.948902] RPC:   119 refreshing UNIX cred ffff8801f84c49c0
+[25890.948904] RPC:   119 call_refreshresult (status 0)
+[25890.948906] RPC:   119 call_allocate (status 0)
+[25890.948908] RPC:   119 allocated buffer of size 3228 at ffff88007f876000
+[25890.948910] RPC:   119 call_bind (status 0)
+[25890.948911] RPC:   119 call_connect xprt ffff880207d34000 is connected
+[25890.948913] RPC:   119 call_transmit (status 0)
+[25890.948915] RPC:   119 xprt_prepare_transmit
+[25890.948916] RPC:   119 rpc_xdr_encode (status 0)
+[25890.948919] RPC:   119 marshaling UNIX cred ffff8801f84c49c0
+[25890.948921] RPC:   119 using AUTH_UNIX cred ffff8801f84c49c0 to wrap rpc data
+[25890.948923] RPC:   119 xprt_transmit(168)
+[25890.948944] svc: socket ffff8800c47f3e00 TCP data ready (svsk ffff88007f870000)
+[25890.948946] svc: transport ffff88007f870000 served by daemon ffff88007fa48000
+[25890.948951] RPC:       xs_tcp_send_request(168) = 168
+[25890.948953] svc: server ffff88007fa48000, pool 0, transport ffff88007f870000, inuse=2
+[25890.948955] svc: tcp_recv ffff88007f870000 data 1 conn 0 close 0
+[25890.948958] svc: socket ffff88007f870000 recvfrom(ffff88007f8702bc, 0) = 4
+[25890.948959] svc: TCP record, 164 bytes
+[25890.948962] svc: socket ffff88007f870000 recvfrom(ffff88007fa330a4, 3932) = 164
+[25890.948963] svc: TCP final record (164 bytes)
+[25890.948965] svc: got len=164
+[25890.948966] svc: svc_authenticate (1)
+[25890.948968] RPC:   119 xmit complete
+[25890.948969] svc: calling dispatcher
+[25890.948972] RPC:   119 sleep_on(queue "xprt_pending" time 4320572552)
+[25890.948973] RPC:       Want update, refage=120, age=0
+[25890.948976] RPC:   119 added to queue ffff880207d34258 "xprt_pending"
+[25890.948978] RPC:   119 setting alarm for 60000 ms
+[25890.948980] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.948982] RPC:   119 sync task going to sleep
+[25890.949188] RPC:       xs_tcp_data_ready...
+[25890.949190] RPC:       xs_tcp_data_recv started
+[25890.949192] RPC:       reading TCP record fragment of length 124
+[25890.949194] RPC:       reading XID (4 bytes)
+[25890.949195] RPC:       reading reply for XID 4a41d29b
+[25890.949197] RPC:       reading CALL/REPLY flag (4 bytes)
+[25890.949198] RPC:       read reply XID 4a41d29b
+[25890.949201] RPC:       XID 4a41d29b read 116 bytes
+[25890.949203] RPC:       xprt = ffff880207d34000, tcp_copied = 124, tcp_offset = 124, tcp_reclen = 124
+[25890.949205] RPC:   119 xid 4a41d29b complete (124 bytes received)
+[25890.949207] RPC:   119 __rpc_wake_up_task (now 4320572552)
+[25890.949209] RPC:   119 disabling timer
+[25890.949210] RPC:   119 removed from queue ffff880207d34258 "xprt_pending"
+[25890.949220] RPC:       __rpc_wake_up_task done
+[25890.949227] RPC:       xs_tcp_data_recv done
+[25890.949238] svc: socket ffff88007f870000 sendto([ffff88008be59000 128... ], 128) = 128 (addr 0000:0000:0000:0000:0000:0000:0000:0001, port=741)
+[25890.949246] svc: server ffff88007fa48000 waiting for data (to = 3600000)
+[25890.949359] RPC:   119 sync task resuming
+[25890.949362] RPC:   119 call_status (status 124)
+[25890.949363] RPC:   119 call_decode (status 124)
+[25890.949365] RPC:   119 validating UNIX cred ffff8801f84c49c0
+[25890.949367] RPC:   119 using AUTH_UNIX cred ffff8801f84c49c0 to unwrap rpc data
+[25890.949371] RPC:   119 call_decode result 0
+[25890.949373] RPC:       wake_up_first(ffff8800bb7f7498 "NFSv4.0 transport Slot table")
+[25890.949374] RPC:   119 return 0, status 0
+[25890.949376] RPC:   119 release task
+[25890.949378] RPC:       freeing buffer of size 3228 at ffff88007f876000
+[25890.949381] RPC:   119 release request ffff88003741d200
+[25890.949383] RPC:       wake_up_first(ffff880207d34320 "xprt_backlog")
+[25890.949385] RPC:       rpc_release_client(ffff8800c933fe00)
+[25890.949386] RPC:   119 freeing task
+[25890.949391] RPC:       new task initialized, procpid 12457
+[25890.949393] RPC:       allocated task ffff8801acc16d00
+[25890.949395] RPC:   120 __rpc_execute flags=0x80
+[25890.949397] RPC:   120 call_start nfs4 proc LOOKUP (sync)
+[25890.949399] RPC:   120 call_reserve (status 0)
+[25890.949401] RPC:   120 reserved req ffff88003741d200 xid 4b41d29b
+[25890.949403] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.949405] RPC:   120 call_reserveresult (status 0)
+[25890.949406] RPC:   120 call_refresh (status 0)
+[25890.949408] RPC:   120 looking up UNIX cred
+[25890.949410] RPC:       looking up UNIX cred
+[25890.949412] RPC:   120 refreshing UNIX cred ffff8801f84c49c0
+[25890.949414] RPC:   120 call_refreshresult (status 0)
+[25890.949416] RPC:   120 call_allocate (status 0)
+[25890.949418] RPC:   120 allocated buffer of size 3620 at ffff88007f876000
+[25890.949419] RPC:   120 call_bind (status 0)
+[25890.949421] RPC:   120 call_connect xprt ffff880207d34000 is connected
+[25890.949423] RPC:   120 call_transmit (status 0)
+[25890.949424] RPC:   120 xprt_prepare_transmit
+[25890.949426] RPC:   120 rpc_xdr_encode (status 0)
+[25890.949428] RPC:   120 marshaling UNIX cred ffff8801f84c49c0
+[25890.949430] RPC:   120 using AUTH_UNIX cred ffff8801f84c49c0 to wrap rpc data
+[25890.949432] RPC:   120 xprt_transmit(180)
+[25890.949451] svc: socket ffff8800c47f3e00 TCP data ready (svsk ffff88007f870000)
+[25890.949453] svc: transport ffff88007f870000 served by daemon ffff88007fa48000
+[25890.949458] RPC:       xs_tcp_send_request(180) = 180
+[25890.949460] svc: server ffff88007fa48000, pool 0, transport ffff88007f870000, inuse=2
+[25890.949462] svc: tcp_recv ffff88007f870000 data 1 conn 0 close 0
+[25890.949465] svc: socket ffff88007f870000 recvfrom(ffff88007f8702bc, 0) = 4
+[25890.949466] svc: TCP record, 176 bytes
+[25890.949469] svc: socket ffff88007f870000 recvfrom(ffff88007fa330b0, 3920) = 176
+[25890.949470] svc: TCP final record (176 bytes)
+[25890.949472] svc: got len=176
+[25890.949473] svc: svc_authenticate (1)
+[25890.949476] svc: calling dispatcher
+[25890.949476] RPC:   120 xmit complete
+[25890.949478] RPC:   120 sleep_on(queue "xprt_pending" time 4320572552)
+[25890.949480] RPC:   120 added to queue ffff880207d34258 "xprt_pending"
+[25890.949482] RPC:   120 setting alarm for 60000 ms
+[25890.949484] RPC:       wake_up_first(ffff880207d34190 "xprt_sending")
+[25890.949485] RPC:   120 sync task going to sleep
+[25890.949496] RPC:       Want update, refage=120, age=0
+[25890.949683] RPC:       xs_tcp_data_ready...
+[25890.949686] RPC:       xs_tcp_data_recv started
+[25890.949688] RPC:       reading TCP record fragment of length 236
+[25890.949689] RPC:       reading XID (4 bytes)
+[25890.949691] RPC:       reading reply for XID 4b41d29b
+[25890.949692] RPC:       reading CALL/REPLY flag (4 bytes)
+[25890.949694] RPC:       read reply XID 4b41d29b
+[25890.949696] RPC:       XID 4b41d29b read 228 bytes
+[25890.949698] RPC:       xprt = ffff880207d34000, tcp_copied = 236, tcp_offset = 236, tcp_reclen = 236
+[25890.949700] RPC:   120 xid 4b41d29b complete (236 bytes received)
+[25890.949702] RPC:   120 __rpc_wake_up_task (now 4320572553)
+[25890.949704] RPC:   120 disabling timer
+[25890.949706] RPC:   120 removed from queue ffff880207d34258 "xprt_pending"
+[25890.949709] RPC:       __rpc_wake_up_task done
+[25890.949711] RPC:       xs_tcp_data_recv done
+[25890.949717] svc: socket ffff88007f870000 sendto([ffff88008be5a000 240... ], 240) = 240 (addr 0000:0000:0000:0000:0000:0000:0000:0001, port=741)
+[25890.949720] svc: server ffff88007fa48000 waiting for data (to = 3600000)
+[25890.949729] RPC:   120 sync task resuming
+[25890.949732] RPC:   120 call_status (status 236)
+[25890.949734] RPC:   120 call_decode (status 236)
+[25890.949735] RPC:   120 validating UNIX cred ffff8801f84c49c0
+[25890.949737] RPC:   120 using AUTH_UNIX cred ffff8801f84c49c0 to unwrap rpc data
+[25890.949741] RPC:   120 call_decode result 0
+[25890.949743] RPC:       wake_up_first(ffff8800bb7f7498 "NFSv4.0 transport Slot table")
+[25890.949745] RPC:   120 return 0, status 0
+[25890.949746] RPC:   120 release task
+[25890.949749] RPC:       freeing buffer of size 3620 at ffff88007f876000
+[25890.949750] RPC:   120 release request ffff88003741d200
+[25890.949752] RPC:       wake_up_first(ffff880207d34320 "xprt_backlog")
+[25890.949754] RPC:       rpc_release_client(ffff8800c933fe00)
+[25890.949755] RPC:   120 freeing task
+[25890.963624] RPC:       shutting down nfs client for localhost
+[25890.963628] RPC:       rpc_release_client(ffff8800bb7f4400)
+[25890.963629] RPC:       destroying nfs client for localhost
+[25893.892030] RPC:       shutting down nfs client for localhost
+[25893.892033] RPC:       rpc_release_client(ffff8800c933fe00)
+[25893.892035] RPC:       destroying nfs client for localhost
+[25893.892133] svc: transport ffff88007f858000 served by daemon ffff880094e9e000
+[25893.892136] svc: transport ffff88007f85a000 put into queue
+[25893.892137] svc: transport ffff88007f877000 put into queue
+[25893.892139] svc: svc_delete_xprt(ffff88007f85a000)
+[25893.892140] svc_recv: found XPT_CLOSE
+[25893.892141] svc: svc_delete_xprt(ffff88007f858000)
+[25893.892143] svc: svc_tcp_sock_detach(ffff88007f858000)
+[25893.892144] svc: svc_sock_detach(ffff88007f858000)
+[25893.892146] svc: svc_sock_free(ffff88007f858000)
+[25893.892147] svc: svc_tcp_sock_detach(ffff88007f85a000)
+[25893.892148] svc: svc_sock_detach(ffff88007f85a000)
+[25893.892150] svc: svc_sock_free(ffff88007f85a000)
+[25893.892156] svc: svc_delete_xprt(ffff88007f877000)
+[25893.892157] svc: server ffff880094e9e000 waiting for data (to = 9223372036854775807)
+[25893.892159] svc: svc_tcp_sock_detach(ffff88007f877000)
+[25893.892161] svc: svc_sock_detach(ffff88007f877000)
+[25893.892200] RPC:       xs_tcp_state_change client ffff880207d30000...
+[25893.892202] RPC:       state 8 conn 1 dead 0 zapped 1 sk_shutdown 1
+[25893.892206] RPC:       xs_tcp_data_ready...
+[25893.892211] svc: svc_sock_free(ffff88007f877000)
+[25893.892217] RPC:       xs_close xprt ffff880207d30000
+[25893.892244] RPC:       disconnected transport ffff880207d30000
+[25893.892247] RPC:       wake_up_first(ffff880207d30190 "xprt_sending")
+[25893.893733] svc: server ffff880094e9e000, no data yet
+[25893.893765] svc: svc_destroy(NFSv4 callback, 1)
+[25893.893774] RPC:       shutting down nfs client for localhost
+[25893.893775] RPC:       rpc_release_client(ffff88003741c400)
+[25893.893777] RPC:       destroying nfs client for localhost
+[25893.893788] RPC:       destroying transport ffff880207d34000
+[25893.893835] RPC:       xs_destroy xprt ffff880207d34000
+[25893.893837] RPC:       xs_close xprt ffff880207d34000
+[25893.893865] svc: socket ffff8800c47f3e00 TCP (connected) state change 8 (svsk ffff88007f870000)
+[25893.893868] svc: transport ffff88007f870000 served by daemon ffff88007fa48000
+[25893.893872] svc: socket ffff8800c47f3e00 TCP data ready (svsk ffff88007f870000)
+[25893.893874] svc: transport ffff88007f870000 busy, not enqueued
+[25893.893877] svc_recv: found XPT_CLOSE
+[25893.893880] RPC:       disconnected transport ffff880207d34000
+[25893.893881] svc: svc_delete_xprt(ffff88007f870000)
+[25893.893883] svc: svc_tcp_sock_detach(ffff88007f870000)
+[25893.893885] svc: svc_sock_detach(ffff88007f870000)
+[25893.893935] svc: svc_sock_free(ffff88007f870000)
+[25893.893942] svc: server ffff88007fa48000 waiting for data (to = 3600000)
+[25907.853552] nfsd: last server has exited, flushing export cache
