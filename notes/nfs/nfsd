@@ -11,3 +11,11 @@ the nfsd service, and zero to stop.
 fs/nfsd/nfsctl.c
 write_threads -> nfsd_svc -> nfsd_create_serv -> svc_create_pooled(nfsd_program
 <goes to nfsd proc compound>
+
+
+OP_PUTROOTFH
+find(export point with fsid=0) --> compose --> put
+
+First, find export key in sunrpc cache, init new one when not found;
+Then, same cache trick to export point.
+

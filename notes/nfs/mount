@@ -390,7 +390,8 @@ fs/nfs/nfs4client.c
 						    V
 					   nfs4_lookup_root_sec
 		fire RPC call LOOKUP_ROOT to server with diff sec flavors, get 
-		info like fsinfo.fattr.{valid,} from server.
+		info like root filehandle, fsinfo.fattr.{valid,} from server.
+		this RPC call breaks down to PUTROOTFH | GETATTR, acd tshark
 		>>>call nfs4_server_capabilities fire RPC call CLNT_SERVER_CAPS,
 		get server caps,
 		>>>call nfs4_do_fsinfo, to fire CLNT_FSINFO call get fsinfo ?
