@@ -9,8 +9,39 @@ Writing a positive integer to /proc/fs/nfsd/threads will start
 the nfsd service, and zero to stop.
 
 fs/nfsd/nfsctl.c
-write_threads -> nfsd_svc -> nfsd_create_serv -> svc_create_pooled(nfsd_program
-<goes to nfsd proc compound>
+write_threads -> nfsd_svc -> nfsd_create_serv ->
+svc_create_pooled(nfsd_program, ...nfsd, ...)
+	              |              |
+<goes to nfsd proc compound>     < kthread function>
+
+-----------------------------------
+struct svc_program              nfsd_program = {
+#if defined(CONFIG_NFSD_V2_ACL) || defined(CONFIG_NFSD_V3_ACL)
+        .pg_next                = &nfsd_acl_program,
+#endif
+        .pg_prog                = NFS_PROGRAM,          /* program number */
+        .pg_nvers               = NFSD_NRVERS,          /* nr of entries in nfsd_version */
+        .pg_vers                = nfsd_versions,        /* version table */
+        .pg_name                = "nfsd",               /* program name */
+        .pg_class               = "nfsd",               /* authentication class */
+        .pg_stats               = &nfsd_svcstats,       /* version table */
+        .pg_authenticate        = &svc_set_client,      /* export authentication */
+};
+---------------------------------------
+
+svc_create_pooled created a RPC service, described by struct svc_serv.
+For nfsd, svc_serv->sv_program = nfsd_program
+	  svc_serv->sv_function = nfsd
+
+nfsd_svc -> svc_set_num_threads(svc_serv, ..) after create_serv, for
+each thread, prepare a struct svc_rqst as rpc context,
+	svc_rqst->rq_server = serv;
+and create kthread nfsd with arg svc_rqst, like nfsd(svc_rqst).
+
+kthread nfsd recv rpc request and process it with svc_process-> ..
+-> svc_process_common, in this function, via arg svc_rqst, finally goes
+to nfsd4proc compound.
+    svc_rqst->rq_server(svc_serv)->sv_program->pg_vers[]->vs_proc
 
 
 OP_PUTROOTFH
