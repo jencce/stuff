@@ -450,8 +450,14 @@ fs/nfs/getroot.c
 			string; then rpc call CLNT_GETATTR with label and
 			fattr in fsinfo. If fattr->fsid is valid, which is said
 			by fattr->valid bitmap, AND server->fsid not equal to
-			fattr->fsid, copy server->fsid to fattr->fsid.
-			server->fsid when inited? and what is it for? wireshark
+			fattr->fsid, copy fattr->fsid to server->fsid.
+			server->fsid inited in PUTROOTFH, according to
+			exports(5), fsid identify each filesystem NFS exports,
+			For NFSv4, fsid=0/fsid=root identifies a distinguished
+			filesystem which is the root of all exported fs.
+
+ _CAPS/CLNT calls did not show in tshark, where did they be discomposed?
+
 fs/nfs/inode.c
 			>>>call nfs_fhget(sb, mntfh, fsinfo.fattr, NULL);
 			to get inode info?

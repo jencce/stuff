@@ -1,0 +1,375 @@
+Adding the below patch to -393 kernel to get some debug info.
+
+=====================================================================
+[zx@ZX SOURCES]$ cat nfsdebug.patch 
+diff -ur linux-2.6.18-393.el5.x86_64/fs/nfs/idmap.c new/fs/nfs/idmap.c
+--- linux-2.6.18-393.el5.x86_64/fs/nfs/idmap.c	2014-07-17 18:01:10.442140214 +0800
++++ new/fs/nfs/idmap.c	2014-07-17 18:46:49.165325444 +0800
+@@ -474,6 +474,7 @@
+         if (mlen != sizeof(im_in))
+                 return (-ENOSPC);
+ 
++	dump_stack();
+         if (copy_from_user(&im_in, src, mlen) != 0)
+ 		return (-EFAULT);
+ 
+diff -ur linux-2.6.18-393.el5.x86_64/fs/nfs/super.c new/fs/nfs/super.c
+--- linux-2.6.18-393.el5.x86_64/fs/nfs/super.c	2014-07-17 18:01:10.447140263 +0800
++++ new/fs/nfs/super.c	2014-07-17 18:47:01.557451712 +0800
+@@ -902,6 +902,8 @@
+ 		if (p == NULL)
+ 			return ERR_PTR(-ENOMEM);
+ 	}
++
++	dump_stack();
+ 	if (copy_from_user(dst, src->data, maxlen)) {
+ 		kfree(p);
+ 		return ERR_PTR(-EFAULT);
+@@ -945,6 +947,7 @@
+ 	if (data->host_addrlen != sizeof(addr))
+ 		return -EINVAL;
+ 
++	dump_stack();
+ 	if (copy_from_user(&addr, data->host_addr, sizeof(addr)))
+ 		return -EFAULT;
+ 
+@@ -966,6 +969,7 @@
+ 			goto out_err_noserver;
+ 		}
+ 
++		dump_stack();
+ 		if (copy_from_user(&authflavour, data->auth_flavours,
+ 				   sizeof(authflavour))) {
+ 			error = -EFAULT;
+diff -ur linux-2.6.18-393.el5.x86_64/fs/nfsd/nfs4proc.c new/fs/nfsd/nfs4proc.c
+--- linux-2.6.18-393.el5.x86_64/fs/nfsd/nfs4proc.c	2014-07-17 18:01:10.451140302 +0800
++++ new/fs/nfsd/nfs4proc.c	2014-07-17 18:47:09.588533542 +0800
+@@ -873,6 +873,13 @@
+ 	struct nfs4_stateowner *replay_owner = NULL;
+ 	int		slack_space;    /* in words, not bytes! */
+ 	int		status;
++	static int	ffflag = 0;
++
++	if (ffflag == 0) {
++		printk("nfsdbug\n");
++		dump_stack();
++		ffflag = 1;
++	}
+ 
+ 	status = nfserr_resource;
+ 	current_fh = kmalloc(sizeof(*current_fh), GFP_KERNEL);
+@@ -906,7 +913,7 @@
+ 	while (!status && resp->opcnt < args->opcnt) {
+ 		op = &args->ops[resp->opcnt++];
+ 
+-		dprintk("nfsv4 compound op #%d: %d\n", resp->opcnt, op->opnum);
++		printk("nfsv4 compound op #%d: %d\n", resp->opcnt, op->opnum);
+ 
+ 		/*
+ 		 * The XDR decode routines may have pre-set op->status;
+[zx@ZX SOURCES]$ 
+===============================================
+
+It did not get any info during the nfs service starting.
+
+=============== mount info start ========================================
+Jul 17 23:23:24 nec-em3 kernel: Call Trace:
+Jul 17 23:23:24 nec-em3 kernel:  [<ffffffff8872c3f9>] :nfs:nfs4_get_sb+0x8e/0x32f
+Jul 17 23:23:24 nec-em3 kernel:  [<ffffffff8009b6bc>] recalc_sigpending+0xe/0x25
+Jul 17 23:23:24 nec-em3 kernel:  [<ffffffff800d0834>] zone_statistics+0x3e/0x6d
+Jul 17 23:23:24 nec-em3 kernel:  [<ffffffff8000ab68>] get_page_from_freelist+0x380/0x442
+Jul 17 23:23:24 nec-em3 kernel:  [<ffffffff8000f48a>] __alloc_pages+0x78/0x308
+Jul 17 23:23:24 nec-em3 kernel:  [<ffffffff8013488d>] selinux_sb_copy_data+0x23/0x1c5
+Jul 17 23:23:24 nec-em3 kernel:  [<ffffffff800e89dc>] vfs_kern_mount+0x93/0x11a
+Jul 17 23:23:24 nec-em3 kernel:  [<ffffffff800e8aa5>] do_kern_mount+0x36/0x4d
+Jul 17 23:23:24 nec-em3 kernel:  [<ffffffff800f4300>] do_mount+0x6ab/0x71b
+Jul 17 23:23:24 nec-em3 kernel:  [<ffffffff8002c19d>] local_bh_enable+0x88/0x99
+Jul 17 23:23:24 nec-em3 kernel:  [<ffffffff8002fcde>] dev_queue_xmit+0x27e/0x2a3
+Jul 17 23:23:24 nec-em3 kernel:  [<ffffffff80032309>] ip_output+0x29a/0x2dd
+Jul 17 23:23:24 nec-em3 kernel:  [<ffffffff80034a61>] ip_queue_xmit+0x42c/0x486
+Jul 17 23:23:24 nec-em3 kernel:  [<ffffffff800227e2>] __up_read+0x19/0x7f
+Jul 17 23:23:24 nec-em3 kernel:  [<ffffffff800f307c>] copy_mount_options+0xce/0x127
+Jul 17 23:23:24 nec-em3 kernel:  [<ffffffff800a2589>] search_exception_tables+0x1d/0x2d
+Jul 17 23:23:24 nec-em3 kernel:  [<ffffffff8006732e>] do_page_fault+0x619/0x842
+Jul 17 23:23:24 nec-em3 kernel:  [<ffffffff80022616>] tcp_transmit_skb+0x646/0x67e
+Jul 17 23:23:24 nec-em3 kernel:  [<ffffffff800d0834>] zone_statistics+0x3e/0x6d
+Jul 17 23:23:24 nec-em3 kernel:  [<ffffffff8000f48a>] __alloc_pages+0x78/0x308
+Jul 17 23:23:24 nec-em3 kernel:  [<ffffffff8004c766>] sys_mount+0x8a/0xcd
+Jul 17 23:23:24 nec-em3 kernel:  [<ffffffff8005d29e>] tracesys+0xd5/0xdf
+Jul 17 23:23:24 nec-em3 kernel: 
+Jul 17 23:23:24 nec-em3 kernel: 
+Jul 17 23:23:24 nec-em3 kernel: Call Trace:
+Jul 17 23:23:24 nec-em3 kernel:  [<ffffffff8872c49e>] :nfs:nfs4_get_sb+0x133/0x32f
+Jul 17 23:23:24 nec-em3 kernel:  [<ffffffff8009b6bc>] recalc_sigpending+0xe/0x25
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800d0834>] zone_statistics+0x3e/0x6d
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8000ab68>] get_page_from_freelist+0x380/0x442
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8000f48a>] __alloc_pages+0x78/0x308
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800e89dc>] vfs_kern_mount+0x93/0x11a
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800e8aa5>] do_kern_mount+0x36/0x4d
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800f4300>] do_mount+0x6ab/0x71b
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8002c19d>] local_bh_enable+0x88/0x99
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8002fcde>] dev_queue_xmit+0x27e/0x2a3
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff80032309>] ip_output+0x29a/0x2dd
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff80034a61>] ip_queue_xmit+0x42c/0x486
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800227e2>] __up_read+0x19/0x7f
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800f307c>] copy_mount_options+0xce/0x127
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800a2589>] search_exception_tables+0x1d/0x2d
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8006732e>] do_page_fault+0x619/0x842
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff80022616>] tcp_transmit_skb+0x646/0x67e
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800d0834>] zone_statistics+0x3e/0x6d
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8000f48a>] __alloc_pages+0x78/0x308
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8004c766>] sys_mount+0x8a/0xcd
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8005d29e>] tracesys+0xd5/0xdf
+Jul 17 23:23:25 nec-em3 kernel: 
+Jul 17 23:23:25 nec-em3 kernel: 
+Jul 17 23:23:25 nec-em3 kernel: Call Trace:
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8872bb3a>] :nfs:nfs_copy_user_string+0x53/0x8d
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8872c4d9>] :nfs:nfs4_get_sb+0x16e/0x32f
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8009b6bc>] recalc_sigpending+0xe/0x25
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800d0834>] zone_statistics+0x3e/0x6d
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8000ab68>] get_page_from_freelist+0x380/0x442
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8000f48a>] __alloc_pages+0x78/0x308
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800e89dc>] vfs_kern_mount+0x93/0x11a
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800e8aa5>] do_kern_mount+0x36/0x4d
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800f4300>] do_mount+0x6ab/0x71b
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8002c19d>] local_bh_enable+0x88/0x99
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8002fcde>] dev_queue_xmit+0x27e/0x2a3
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff80032309>] ip_output+0x29a/0x2dd
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff80034a61>] ip_queue_xmit+0x42c/0x486
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800227e2>] __up_read+0x19/0x7f
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800f307c>] copy_mount_options+0xce/0x127
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800a2589>] search_exception_tables+0x1d/0x2d
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8006732e>] do_page_fault+0x619/0x842
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff80022616>] tcp_transmit_skb+0x646/0x67e
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800d0834>] zone_statistics+0x3e/0x6d
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8000f48a>] __alloc_pages+0x78/0x308
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8004c766>] sys_mount+0x8a/0xcd
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8005d29e>] tracesys+0xd5/0xdf
+Jul 17 23:23:25 nec-em3 kernel: 
+Jul 17 23:23:25 nec-em3 kernel: 
+Jul 17 23:23:25 nec-em3 kernel: Call Trace:
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8872bb3a>] :nfs:nfs_copy_user_string+0x53/0x8d
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8872c4fb>] :nfs:nfs4_get_sb+0x190/0x32f
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8009b6bc>] recalc_sigpending+0xe/0x25
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800d0834>] zone_statistics+0x3e/0x6d
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8000ab68>] get_page_from_freelist+0x380/0x442
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8000f48a>] __alloc_pages+0x78/0x308
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800e89dc>] vfs_kern_mount+0x93/0x11a
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800e8aa5>] do_kern_mount+0x36/0x4d
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800f4300>] do_mount+0x6ab/0x71b
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8002c19d>] local_bh_enable+0x88/0x99
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8002fcde>] dev_queue_xmit+0x27e/0x2a3
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff80032309>] ip_output+0x29a/0x2dd
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff80034a61>] ip_queue_xmit+0x42c/0x486
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800227e2>] __up_read+0x19/0x7f
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800f307c>] copy_mount_options+0xce/0x127
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800a2589>] search_exception_tables+0x1d/0x2d
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8006732e>] do_page_fault+0x619/0x842
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff80022616>] tcp_transmit_skb+0x646/0x67e
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800d0834>] zone_statistics+0x3e/0x6d
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8000f48a>] __alloc_pages+0x78/0x308
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8004c766>] sys_mount+0x8a/0xcd
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8005d29e>] tracesys+0xd5/0xdf
+Jul 17 23:23:25 nec-em3 kernel: 
+Jul 17 23:23:25 nec-em3 kernel: 
+Jul 17 23:23:25 nec-em3 kernel: Call Trace:
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8872bb3a>] :nfs:nfs_copy_user_string+0x53/0x8d
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8872c53d>] :nfs:nfs4_get_sb+0x1d2/0x32f
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8009b6bc>] recalc_sigpending+0xe/0x25
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800d0834>] zone_statistics+0x3e/0x6d
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8000ab68>] get_page_from_freelist+0x380/0x442
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8000f48a>] __alloc_pages+0x78/0x308
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800e89dc>] vfs_kern_mount+0x93/0x11a
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800e8aa5>] do_kern_mount+0x36/0x4d
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800f4300>] do_mount+0x6ab/0x71b
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8002c19d>] local_bh_enable+0x88/0x99
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8002fcde>] dev_queue_xmit+0x27e/0x2a3
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff80032309>] ip_output+0x29a/0x2dd
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff80034a61>] ip_queue_xmit+0x42c/0x486
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800227e2>] __up_read+0x19/0x7f
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800f307c>] copy_mount_options+0xce/0x127
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800a2589>] search_exception_tables+0x1d/0x2d
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8006732e>] do_page_fault+0x619/0x842
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff80022616>] tcp_transmit_skb+0x646/0x67e
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800d0834>] zone_statistics+0x3e/0x6d
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8000f48a>] __alloc_pages+0x78/0x308
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8004c766>] sys_mount+0x8a/0xcd
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8005d29e>] tracesys+0xd5/0xdf
+Jul 17 23:23:25 nec-em3 kernel: 
+Jul 17 23:23:25 nec-em3 kernel: nfsdbug
+Jul 17 23:23:25 nec-em3 kernel: 
+Jul 17 23:23:25 nec-em3 kernel: Call Trace:
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff886e9d04>] :nfsd:nfsd4_proc_compound+0x45/0x148d
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8003391f>] lock_sock+0xa7/0xb2
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff801d7dfd>] loopback_xmit+0x95/0x9b
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff80064b09>] _spin_lock_bh+0x9/0x14
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800310ec>] release_sock+0x13/0xbe
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8001e11f>] tcp_recvmsg+0x956/0xa69
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff80032309>] ip_output+0x29a/0x2dd
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff80031fcc>] sock_common_recvmsg+0x2d/0x43
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8003089c>] sock_recvmsg+0xfd/0x155
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800a3fa2>] autoremove_wake_function+0x0/0x2e
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff80055888>] sk_reset_timer+0xf/0x19
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff800334a9>] __tcp_push_pending_frames+0x776/0x850
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8008ee94>] enqueue_task+0x41/0x56
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8008eeff>] __activate_task+0x56/0x6d
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff80047277>] try_to_wake_up+0x472/0x484
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8008ece2>] dequeue_task+0x18/0x37
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8008d90e>] __wake_up_common+0x3e/0x68
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff885f7684>] :sunrpc:ip_map_match+0x19/0x30
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff885fafa3>] :sunrpc:sunrpc_cache_lookup+0x4b/0x128
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff886ed196>] :nfsd:nfsd4_decode_compound+0x324/0xe05
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff886db1db>] :nfsd:nfsd_dispatch+0xd8/0x1d6
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff885f483e>] :sunrpc:svc_process+0x3f8/0x6bf
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff80064624>] __down_read+0x12/0x92
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff886db5cb>] :nfsd:nfsd+0x0/0x2f1
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff886db798>] :nfsd:nfsd+0x1cd/0x2f1
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8005dfc1>] child_rip+0xa/0x11
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff886db5cb>] :nfsd:nfsd+0x0/0x2f1
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff886db5cb>] :nfsd:nfsd+0x0/0x2f1
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8005dfb7>] child_rip+0x0/0x11
+Jul 17 23:23:25 nec-em3 kernel: 
+Jul 17 23:23:25 nec-em3 kernel: nfsv4 compound op #1: 24
+Jul 17 23:23:25 nec-em3 kernel: nfsv4 compound op #1: 24
+Jul 17 23:23:25 nec-em3 kernel: nfsv4 compound op #2: 10
+Jul 17 23:23:25 nec-em3 kernel: nfsv4 compound op #3: 9
+Jul 17 23:23:25 nec-em3 kernel: 
+Jul 17 23:23:25 nec-em3 kernel: Call Trace:
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff887462d1>] :nfs:idmap_pipe_downcall+0x41/0x240
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff80132601>] file_has_perm+0x94/0xa3
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff885fc0f2>] :sunrpc:rpc_pipe_write+0x45/0x5b
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff80016b4b>] vfs_write+0xce/0x174
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff80017414>] sys_write+0x45/0x6e
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8005d29e>] tracesys+0xd5/0xdf
+Jul 17 23:23:25 nec-em3 kernel: 
+Jul 17 23:23:25 nec-em3 kernel: 
+Jul 17 23:23:25 nec-em3 kernel: Call Trace:
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff887462d1>] :nfs:idmap_pipe_downcall+0x41/0x240
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff80132601>] file_has_perm+0x94/0xa3
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff885fc0f2>] :sunrpc:rpc_pipe_write+0x45/0x5b
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff80016b4b>] vfs_write+0xce/0x174
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff80017414>] sys_write+0x45/0x6e
+Jul 17 23:23:25 nec-em3 kernel:  [<ffffffff8005d29e>] tracesys+0xd5/0xdf
+Jul 17 23:23:25 nec-em3 kernel: 
+Jul 17 23:23:25 nec-em3 kernel: nfsv4 compound op #1: 22
+Jul 17 23:23:25 nec-em3 kernel: nfsv4 compound op #2: 9
+Jul 17 23:23:25 nec-em3 kernel: nfsv4 compound op #1: 22
+Jul 17 23:23:25 nec-em3 kernel: nfsv4 compound op #2: 9
+Jul 17 23:23:25 nec-em3 kernel: nfsv4 compound op #1: 22
+Jul 17 23:23:25 nec-em3 kernel: nfsv4 compound op #2: 9
+Jul 17 23:23:25 nec-em3 kernel: nfsv4 compound op #1: 22
+Jul 17 23:23:25 nec-em3 kernel: nfsv4 compound op #2: 9
+Jul 17 23:23:25 nec-em3 kernel: nfsv4 compound op #1: 22
+Jul 17 23:23:25 nec-em3 kernel: nfsv4 compound op #2: 9
+Jul 17 23:23:25 nec-em3 kernel: nfsv4 compound op #1: 22
+Jul 17 23:23:25 nec-em3 kernel: nfsv4 compound op #2: 9
+=============== mount info end =======================================================
+
+============ touch file info ===============
+Jul 17 23:33:15 nec-em3 kernel: nfsv4 compound op #1: 22
+Jul 17 23:33:15 nec-em3 kernel: nfsv4 compound op #2: 3
+Jul 17 23:33:15 nec-em3 kernel: nfsv4 compound op #1: 35
+Jul 17 23:33:15 nec-em3 kernel: nfsv4 compound op #1: 36
+Jul 17 23:33:15 nec-em3 kernel: nfsv4 compound op #2: 24
+Jul 17 23:33:15 nec-em3 kernel: nfsv4 compound op #3: 9
+Jul 17 23:33:15 nec-em3 kernel: nfsv4 compound op #1: 22
+Jul 17 23:33:15 nec-em3 kernel: nfsv4 compound op #2: 32
+Jul 17 23:33:15 nec-em3 kernel: nfsv4 compound op #3: 18
+Jul 17 23:33:15 nec-em3 kernel: nfsv4 compound op #4: 10
+Jul 17 23:33:15 nec-em3 kernel: nfsv4 compound op #5: 9
+Jul 17 23:33:15 nec-em3 kernel: nfsv4 compound op #6: 31
+Jul 17 23:33:15 nec-em3 kernel: nfsv4 compound op #7: 9
+Jul 17 23:33:15 nec-em3 kernel: nfsv4 compound op #1: 22
+Jul 17 23:33:15 nec-em3 kernel: nfsv4 compound op #2: 20
+Jul 17 23:33:15 nec-em3 kernel: nfsv4 compound op #1: 22
+Jul 17 23:33:15 nec-em3 kernel: nfsv4 compound op #2: 34
+Jul 17 23:33:15 nec-em3 kernel: nfsv4 compound op #3: 9
+Jul 17 23:33:15 nec-em3 kernel: nfsv4 compound op #1: 22
+Jul 17 23:33:15 nec-em3 kernel: nfsv4 compound op #2: 4
+Jul 17 23:33:15 nec-em3 kernel: nfsv4 compound op #3: 9
+============ touch file info end ===============
+
+============ echo 1 > file info ===============
+Jul 17 23:34:50 nec-em3 kernel: nfsv4 compound op #1: 22
+Jul 17 23:34:50 nec-em3 kernel: nfsv4 compound op #2: 3
+Jul 17 23:34:50 nec-em3 kernel: nfsv4 compound op #1: 35
+Jul 17 23:34:50 nec-em3 kernel: nfsv4 compound op #1: 36
+Jul 17 23:34:50 nec-em3 kernel: nfsv4 compound op #2: 24
+Jul 17 23:34:50 nec-em3 kernel: nfsv4 compound op #3: 9
+Jul 17 23:34:50 nec-em3 kernel: nfsv4 compound op #1: 22
+Jul 17 23:34:50 nec-em3 kernel: nfsv4 compound op #2: 32
+Jul 17 23:34:50 nec-em3 kernel: nfsv4 compound op #3: 18
+Jul 17 23:34:50 nec-em3 kernel: nfsv4 compound op #4: 10
+Jul 17 23:34:50 nec-em3 kernel: nfsv4 compound op #5: 9
+Jul 17 23:34:50 nec-em3 kernel: nfsv4 compound op #6: 31
+Jul 17 23:34:50 nec-em3 kernel: nfsv4 compound op #7: 9
+Jul 17 23:34:50 nec-em3 kernel: 
+Jul 17 23:34:50 nec-em3 kernel: Call Trace:
+Jul 17 23:34:50 nec-em3 kernel:  [<ffffffff887462d1>] :nfs:idmap_pipe_downcall+0x41/0x240
+Jul 17 23:34:50 nec-em3 kernel:  [<ffffffff80132601>] file_has_perm+0x94/0xa3
+Jul 17 23:34:50 nec-em3 kernel:  [<ffffffff885fc0f2>] :sunrpc:rpc_pipe_write+0x45/0x5b
+Jul 17 23:34:50 nec-em3 kernel:  [<ffffffff80016b4b>] vfs_write+0xce/0x174
+Jul 17 23:34:50 nec-em3 kernel:  [<ffffffff80017414>] sys_write+0x45/0x6e
+Jul 17 23:34:50 nec-em3 kernel:  [<ffffffff8005d29e>] tracesys+0xd5/0xdf
+Jul 17 23:34:50 nec-em3 kernel: 
+Jul 17 23:34:50 nec-em3 kernel: 
+Jul 17 23:34:50 nec-em3 kernel: Call Trace:
+Jul 17 23:34:50 nec-em3 kernel:  [<ffffffff887462d1>] :nfs:idmap_pipe_downcall+0x41/0x240
+Jul 17 23:34:50 nec-em3 kernel:  [<ffffffff80132601>] file_has_perm+0x94/0xa3
+Jul 17 23:34:50 nec-em3 kernel:  [<ffffffff885fc0f2>] :sunrpc:rpc_pipe_write+0x45/0x5b
+Jul 17 23:34:50 nec-em3 kernel:  [<ffffffff80016b4b>] vfs_write+0xce/0x174
+Jul 17 23:34:50 nec-em3 kernel:  [<ffffffff80017414>] sys_write+0x45/0x6e
+Jul 17 23:34:50 nec-em3 kernel:  [<ffffffff8005d29e>] tracesys+0xd5/0xdf
+Jul 17 23:34:50 nec-em3 kernel: 
+Jul 17 23:34:50 nec-em3 kernel: nfsv4 compound op #1: 22
+Jul 17 23:34:50 nec-em3 kernel: nfsv4 compound op #2: 20
+Jul 17 23:34:50 nec-em3 kernel: nfsv4 compound op #1: 22
+Jul 17 23:34:50 nec-em3 kernel: nfsv4 compound op #2: 34
+Jul 17 23:34:50 nec-em3 kernel: nfsv4 compound op #3: 9
+Jul 17 23:34:50 nec-em3 kernel: nfsv4 compound op #1: 22
+Jul 17 23:34:50 nec-em3 kernel: nfsv4 compound op #2: 38
+Jul 17 23:34:50 nec-em3 kernel: nfsv4 compound op #3: 9
+Jul 17 23:34:50 nec-em3 kernel: nfsv4 compound op #1: 22
+Jul 17 23:34:50 nec-em3 kernel: nfsv4 compound op #2: 5
+Jul 17 23:34:50 nec-em3 kernel: nfsv4 compound op #3: 9
+Jul 17 23:34:50 nec-em3 kernel: nfsv4 compound op #1: 22
+Jul 17 23:34:50 nec-em3 kernel: nfsv4 compound op #2: 4
+Jul 17 23:34:50 nec-em3 kernel: nfsv4 compound op #3: 9
+============ echo 1 > file info end ===============
+
+============ cat file info ===============
+Jul 17 23:37:24 nec-em3 kernel: nfsv4 compound op #1: 22
+Jul 17 23:37:24 nec-em3 kernel: nfsv4 compound op #2: 3
+Jul 17 23:37:24 nec-em3 kernel: nfsv4 compound op #1: 35
+Jul 17 23:37:24 nec-em3 kernel: nfsv4 compound op #1: 36
+Jul 17 23:37:24 nec-em3 kernel: nfsv4 compound op #2: 24
+Jul 17 23:37:24 nec-em3 kernel: nfsv4 compound op #3: 9
+Jul 17 23:37:24 nec-em3 kernel: nfsv4 compound op #1: 22
+Jul 17 23:37:24 nec-em3 kernel: nfsv4 compound op #2: 32
+Jul 17 23:37:24 nec-em3 kernel: nfsv4 compound op #3: 18
+Jul 17 23:37:24 nec-em3 kernel: nfsv4 compound op #4: 10
+Jul 17 23:37:24 nec-em3 kernel: nfsv4 compound op #5: 9
+Jul 17 23:37:24 nec-em3 kernel: nfsv4 compound op #6: 31
+Jul 17 23:37:24 nec-em3 kernel: nfsv4 compound op #7: 9
+Jul 17 23:37:24 nec-em3 kernel: nfsv4 compound op #1: 22
+Jul 17 23:37:24 nec-em3 kernel: nfsv4 compound op #2: 20
+Jul 17 23:37:24 nec-em3 kernel: nfsv4 compound op #1: 22
+Jul 17 23:37:24 nec-em3 kernel: nfsv4 compound op #2: 25
+Jul 17 23:37:24 nec-em3 kernel: nfsv4 compound op #1: 22
+Jul 17 23:37:24 nec-em3 kernel: nfsv4 compound op #2: 4
+Jul 17 23:37:24 nec-em3 kernel: nfsv4 compound op #3: 9
+============ cat file info end ===============
+ 
+============ rm -f file info ===============
+Jul 17 23:38:39 nec-em3 kernel: nfsv4 compound op #1: 22
+Jul 17 23:38:39 nec-em3 kernel: nfsv4 compound op #2: 3
+Jul 17 23:38:39 nec-em3 kernel: nfsv4 compound op #1: 22
+Jul 17 23:38:39 nec-em3 kernel: nfsv4 compound op #2: 9
+Jul 17 23:38:39 nec-em3 kernel: nfsv4 compound op #1: 22
+Jul 17 23:38:39 nec-em3 kernel: nfsv4 compound op #2: 9
+Jul 17 23:38:39 nec-em3 kernel: nfsv4 compound op #1: 22
+Jul 17 23:38:39 nec-em3 kernel: nfsv4 compound op #2: 28
+Jul 17 23:38:39 nec-em3 kernel: nfsv4 compound op #3: 9
+============ rm -f file info end ===============
+
+No info collected during umount and service nfs stop.
