@@ -462,6 +462,8 @@ fs/nfs/inode.c
 			>>>call nfs_fhget(sb, mntfh, fsinfo.fattr, NULL);
 			to get inode info?
 			
+			|| got sb, got inode, got dentry, got struct vfsmnt ||
+			|| a filesystem is a dentry that is mountpoint?     ||
 
 		>>>Call set_security to set LSM related stuff.
 		>>>Set, s->s_flags |= MS_ACTIVE
