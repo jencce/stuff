@@ -460,10 +460,17 @@ fs/nfs/getroot.c
 
 fs/nfs/inode.c
 			>>>call nfs_fhget(sb, mntfh, fsinfo.fattr, NULL);
-			to get inode info?
+			to get inode.
 			
 			|| got sb, got inode, got dentry, got struct vfsmnt ||
 			|| a filesystem is a dentry that is mountpoint?     ||
+
+			IN nfs_fhget,
+			>>> call nfs_attr_check_mountpoint first, if fsid in
+				sb and fattr not equal, fattr mountpoint valid,
+				this means this fh is a mountpoint, indicating
+				a potential submount here.
+			fileid ?
 
 		>>>Call set_security to set LSM related stuff.
 		>>>Set, s->s_flags |= MS_ACTIVE
