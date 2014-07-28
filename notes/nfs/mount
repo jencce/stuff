@@ -464,6 +464,7 @@ fs/nfs/inode.c
 			
 			|| got sb, got inode, got dentry, got struct vfsmnt ||
 			|| a filesystem is a dentry that is mountpoint?     ||
+			|| diff ops in dentry/inode/sb defines diff files ? ||
 
 			IN nfs_fhget,
 			>>> call nfs_attr_check_mountpoint first, if fsid in
