@@ -472,6 +472,23 @@ fs/nfs/inode.c
 				this means this fh is a mountpoint, indicating
 				a potential submount here.
 			fileid ?
+---------from rfc1094 ---------------
+The "fattr" structure contains the attributes of a file;
+"type" is the type of the file;
+"nlink" is the number of hard links to the file (the number of different names for the same file);
+"uid" is the user identification number of the owner of the file;
+"gid" is the group identification number of the group of the file;
+"size" is the size in bytes of the file;
+"blocksize" is the size in bytes of a block of the file;
+"rdev" is the device number of the file if it is type NFCHR or NFBLK;
+"blocks" is the number of blocks the file takes up on disk;
+"fsid" is the file system identifier for the filesystem containing the file;
+"fileid" is a number that uniquely identifies the file within its filesystem;
+"atime" is the time when the file was last accessed for either read or write;
+"mtime" is the time when the file data was last modified (written); and
+"ctime" is the time when the status of the file was last changed.
+Writing to the file also changes "ctime" if the size of the file changes.
+--------------------------------------------
 
 		>>>Call set_security to set LSM related stuff.
 		>>>Set, s->s_flags |= MS_ACTIVE
