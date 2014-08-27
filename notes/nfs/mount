@@ -471,7 +471,13 @@ fs/nfs/inode.c
 				sb and fattr not equal, fattr mountpoint valid,
 				this means this fh is a mountpoint, indicating
 				a potential submount here.
-			fileid ?
+			>>> check fattr->fileid and mounted_on_fileid, to make
+				sure we should get inode for this fh or not.
+				Only 2 situations under which we should get:
+				1> fileid is valid and fattr->type is valid
+				2> fileid is not valid and it is a mounted_on_fileid
+				   fh and fattr->type is valid
+			fileid ? and mounted_on_fileid ?
 ---------from rfc1094 ---------------
 The "fattr" structure contains the attributes of a file;
 "type" is the type of the file;
@@ -489,6 +495,15 @@ The "fattr" structure contains the attributes of a file;
 "ctime" is the time when the status of the file was last changed.
 Writing to the file also changes "ctime" if the size of the file changes.
 --------------------------------------------
+			>>> use fileid as hash value, call iget5_locked to find
+				inode for fh. create new one if not found.
+				>>> call nfs_find_actor as compare func to find,
+				    comparing fileid, mode, fh(size/data(name)),
+				    and checking inode.
+				>>> call nfs_init_locked to init fileid and fh
+				    for new alloced inode.
+			>>> if new inode has been created, init it according to
+				fattr info, mode/type/atime etc
 
 		>>>Call set_security to set LSM related stuff.
 		>>>Set, s->s_flags |= MS_ACTIVE
