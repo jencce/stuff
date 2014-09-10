@@ -113,3 +113,28 @@ vim search case insensitive
 tshark
 	tshark -w /tmp/out -i em1
 	tshark -r /tmp/out -O NFS
+
+12/
+   Compound Commands
+       A compound command is one of the following:
+
+       (list) list  is  executed  in  a  subshell  environment.
+
+       { list; }
+              list  is simply executed in the current shell environment.  list must be terminated with a newline or semicolon.  This
+              is known as a group command.they must be separated from list by whitespace or another shell metacharacter.
+
+       ((expression))
+              The expression is evaluated according to the rules described below under ARITHMETIC EVALUATION.  If the value  of  the
+              expression  is  non-zero, the return status is 0; otherwise the return status is 1.  This is exactly equivalent to let
+              "expression".
+
+       [[ expression ]]
+		An additional binary operator, =~, is available, regular exporession match
+
+       for (( expr1 ; expr2 ; expr3 )) ; do list ; done
+		expr1/2/3 are arithmatic expressions , like c-language for loop
+
+13/
+associate array
+	declare -A ar; ar[a]=1; ar[c]=2;
