@@ -138,3 +138,6 @@ tshark
 13/
 associate array
 	declare -A ar; ar[a]=1; ar[c]=2;
+
+14/
+acl set all privileges, ignoring other mod bits
