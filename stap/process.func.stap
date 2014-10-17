@@ -1,0 +1,5 @@
+global r12;
+probe process("ls").function("vfs.open") {
+	r12 = register("r12");
+	printf("r12 %d\n", r12);
+}
