@@ -26,7 +26,7 @@ class waterwindow:
 		self.button = gtk.Button("Water Please~~~")
 		self.button.set_size_request(180,10)
 		self.button.connect_object("clicked", gtk.Widget.destroy, self.window)
-		self.bbox = gtk.HButtonBox()
+		self.bbox = gtk.VButtonBox()
 		self.bbox.pack_start(self.button_f, False, False, 0)
 		self.bbox.pack_start(self.button, False, False, 1)
 		self.window.add(self.bbox)
