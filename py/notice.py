@@ -39,6 +39,6 @@ while r:
 	if datetime.now().hour == 17:
 		r = 0
 	ww = waterwindow()	
-	time.sleep(60*15)
+	time.sleep(60*45)
 else:
 	pass
