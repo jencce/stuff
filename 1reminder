@@ -1,0 +1,35 @@
+#!/bin/sh
+# Check whether 0anacron was run today already
+cdir="/home/zx/.cache/w3m/"
+mad="xzhou@redhat.com"
+tmplog="/tmp/rmdlog"
+
+if ! test -w /home/zx/.cache/w3m; then
+	mkdir -p /home/zx/.cache/w3m
+fi
+
+cp -f ${cdir}eng{new,old} >> ${tmplog} 2>&1
+w3m -dump http://download.eng.bos.redhat.com/rel-eng/ > ${cdir}engnew
+
+if test -e ${cdir}engold; then
+	diff -q ${cdir}eng{old,new} >> ${tmplog} 2>&1
+	if [ $? -ne 0 ]; then
+		diff -u ${cdir}eng{old,new} | mail -s "rel-eng change" $mad
+	fi
+fi
+
+declare rlvers=(5 6 7)
+declare kvers=(2.6.18  2.6.32 3.10.0)
+kburl="http://download.eng.bos.redhat.com/brewroot/packages/kernel/"
+
+for i in 0 1 2;
+do
+	cp -f ${cdir}${rlvers[$i]}{new,old} >> ${tmplog} 2>&1
+	w3m -dump $kburl${kvers[$i]} > ${cdir}${rlvers[$i]}new
+	if test -e ${cdir}${rlvers[$i]}old; then
+		diff -q ${cdir}${rlvers[$i]}{old,new} >> ${tmplog} 2>&1
+		if [ $? -ne 0 ]; then
+			diff -u ${cdir}${rlvers[$i]}{old,new} | mail -s "${rlvers[$i]}kernel change" $mad
+		fi
+	fi
+done
