@@ -1,0 +1,13 @@
+#!/bin/bassh
+if test -e /home/zx/.hbrewold; then
+    brew search -r build kernel-3.10.0 | sort -V | tail > /home/zx/.hbrewnew
+else
+    brew search -r build kernel-3.10.0 | sort -V | tail > /home/zx/.hbrewold
+    brew search -r build kernel-3.10.0 | sort -V | tail > /home/zx/.hbrewnew
+fi
+
+if diff -q /home/zx/.hbrew{old,new}; then
+	:
+else
+	 diff -u /home/zx/.hbrew{old,new} 2>&1 | mail -s "brew diff" xzhou@redhat.com
+fi

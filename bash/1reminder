@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Check whether 0anacron was run today already
 cdir="/home/zx/.cache/w3m/"
 mad="xzhou@redhat.com"
@@ -18,6 +18,16 @@ if test -e ${cdir}engold; then
 	fi
 fi
 
+cp -f ${cdir}nightly{new,old} >> ${tmplog} 2>&1
+w3m -dump http://download.devel.redhat.com/nightly/ > ${cdir}nightlynew
+
+if test -e ${cdir}nightlyold; then
+	diff -q ${cdir}nightly{old,new} >> ${tmplog} 2>&1
+	if [ $? -ne 0 ]; then
+		diff -u ${cdir}nightly{old,new} | mail -s "nightly change" $mad
+	fi
+fi
+
 declare rlvers=(5 6 7)
 declare kvers=(2.6.18  2.6.32 3.10.0)
 kburl="http://download.eng.bos.redhat.com/brewroot/packages/kernel/"
@@ -33,3 +43,12 @@ do
 		fi
 	fi
 done
+
+cp -f ${cdir}/.hbrew{new,old} >> ${tmplog} 2>&1
+brew search -r build kernel-3.10.0 | sort -V | tail > ${cdir}/.hbrewnew
+
+if test -e ${cdir}/.hbrewold; then
+	if ! diff -q ${cdir}/.hbrew{old,new}; then
+		diff -u ${cdir}/.hbrew{old,new} 2>&1 | mail -s "brew diff" $mad
+	fi
+fi
