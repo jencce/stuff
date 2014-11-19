@@ -1,0 +1,12 @@
+#! /usr/bin/env stap
+
+probe kernel.function("sys_umount") {
+	printf("%s[%d]\n", execname(), tid());
+	print_backtrace();
+	print_ubacktrace();
+	printf("process tree:\n%s\n", pstrace(task_current()));
+}
+
+probe begin { log("starting probe") }
+
+probe end { log("ending probe") }

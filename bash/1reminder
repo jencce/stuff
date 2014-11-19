@@ -45,7 +45,8 @@ do
 done
 
 cp -f ${cdir}/.hbrew{new,old} >> ${tmplog} 2>&1
-brew search -r build kernel-3.10.0 | sort -V | tail > ${cdir}/.hbrewnew
+#brew search -r build kernel-3.10.0 | sort -V | tail > ${cdir}/.hbrewnew
+yes | w3m  -dump -T text https://brewweb.devel.redhat.com/userinfo?userID=332 | grep kernel- > ${cdir}/.hbrewnew
 
 if test -e ${cdir}/.hbrewold; then
 	if ! diff -q ${cdir}/.hbrew{old,new}; then
