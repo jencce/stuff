@@ -40,3 +40,78 @@ $ gdb obj/fs/nfs/nfs.ko
 927			kfree(data->fscache_uniq);
 928			security_free_mnt_opts(&data->lsm_opts);
 
+
+2. crash
+crash> bt -F
+PID: 385    TASK: ffff8802300ff1c0  CPU: 0   COMMAND: "kworker/0:1H"
+    [exception RIP: xfs_dir3_block_read_verify+47]
+    RIP: ffffffffa01b434f  RSP: ffff88022f59fdb0  RFLAGS: 00010246
+    RAX: 0000000000000000  RBX: ffff8800448be100  RCX: dead000000200200
+    RDX: ffffffffa01ef260  RSI: 0d00000000000000  RDI: ffff8800448be100
+    RBP: ffff88022f59fdd8   R8: ffff8800448be1a8   R9: dffe75d0be0be1a0
+    R10: dffe75d0be0be1a0  R11: 0000000000000400  R12: ffff8800448be100
+    R13: ffff880237214280  R14: ffff88023721c200  R15: 0000000000000020
+    CS: 0010  SS: 0018
+...
+crash> gdb list *xfs_dir3_block_read_verify+47
+0xffffffffa01b43ef is in xfs_dir3_block_read_verify (fs/xfs/xfs_sb.h:630).
+625     /*
+626      * V5 superblock specific feature checks
+627      */
+628     static inline int xfs_sb_version_hascrc(xfs_sb_t *sbp)
+629     {
+630             return XFS_SB_VERSION_NUM(sbp) == XFS_SB_VERSION_5;
+631     }
+632
+crash> dis xfs_dir3_block_read_verify+47
+0xffffffffa01b434f <xfs_dir3_block_read_verify+47>:     movzwl 0x7c(%rax),%eax
+sh> p *((struct xfs_buf *) 0xffff8800448be100)
+...
+  b_target = 0xffff88012fa3b440,
+...
+  b_ops = 0xffffffffa01ef250 <xfs_dir3_block_buf_ops>
+}
+crash> p *((struct xfs_buf *) 0xffff8800448be100)->b_target
+$75 = {
+  bt_dev = 2,
+  bt_bdev = 0x0,
+  bt_bdi = 0x0,
+  bt_mount = 0x0,
+  bt_meta_sectorsize = 0,
+  bt_meta_sectormask = 0,
+  bt_logical_sectorsize = 137438953471,
+  bt_logical_sectormask = 137438953471,
+  bt_shrinker = {
+    shrink = 0x1fffffffff,
+    seeks = 0,
+    batch = 0,
+    list = {
+      next = 0x0,
+      prev = 0x0
+    },
+    nr_in_batch = {
+      counter = 0
+    }
+  },
+  bt_lru = {
+    next = 0xffff880180fce880,
+    prev = 0xffffffff8193a2a0 <root_user>
+  },
+  bt_lru_lock = {
+    {
+      rlock = {
+        raw_lock = {
+          {
+            head_tail = 2173936416,
+            tickets = {
+              head = 41760,
+              tail = 33171
+            }
+          }
+        }
+      }
+    }
+  },
+  bt_lru_nr = 4294967295
+}
+
