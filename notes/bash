@@ -141,3 +141,18 @@ associate array
 
 14/
 acl set all privileges, ignoring other mod bits
+
+15/
+HERE doc/string: to be used as input to cmd
+[zx@ZX notes]$ cat > /tmp/2 <<ZX   # an EOF word implies end of reading
+> 2
+> ZX
+[zx@ZX notes]$ cat /tmp/2
+2
+[zx@ZX notes]$ tee <<<asd          # single word as stdin of cmd
+asd
+[zx@ZX notes]$ tee <<asd
+> 123
+> asd
+123
+[zx@ZX notes]$ 
