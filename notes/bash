@@ -156,3 +156,8 @@ asd
 > asd
 123
 [zx@ZX notes]$ 
+
+
+16/
+multiple fs in awk:  ':' '.' ' '
+	awk -F[:.\ ] '{xxx}'
