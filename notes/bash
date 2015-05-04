@@ -161,3 +161,11 @@ asd
 16/
 multiple fs in awk:  ':' '.' ' '
 	awk -F[:.\ ] '{xxx}'
+
+17/
+gcore PID  # to generate core dump file manually
+gdb /path/to/binary /path/to/core
+#bt
+#frame <frame-number>   # select frame
+#info locals            # print local variables
+#print <variable>
