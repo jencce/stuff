@@ -1,6 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/* why zero-length array over pointer:
+ * http://www.quora.com/What-is-the-advantage-of-using-zero-length-arrays-in-C
+ * 1, pointer need anoter allocation mem to it
+ * 2, the separate allocated mem may not be continuous with the structure
+ * 3, sometimes you can have pointers in structure
+ */
+
 int main()
 {
 	struct node {
