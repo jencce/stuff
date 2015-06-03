@@ -169,3 +169,21 @@ gdb /path/to/binary /path/to/core
 #frame <frame-number>   # select frame
 #info locals            # print local variables
 #print <variable>
+
+
+18/
+There are three quoting mechanisms: the escape character, single quotes, and double quotes.
+
+       A  non-quoted backslash (\) is the escape character.
+	If a \<newline> pair appears, and the backslash is not itself quoted, the \<newline> is treated as a line continuation.
+
+       Enclosing  characters  in  single  quotes preserves the literal value of each character within the quotes.  A single quote may not occur
+       between single quotes, even when preceded by a backslash.
+
+       Enclosing characters in double quotes preserves the literal value of all characters within the quotes, with the exception of
+			$,  `,  \, and,  when  history  expansion  is enabled, !.
+       The characters $ and ` retain their special meaning within double quotes.
+       The backslash retains its special meaning only when followed by one of the following characters: $, `, ", \, or <newline>.
+       A double quote may be quoted within double quotes by preceding it with a backslash.
+
+       Tilda expantion ~ does not retain its special meaning in any form of quoting..
