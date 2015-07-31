@@ -195,3 +195,18 @@ There are three quoting mechanisms: the escape character, single quotes, and dou
        treated as a possible login name.  If this login name is the null string, the tilde is replaced with the value of the shell parameter HOME.  If HOME is unset, the
        home directory of the user executing the shell is substituted instead.  Otherwise, the tilde-prefix is replaced with the home directory associated with the speci‐
        fied login name.
+
+20/
+[[ $line =~ regex ]]
+	this does not need the whole line match the regex pattern, a substring matching is enough.
+	
+	regex(7) , two types of Regular Expressions:
+		old one, ed
+		new one, egrep
+	Obsolete ("basic") regular expressions differ in several respects.
+		'|', '+', and '?' are ordinary characters and there is no equivalent for  their  functionality.
+		The delimiters for bounds are "\{" and "\}", with '{' and '}' by themselves ordinary characters.
+		The parentheses for nested subexpressions are "\(" and "\)", with '(' and ')' by themselves ordinary characters.
+		'^' is  an  ordinary  character except  at  the beginning of the RE or(!) the beginning of a parenthesized subexpression
+		'$' is an ordinary character except at the end of the RE or(!) the end of a parenthesized subexpression
+		'*' is an ordinary character if it appears at the beginning of the RE or the beginning of a parenthesized subexpression
