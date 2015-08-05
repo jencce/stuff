@@ -210,3 +210,13 @@ There are three quoting mechanisms: the escape character, single quotes, and dou
 		'^' is  an  ordinary  character except  at  the beginning of the RE or(!) the beginning of a parenthesized subexpression
 		'$' is an ordinary character except at the end of the RE or(!) the end of a parenthesized subexpression
 		'*' is an ordinary character if it appears at the beginning of the RE or the beginning of a parenthesized subexpression
+
+21/
+printf '=%.0s' {1..100}
+
+How this works:
+Bash expands {1..100} so the command becomes:
+printf '=%.0s' 1 2 3 4 ... 100
+
+I've set printf's format to =%.0s which means that it will always print a single = no matter
+what argument it is given. Therefore it prints 100 =s.

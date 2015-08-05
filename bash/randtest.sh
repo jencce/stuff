@@ -6,10 +6,11 @@ RAND_ROUNDS=20
 cpucnt=$(grep -c processor /proc/cpuinfo)
 
 yum install -y rpm-build automake autoconf libtool libgssglue-devel \
-net-tools xmlto asciidoc elfutils-libelf-devel zlib-devel binutils-devel \
+net-tools asciidoc elfutils-libelf-devel zlib-devel binutils-devel \
 newt-devel python-devel hmaccalc  perl-ExtUtils-Embed net-tools xmlto \
 asciidoc hmaccalc python-devel newt-devel elfutils-devel binutils-devel \
-audit-libs-devel numactl-devel pciutils-devel pesign bc mailx
+audit-libs-devel numactl-devel pciutils-devel pesign bc mailx openssl \
+openssl-devel xmlto ncurses-devel
 
 if [ $# -ne 1 ]; then
 	echo "Usage: $0 <linux-dir>|<linux-gz>"
@@ -40,10 +41,10 @@ if git status -uno ; then
 	if git tag | grep next ; then
 		# -next repo
 		TTAG=`git tag | grep next | tail -1`
-		git checkout $TTAG
+		git checkout -b $TTAG
 	else
 		TTAG=`git tag | sort -V | tail -1`
-		git checkout $TTAG
+		git checkout -b $TTAG
 	fi
 else
 	TTAG=`basename $1`
