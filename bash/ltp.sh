@@ -19,7 +19,15 @@ audit-libs-devel numactl-devel pciutils-devel pesign bc mailx openssl \
 openssl-devel xmlto ncurses-devel xfslibs-dev uuid-dev libtool e2fsprogs \
 automake gcc libuuid1 quota attr libattr1-dev libacl1-dev libaio-dev \
 xfsprogs libgdbm-dev fio dbench bison automake autoconf libuuid-devel \
-kernel-devel gawk 
+kernel-devel gawk busybox device-mapper fcoe-utils mdadm lldpad nbd \
+libiscsi iscsi-initiator-utils cifs-utils device-mapper-multipath \
+dmraid cryptsetup lvm2 acl attr autoconf bc bind-utils btrfs-progs \
+e2fsprogs-devel e4fsprogs gcc gdbm-devel gettext gfs2-utils git \
+indent kernel-devel kernel libacl-devel libaio-devel libattr-devel \
+libblkid-devel libcap libtool libuuid-devel ncurses-devel \
+openssl-devel perl policycoreutils-python popt-devel psmisc \
+pyOpenSSL python quota readline-devel rpm-build shadow-utils wget \
+xfsdump xfs-kmod xfsprogs xfsprogs-devel xfsprogs-qa-devel screen 
 
 useradd fsgqa
 
@@ -86,7 +94,7 @@ fi
 
 pushd xfstests
 git pull --rebase > /tmp/xl 2>&1
-if ! grep "up to date" /tmp/xl ; then
+if ! grep "up to date" /tmp/xl || ! test -d /var/lib/xfstests ; then
 	make -j$cpucnt > /dev/null 2>&1
 	make install > /dev/null 2>&1
 fi
@@ -94,7 +102,7 @@ popd
 
 pushd ltp
 git pull --rebase > /tmp/ll 2>&1
-if ! grep "up to date" /tmp/ll ; then
+if ! grep "up to date" /tmp/ll || ! test -e /opt/ltp/runltp ; then
 	make autotools > /dev/null 2>&1
 	./configure > /dev/null 2>&1
 	make -j$cpucnt > /dev/null 2>&1
@@ -110,14 +118,30 @@ if ! grep "up to date" /tmp/lpl || ! [[ `uname -r` =~ $ltag ]] ; then
 	echo -e "y\n1\n$(yes | head -n 1000)" | make oldconfig
 	make -j$cpucnt > /dev/null 2>&1
 	make modules_install -j$cpucnt > /dev/null 2>&1
-	make install && reboot
+	make install && grub2-set-default 0 && reboot
 fi
 popd
 
 # ltp
 for i in fs fs_ext4 ; do
+	test -e ${HOME}/ltp/`uname -r`-${i}.log && continue
 	echo "/opt/ltp/runltp -p -q -f $i -l ${HOME}/ltp/`uname -r`-${i}.log -o ${HOME}/ltp/`uname -r`-${i}.out -d $test_mnt"
 	/opt/ltp/runltp -p -q -f $i -l ${HOME}/ltp/`uname -r`-${i}.log -o ${HOME}/ltp/`uname -r`-${i}.out -d $test_mnt
+	grep -w FAIL ${HOME}/ltp/`uname -r`-${i}.log | mail -s "`uname -r` ltp fail" xzhou@redhat.com
 done
 
 # xfstests
+pushd /var/lib/xfstests
+cat > local.config  <<EOF
+export EMAIL=xzhou@redhat.com
+export TEST_DIR=$test_mnt
+export TEST_DEV=$test_dev
+export SCRATCH_DEV=$sct_dev
+export SCRATCH_MNT=$sct_mnt
+export FSTYP=ext4
+EOF
+if ! test -s $HOME/xfstests-`uname -r` ; then
+	./check -g auto > $HOME/xfstests-`uname -r` 2>&1
+	cat  $HOME/xfstests-`uname -r` | mail -s "`uname -r` xfstests fail" xzhou@redhat.com
+fi
+popd
