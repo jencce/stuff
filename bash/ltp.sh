@@ -116,18 +116,21 @@ ltag=$(git tag | grep next | sort -V | tail -1)
 if ! grep "up to date" /tmp/lpl || ! [[ `uname -r` =~ $ltag ]] ; then
 	rm -f .config .config.old
 	echo -e "y\n1\n$(yes | head -n 1000)" | make oldconfig
-	make -j$cpucnt > /dev/null 2>&1
-	make modules_install -j$cpucnt > /dev/null 2>&1
+	make -j$cpucnt > /dev/null 2>&1 && \
+	make modules_install -j$cpucnt > /dev/null 2>&1 && \
 	make install && grub2-set-default 0 && reboot
 fi
 popd
 
 # ltp
 for i in fs fs_ext4 ; do
-	test -e ${HOME}/ltp/`uname -r`-${i}.log && continue
-	echo "/opt/ltp/runltp -p -q -f $i -l ${HOME}/ltp/`uname -r`-${i}.log -o ${HOME}/ltp/`uname -r`-${i}.out -d $test_mnt"
-	/opt/ltp/runltp -p -q -f $i -l ${HOME}/ltp/`uname -r`-${i}.log -o ${HOME}/ltp/`uname -r`-${i}.out -d $test_mnt
-	grep -w FAIL ${HOME}/ltp/`uname -r`-${i}.log | mail -s "`uname -r` ltp fail" xzhou@redhat.com
+	local logfile="${HOME}/ltp/`uname -r`-${i}.log"
+	local outfile="${HOME}/ltp/`uname -r`-${i}.out"
+	test -e $logfile && continue
+	/opt/ltp/runltp -p -q -f $i -l $logfile -o $outfile -d $test_mnt
+	if grep -wq FAIL $logfile ; then
+		grep -w FAIL $logfile | mail -s "`uname -r` ltp fail" xzhou@redhat.com
+	fi
 done
 
 # xfstests
