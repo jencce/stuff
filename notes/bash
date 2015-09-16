@@ -220,3 +220,29 @@ printf '=%.0s' 1 2 3 4 ... 100
 
 I've set printf's format to =%.0s which means that it will always print a single = no matter
 what argument it is given. Therefore it prints 100 =s.
+
+22/
+((expression))
+   The expression is evaluated according to the rules described below under ARITHMETIC EVALUATION.  If the value of  the  expression
+   is non-zero, the return status is 0; otherwise the return status is 1.  This is exactly equivalent to let "expression".
+
+sh-4.2$ a=1
+sh-4.2$ b$a=2
+sh: b1=2: command not found
+sh-4.2$ ((b$a=2))
+sh-4.2$ echo $b$a
+1
+sh-4.2$ echo ${b$a}
+sh: ${b$a}: bad substitution
+sh-4.2$ echo $((b$a))
+2
+sh-4.2$ ((b$a=asd))                <------------------ only for arithmetic calculation
+sh-4.2$ echo $((b$a))
+0
+sh-4.2$ ((b$a=/dev/d))
+sh: ((: b1=/dev/d: syntax error: operand expected (error token is "/dev/d")
+sh-4.2$ ((b$a=\/dev\/d))
+sh: ((: b1=/dev/d: syntax error: operand expected (error token is "/dev/d")
+sh-4.2$ ((b$a=\\/dev\/d))
+sh: ((: b1=\/dev/d: syntax error: operand expected (error token is "\/dev/d")
+sh-4.2$ 
