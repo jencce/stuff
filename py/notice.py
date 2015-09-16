@@ -21,7 +21,7 @@ class waterwindow:
 		self.window.connect("destroy", gtk.main_quit)
 		f_str = os.popen("fortune").read()
 		self.button_f = gtk.Button(f_str)
-		self.button_f.set_size_request(500,200)
+		self.button_f.set_size_request(550,200)
 		self.button_f.connect_object("clicked", gtk.Widget.destroy, self.window)
 		self.button = gtk.Button("if u want to be top 500, good is far from enough")
 		self.button.set_size_request(180,10)
