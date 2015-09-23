@@ -9,9 +9,8 @@
 free dirs
 init_ob optimise
 android BG message app
-113	find-mount-point.c
-116	hostname.c
-123	group-list.c
+113	find-mount-point.c # findmnt in utils-linux
+123	group-list.c # groups
 124	tty.c
 133	nproc.c
 133	relpath.c
