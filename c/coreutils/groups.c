@@ -8,33 +8,30 @@
 #include <sys/types.h>
 
 int print_group_list(uid_t uid) {
-	int ret, cnt, i;
+	int ret, cnt, i, nrgroups = 10;
 	gid_t *group_list = NULL;
 	struct passwd *pwd = NULL;
+
+	group_list = (gid_t *)malloc(nrgroups * sizeof(gid_t));
+	if (group_list == NULL) {
+		perror("malloc:");
+		return -1;
+	}
 
 	pwd = getpwuid(uid);
 	if (pwd == NULL) {
 		perror("getpwuid:");
 		return -1;
 	}
-	//printf("%s", pwd->pw_name);
+	printf("%s :", pwd->pw_name);
 
-	cnt = getgroups(0, group_list);
-	if (cnt > 0) {
-		group_list = (gid_t *)malloc(sizeof(gid_t) * cnt);
-		if (group_list == NULL) {
-			perror("malloc:");
-			return -1;
-		}
-	}
-
-	ret = getgroups(cnt, group_list);
+	ret = getgrouplist(pwd->pw_name, pwd->pw_gid, group_list, &nrgroups);
 	if (ret == -1) {
-		perror("getgroups:");
+		perror("getgrouplist:");
 		return -1;
 	}
 
-	for (i = 0; i < cnt; i++) {
+	for (i = 0; i < nrgroups; i++) {
 
 		struct group *grp = NULL;
 
@@ -47,7 +44,6 @@ int print_group_list(uid_t uid) {
 		}
 	}
 	printf("\n");
-	return 0;
 }
 
 int main(int argc, char ** argv)
@@ -77,10 +73,40 @@ int main(int argc, char ** argv)
 	}
 	
 	if (optind == argc) {
+		int ret, cnt, i;
+		gid_t *group_list = NULL;
 
 		/* no more arguments, print groups of calling process*/
-		print_group_list(getuid());
+		cnt = getgroups(0, group_list);
+		if (cnt > 0) {
+			group_list = (gid_t *)malloc(sizeof(gid_t) * cnt);
+			if (group_list == NULL) {
+				perror("malloc:");
+				return -1;
+			}
+		}
 
+		ret = getgroups(cnt, group_list);
+		if (ret == -1) {
+			perror("getgroups:");
+			return -1;
+		}
+
+		for (i = cnt - 1; i >= 0; i--) {
+
+			struct group *grp = NULL;
+
+			grp = getgrgid(group_list[i]);
+			if (grp != NULL) {
+				printf("%s", grp->gr_name);
+			} else {
+				perror("getgrgid:");
+				return -1;
+			}
+			if (i != 0)
+				printf(" ");
+		}
+		printf("\n");
 	} else {
 		while (optind < argc) {
 
