@@ -14,6 +14,7 @@
 #include <libgen.h>
 #include <locale.h>
 #include <termios.h>
+#include <ctype.h>
 
 #ifdef SELINUX
 #include <selinux/selinux.h>

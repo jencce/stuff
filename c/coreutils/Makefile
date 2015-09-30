@@ -1,5 +1,5 @@
 # Makefile
-progs =  ls arch uname logname hostid yes link unlink whoami hostname groups tty
+progs =  ls arch uname logname hostid yes link unlink whoami hostname groups tty nproc
 
 all: $(progs)
 
