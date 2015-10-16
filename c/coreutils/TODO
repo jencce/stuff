@@ -14,6 +14,7 @@ group-list.c # groups
 tty.c
 nproc.c
 133	relpath.c
+277	realpath.c
 136	dirname.c
 137	mkfifo.c
 140	groups.c
@@ -40,7 +41,6 @@ nproc.c
 267	runcon.c
 272	echo.c
 274	sum.c
-277	realpath.c
 278	chroot.c
 312	kill.c
 317	chgrp.c
