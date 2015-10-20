@@ -246,3 +246,24 @@ sh: ((: b1=/dev/d: syntax error: operand expected (error token is "/dev/d")
 sh-4.2$ ((b$a=\\/dev\/d))
 sh: ((: b1=\/dev/d: syntax error: operand expected (error token is "\/dev/d")
 sh-4.2$ 
+
+
+23/ 
+
+read [-ers] [-a aname] [-d delim] [-i text] [-n nchars] [-N nchars] [-p prompt] [-t timeout] [-u fd] [name ...]
+              One  line is read from the standard input, or from the file descriptor fd supplied as an argument to the -u option, and the first
+              word is assigned to the first name, the second word to the second name, and so on, with leftover words and their intervening sep‐
+              arators  assigned  to  the  last  name.   If there are fewer words read from the input stream than names, the remaining names are
+              assigned empty values.  The characters in IFS are used to split the line into words.
+
+IFS    The  Internal Field Separator that is used for word splitting after expansion and to split lines into words with the read builtin
+              command.  The default value is ``<space><tab><newline>''.
+
+# cat /tmp/gftmp-1445328584
+ext4:ext4/005 result: FAIL
+# while IFS=' ' read -r line last || [ -n "$line" ] ; do echo 1$line ; echo 2$last;  done < /tmp/gftmp-1445328584
+1ext4 ext4/005
+2result  FAIL
+# while IFS='' read -r line last || [ -n "$line" ] ; do echo 1$line ; echo 2$last;  done < /tmp/gftmp-1445328584
+1ext4 ext4/005 result  FAIL
+2
