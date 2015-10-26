@@ -267,3 +267,16 @@ ext4:ext4/005 result: FAIL
 # while IFS='' read -r line last || [ -n "$line" ] ; do echo 1$line ; echo 2$last;  done < /tmp/gftmp-1445328584
 1ext4 ext4/005 result  FAIL
 2
+
+
+24/
+
+awk '{$1=$1;print}'
+
+or shorter:           awk '{$1=$1};1'
+
+Would trim leading and trailing space or tab characters and also squeeze sequences of tabs and spaces into a single space.
+
+That works because when you assign something to one of the fields, awk rebuilds the whole record (as printed by print)
+by joining all fields ($1, ..., $NF) with OFS (space by default).
+
