@@ -273,10 +273,21 @@ ext4:ext4/005 result: FAIL
 
 awk '{$1=$1;print}'
 
-or shorter:           awk '{$1=$1};1'
+or shorter:       awk '{$1=$1};1'
 
 Would trim leading and trailing space or tab characters and also squeeze sequences of tabs and spaces into a single space.
 
 That works because when you assign something to one of the fields, awk rebuilds the whole record (as printed by print)
 by joining all fields ($1, ..., $NF) with OFS (space by default).
 
+awk '{$1=$1};1' contains 2 awk pattern-action pairs:
+{$1=$1} is an action, execed on every record coz there is an null pattern.
+'1' equals '1{print $0}' ,  pattern 1 always true, so defaul action print everytime.
+
+25/
+
+clean() {
+	echo clean
+}
+trap "clean;" 0 1   # 0 is necessary to exec clean
+exit 1  # although exit on error, still a normal exit to this whole program, terminated by signal 0
