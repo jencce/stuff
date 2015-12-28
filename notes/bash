@@ -291,3 +291,10 @@ clean() {
 }
 trap "clean;" 0 1   # 0 is necessary to exec clean
 exit 1  # although exit on error, still a normal exit to this whole program, terminated by signal 0
+
+26/
+
+in gdb, press C-x 2 to enter TUI mode, put into a split source and disassembly
+display, where you can see assembly instructions of C instructions.
+
+use: p $r29  can print value in register, which may be optimized by gdb.
