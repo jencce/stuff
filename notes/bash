@@ -298,3 +298,23 @@ in gdb, press C-x 2 to enter TUI mode, put into a split source and disassembly
 display, where you can see assembly instructions of C instructions.
 
 use: p $r29  can print value in register, which may be optimized by gdb.
+
+
+27/
+
+combination of IO redirection and Process Substitution
+
+       Process  substitution is supported on systems that support named pipes (FIFOs) or
+       the /dev/fd method of naming open files.  It takes the form of <(list) or >(list).
+       The process list is run with its input or output connected to a FIFO or some file
+       in /dev/fd.
+
+       When available, process substitution is performed simultaneously with parameter
+       and variable expansion, command substitution, and arithmetic expansion.
+
+bash -x tt.sh > >(tee .log) 2>&1
+bash -x tt.sh &> >(tee .log)
+bash -x tt.sh > >(tee .log)
+
+to avoid
+bash -x tt.sh | tee .log   which will LOSE the return value of tt.sh
