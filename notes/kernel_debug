@@ -115,3 +115,55 @@ $75 = {
   bt_lru_nr = 4294967295
 }
 
+
+3. code
+
+https://bugzilla.redhat.com/show_bug.cgi?id=995189#c3
+
+I think I found the location. I took the code of:
+
+49 81 c1 00 00 10 00 49 89 c2 49 81 e2 00 00 f0 ff 4d 0f b1 10 4d 89 c8 4c 89 c8 49 81 e0 00 00 f0 ff 4c 0f b1 07 49 8b 44 24 30 <48> c7 40 08 00 00 00 00 48 89 c8 f0 4c 0f b1 63 30 48 39 c1 74
+
+Replaced "<48>" with "48", then ran it through:
+
+echo 49 81 c1 00 00 10 00 49 89 c2 49 81 e2 00 00 f0 ff 4d 0f b1 10 4d 89 c8 4c 89 c8 49 81 e0 00 00 f0 ff 4c 0f b1 07 49 8b 44 24 30 <48> c7 40 08 00 00 00 00 48 89 c8 f0 4c 0f b1 63 30 48 39 c1 74 | perl -e '$a=<>; chomp $a; @b = split / /,$a; $t = ""; foreach $y (@b) { $y = hex $y; $t = "C".$t; } $bin = pack $t, @b; print $bin;' > /tmp/binary
+
+Then I did:
+
+objdump -D -b binary -mi386 -Mx86-64 /tmp/binary
+
+Which gave me:
+
+00000000 <.data>:
+   0:   49 81 c1 00 00 10 00    add    $0x100000,%r9
+   7:   49 89 c2                mov    %rax,%r10
+   a:   49 81 e2 00 00 f0 ff    and    $0xfffffffffff00000,%r10
+  11:   4d 0f b1 10             cmpxchg %r10,(%r8)
+  15:   4d 89 c8                mov    %r9,%r8
+  18:   4c 89 c8                mov    %r9,%rax
+  1b:   49 81 e0 00 00 f0 ff    and    $0xfffffffffff00000,%r8
+  22:   4c 0f b1 07             cmpxchg %r8,(%rdi)
+  26:   49 8b 44 24 30          mov    0x30(%r12),%rax
+  2b:   48 c7 40 08 00 00 00    movq   $0x0,0x8(%rax) <<<- bug here
+  32:   00 
+  33:   48 89 c8                mov    %rcx,%rax
+  36:   f0 4c 0f b1 63 30       lock cmpxchg %r12,0x30(%rbx)
+  3c:   48 39 c1                cmp    %rax,%rcx
+  3f:   74                      .byte 0x74
+
+This seems to be the location of rb_tail_page_update():
+
+		(void)local_cmpxchg(&next_page->write, old_write, val);
+		(void)local_cmpxchg(&next_page->entries, old_entries, eval);
+
+		/*
+		 * No need to worry about races with clearing out the commit.
+		 * it only can increment when a commit takes place. But that
+		 * only happens in the outer most nested commit.
+		 */
+		local_set(&next_page->page->commit, 0);
+
+"commit" is at the 8 byte offset of page. So it seems that somehow next_page->page became NULL?
+
+What were you doing at the time of tracing? Were you reading the buffers too? Running trace-cmd?
+
