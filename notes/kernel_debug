@@ -20,6 +20,7 @@ Call Trace:
 There is a simple way to translate a <symbol>/<offset> to a line number:
 
     run gdb passing the correct kernel module (.ko) as the only argument
+    or  run gdb passing the vmlinux as the only argument.
     use the "l * (<symbol>+<offset>)" command 
 
 
@@ -167,3 +168,239 @@ This seems to be the location of rb_tail_page_update():
 
 What were you doing at the time of tracing? Were you reading the buffers too? Running trace-cmd?
 
+4. DEBUG_INFO
+The normal built vmlinux has the symbol and offset info. This option
+just give you extra debug info, like line numbers.
+"but for most kernel developers, DEBUG_INFO really just bloats things
+and makes the build much *much* slower, for very little gain. Sure,
+you get line numbers, but let's face it, it's not that hard to just do
+"x/20i <address>" and trying to match it up with the generated code
+instead. And since "just match it up" model works with user-reported
+oopses of random kernels, you had better be able and willing to do
+that *anyway*.
+
+If most of the oopses you decode are on your own machine with your own
+kernel, you might want to try to learn to be more careful when writing
+code. And I'm not even kidding.   -- Linus"
+
+with DEBUG_INFO:
+[zx@ZX linux]$ gdb vmlinux
+GNU gdb (GDB) Red Hat Enterprise Linux 7.6.1-64.el7
+<snip>
+Reading symbols from /home/zx/git/linux/vmlinux...done.
+(gdb) list schedule+0x45
+Function "schedule+0x45" not defined.
+(gdb) list *schedule+0x45
+0xffffffff819ab025 is in schedule (kernel/sched/core.c:2845).
+warning: Source file is more recent than executable.
+2840	asmlinkage __visible void __sched schedule(void)
+2841	{
+2842		struct task_struct *tsk = current;
+2843	
+2844		sched_submit_work(tsk);
+2845		__schedule();
+2846	}
+2847	EXPORT_SYMBOL(schedule);
+2848	
+2849	#ifdef CONFIG_CONTEXT_TRACKING
+(gdb) x/3i schedule+0x45
+   0xffffffff819ab025 <schedule+69>:	(bad)  
+   0xffffffff819ab026 <schedule+70>:	jmp    0xffffffff819ab027 <schedule+71>
+   0xffffffff819ab028 <schedule+72>:	decl   -0x7d(%rax)
+(gdb) 
+
+
+5. x86 registers
+==Segment registers
+	CS  code segment
+	DS  data segment
+	SS  stack segment
+	ES/FS/GS  data segment
+
+==General-purpose registers
+	These eight registers are available for storing operands and pointers.
+	EAX — Accumulator for operands and results data
+	EBX — Pointer to data in the DS segment
+	ECX — Counter for string and loop operations
+	EDX — I/O pointer
+	ESI — Pointer to data in the segment pointed to by the DS register;
+		source pointer for string operations
+	EDI — Pointer to data (or destination) in the segment pointed to by
+		the ES register; destination pointer for string operations
+	ESP — Stack pointer (in the SS segment)
+	EBP — Pointer to data on the stack (in the SS segment)
+
+	64-bit operand size : RAX, RBX, RCX, RDX, RDI, RSI, RBP, RSP, R8-R15
+
+==EFLAGS (program status and control) register
+	The EFLAGS register report on the status of the program
+	being executed and allows limited (application-program level)
+	control of the processor.
+
+==EIP (instruction pointer) register
+	The EIP register contains a 32-bit pointer to the *next* instruction
+	to be executed.
+
+
+6. find function arguments in vmcore
+help bt from crash:
+
+  In order to examine each stack frame's contents use the bt -f option.
+  From the extra frame data that is displayed, the arguments passed to each
+  function can be determined.  Re-examining the PID 1592 trace above:
+ 
+    crash> bt -f 1592
+    PID: 1592   TASK: c0cec000  CPU: 3   COMMAND: "httpd"
+<snip> 
+     #2 [c0cedf58] pipe_read at c015317f
+        [RA: c0148be8  SP: c0cedf5c  FP: c0cedf7c  SIZE: 36]
+        c0cedf5c: ef70a040  c0cec000  00000000  00000000  
+        c0cedf6c: 00000001  f27ae680  ffffffea  c0cedfbc  
+        c0cedf7c: c0148be8  
+     #3 [c0cedf7c] sys_read at c0148be6
+        [RA: c0107413  SP: c0cedf80  FP: c0cedfc0  SIZE: 68]
+        c0cedf80: f27ae680  bffed4a3  00000001  f27ae6a0  
+        c0cedf90: 40160370  24000000  4019ba28  00000000  
+        c0cedfa0: 00000000  fffffffe  bffba207  fffffffe  
+        c0cedfb0: c0cec000  00000001  bffed4a3  bffed488  
+        c0cedfc0: c0107413  
+     #4 [c0cedfc0] system_call at c010740c
+<snip> 
+ 
+    Typically the arguments passed to a function will be the last values
+    that were pushed onto the stack by the next higher-numbered function, i.e.,
+    the lowest stack addresses in the frame above the called function's
+    stack frame.  That can be verified by disassembling the calling function.
+    For example, the arguments passed from sys_read() to pipe_read() above
+    are the file pointer, the user buffer address, the count, and a pointer
+    to the file structure's f_pos field.  Looking at the frame #3 data for
+    sys_read(), the last four items pushed onto the stack (lowest addresses)
+    are f27ae680, bffed4a3, 00000001, and f27ae6a0 -- which are the 4 arguments
+    above, in that order.  Note that the first (highest address) stack content
+    in frame #2 data for pipe_read() is c0148be8, which is the return address
+    back to sys_read(). 
+
+So get the struct file * value:
+crash>p *((struct file *) 0xf27ae680)
+
+--
+ppc64 seems like has different direction on stack growing,
+
+investigation of ppc generic/269 panic issue:
+	kernel BUG at fs/ext4/inode.c:1375!
+
+static void ext4_da_page_release_reservation(struct page *page,
+                                             unsigned int offset,
+                                             unsigned int length)
+{
+        unsigned int stop = offset + length;
+        BUG_ON(stop > PAGE_CACHE_SIZE || stop < length);
+<snip>
+
+
+
+crash> bt -FF output:
+#
+#static void ext4_da_invalidatepage(struct page *page, unsigned int offset,
+#                                   unsigned int length)
+#
+ #5 [c0000001a3d17990] .ext4_da_invalidatepage at d000000002aba9e4 [ext4]
+ [Link Register ]  [c0000001a3d17990] .truncate_inode_pages_range at c00000000023b8d0
+    c0000001a3d17990: c0000001a3d17a80 ext4_xattr_cache+21592 
+    c0000001a3d179a0: .path_init+540   0000000000010002 
+    c0000001a3d179b0: 0000000100001fb6 c0000001a3d17bb0 
+    c0000001a3d179c0: c0000001a3d17a40 c0000001a3d17bb0 
+    c0000001a3d179d0: .complete_walk+116 f0000000004ecc08 
+    c0000001a3d179e0: c0000001a3d17a80 00003fffd57be5db 
+    c0000001a3d179f0: .find_lock_page+180 names_cachep     
+    c0000001a3d17a00: 0000000000000000 0000000000008000 
+    c0000001a3d17a10: 0000000000008000 0000000000007000 
+    c0000001a3d17a20: 0000000000000002 0000000000000001 
+    c0000001a3d17a30: 0000000000000018 0000000000017000 
+    c0000001a3d17a40: 0000000000018000 [c00000017f609728:ext4_inode_cache] 
+    c0000001a3d17a50: 0000000000000001 000000000000058a 
+    c0000001a3d17a60: 0000000000000000 0000000000000000 
+    c0000001a3d17a70: c0000001a3d14000 f0000000004ecc08 
+
+#
+#void truncate_inode_pages_range(struct address_space *mapping,
+#                                loff_t lstart, loff_t lend)
+
+ #6 [c0000001a3d17a80] .truncate_inode_pages_range at c00000000023b8d0  (unreliable)
+    c0000001a3d17a80: c0000001a3d17c70 440024247f6095d8 
+    c0000001a3d17a90: .truncate_inode_pages_range+2080 00003fffd57b8578 
+    c0000001a3d17aa0: c0000001a3d17ba0 init_thread_union+9920 
+    c0000001a3d17ab0: c0000001a3d17b40 28222442d57be5db 
+    c0000001a3d17ac0: c0000001a3d17bc0 00003fffd57be5db 
+    c0000001a3d17ad0: 000000021000bd08 0000000000000000 
+    c0000001a3d17ae0: 0000000000000000 00003fffd57be5db 
+    c0000001a3d17af0: 0000000000000000 0000000000000000 
+    c0000001a3d17b00: 0000000000000000 ffffffffffffff9c 
+    c0000001a3d17b10: 0000000000000000 0000000000000000 
+    c0000001a3d17b20: ffffffffffffffff 000000001000d260 
+    c0000001a3d17b30: 0000000000000000 0000000010020128
+    c0000001a3d17b40: c0000001a3d17be0 00003fffd57be5db 
+    c0000001a3d17b50: 000000001000bd08 0000000010020128 
+    c0000001a3d17b60: 0000000000000000 00003fffd57be5db 
+    c0000001a3d17b70: c0000001a3d17bf0 00003fffd57be5db 
+    c0000001a3d17b80: .mntput+80       0000000000000090 
+    c0000001a3d17b90: c0000001a3d17c80 00003fffd57b86a8 
+    c0000001a3d17ba0: c0000001a3d17c10 0000000000000090 
+    c0000001a3d17bb0: c0000001a3d17c70 00000000100214e8 
+    c0000001a3d17bc0: [c0000001a1e5f000:kmalloc-1024] [c0000001a1e5f248:kmalloc-1024] 
+    c0000001a3d17bd0: c0000001a3d17c60 [c0000001a1e5f260:kmalloc-1024] 
+    c0000001a3d17be0: 0000000000018000 0000000000016fff 
+    c0000001a3d17bf0: c0000001a3d17c70 0000000000000403 
+    c0000001a3d17c00: 000000000001771d [c00000017f609680:ext4_inode_cache] 
+    c0000001a3d17c10: 0000000000000fff 0000000000000001 
+    c0000001a3d17c20: 0000000000000018 0000000000017000 
+    c0000001a3d17c30: 0000000000018000 [c00000017f6095d8:ext4_inode_cache] 
+    c0000001a3d17c40: [c0000000295ae800:kmalloc-256] 000000000000058a 
+    c0000001a3d17c50: 0000000000000000 0000000000017193 
+    c0000001a3d17c60: [c00000017f609578:ext4_inode_cache] 000000000001771d 
+#
+#long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
+#
+ #7 [c0000001a3d17c70] .ext4_fallocate at d000000002af9060 [ext4]
+    c0000001a3d17c70: c0000001a3d17d70 c0000001a3d17db0 
+    c0000001a3d17c80: .ext4_fallocate+1360 [c0000001a1bee270:kmalloc-1024] 
+    c0000001a3d17c90: 0000000000000001 ext4_xattr_cache+21592 
+    c0000001a3d17ca0: c0000001a3d17d70 0000000000000000 
+    c0000001a3d17cb0: .__sb_start_write+116 0000000000001000 
+    c0000001a3d17cc0: c0000001a3d17d90 0000000054d027eb 
+    c0000001a3d17cd0: 000000002e22cd83 0000000054d027f1 
+    c0000001a3d17ce0: c0000001a3d17d70 00000000100213c8 
+    c0000001a3d17cf0: 00000000100213c0 000000001000d260 
+    c0000001a3d17d00: 0000000000000000 0000000010020128 
+    c0000001a3d17d10: 0000000000000000 00003fffd57be5db 
+    c0000001a3d17d20: 000000001000bd08 0000000051eb851f
+    c0000001a3d17d30: 000000001dcd6500 0000000000000000 
+    c0000001a3d17d40: 000000000000058a 0000000000017193 
+    c0000001a3d17d50: [c00000017f6095d8:ext4_inode_cache] 0000000000000000 
+    c0000001a3d17d60: [c0000000295ae800:kmalloc-256] 0000000000000010 
+ #8 [c0000001a3d17d70] .sys_fallocate at c0000000002d3c80
+    c0000001a3d17d70: c0000001a3d17e30 2400242800000000 
+    c0000001a3d17d80: .sys_fallocate+368 c0000001a3d17ea0
+
+
+
+7. disassemble in crash
+
+crash> dis -l sys_readlinkat+46
+/usr/src/debug/kernel-3.10.0-324.el7/linux-3.10.0-324.el7.x86_64/fs/stat.c: 301
+0xffffffff811e3e7e <sys_readlinkat+46>: movl   $0x0,-0x44(%rbp)
+crash> l *sys_readlinkat+46
+0xffffffff811e3e7e is in SyS_readlinkat (fs/stat.c:301).
+296     SYSCALL_DEFINE4(readlinkat, int, dfd, const char __user *, pathname,
+297                     char __user *, buf, int, bufsiz)
+298     {
+299             struct path path;
+300             int error;
+301             int empty = 0;
+302             unsigned int lookup_flags = LOOKUP_EMPTY;
+303     
+304             if (bufsiz <= 0)
+305                     return -EINVAL;
+crash> 
+
+movl   $0x0,-0x44(%rbp) ==> copy 0 to address(value(rbp)-0x44)
