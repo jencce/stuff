@@ -30,3 +30,10 @@ for c in [B, C, D]:
 		print 'C'
 	except B:
 		print 'B'
+
+try:
+	raise B()
+except B:
+	print "exp"
+finally:
+	print "ff"
