@@ -51,7 +51,7 @@ void print_b1(int *p)
 void print_b3(int *p)
 {
 #define container_of(p, type, member)\
-	(type *) ((char *)p - (&(type *)0)->member)
+	(type *) ((char *)p - (size_t)(&((type *)0)->member))
 	struct hs* pp = container_of(p, struct hs, v);
 	//struct hs* pp = (struct hs *)((char *)p - (long)(&((struct hs *)0)->v));
 	printf("offset %ld\n", (long)(&((struct hs *)0)->v));
@@ -69,6 +69,8 @@ int main()
 	hs.b = 129;
 	hs.v = 12;
 
+	printf("hs.t offset %d\n", (size_t)(&((struct hs *)0)->t));
+	printf("hs.t offset %d\n", (&((struct hs *)0)->t));
 	print_b(&hs.v);
 	print_b1(&hs.v);
 	print_b3(&hs.v);
