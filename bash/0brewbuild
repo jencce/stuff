@@ -1,4 +1,4 @@
-#!/bin/bassh
+#!/bin/bash
 if test -e /home/zx/.hbrewold; then
     brew search -r build kernel-3.10.0 | sort -V | tail > /home/zx/.hbrewnew
 else
