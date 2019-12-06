@@ -1,5 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/time.h>
+#include <time.h>
 
 struct t_node {
 	int a;
@@ -26,6 +28,9 @@ int main()
 		printf("0\n");
 
 	gettimeofday(&tm, NULL);
+	time_t t = time(NULL);
+	printf("time %d\n", t);
+	printf("ctime %s\n", ctime(&t));
 	char *s = malloc(10);
 //	printf("sec:%ld, usec:%ld\n", tm.tv_sec, tm.tv_usec);
 //	printf("int %d, l %d, i %d, a %d\n", sizeof(int), sizeof(long), i, sizeof(a));
