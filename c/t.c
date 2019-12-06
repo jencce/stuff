@@ -29,8 +29,12 @@ int main()
 
 	gettimeofday(&tm, NULL);
 	time_t t = time(NULL);
+	struct tm *tmp;
+	char str[50];
+	tmp = localtime(&t);
 	printf("time %d\n", t);
-	printf("ctime %s\n", ctime(&t));
+	strftime(str, sizeof(str), "%T", tmp);
+	printf("ctime %s t2 %s\n", ctime(&t), str);
 	char *s = malloc(10);
 //	printf("sec:%ld, usec:%ld\n", tm.tv_sec, tm.tv_usec);
 //	printf("int %d, l %d, i %d, a %d\n", sizeof(int), sizeof(long), i, sizeof(a));
